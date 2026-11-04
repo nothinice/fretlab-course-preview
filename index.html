@@ -749,7 +749,7 @@ function playMetronome(when,accent=false,peak=.12){
   let stopped=false;
   return {get stopped(){return stopped;},stop(){if(stopped)return;stopped=true;const now=ctx.currentTime;gain.gain.setValueAtTime(now<t?0:peak,now);gain.gain.linearRampToValueAtTime(0,now+.008);source.stop(now+.01);}};
 }
-function playMidi(midi, when, dur, peak = 0.22, position = null){
+function playMidi(midi, when, dur, peak = 0.22, position = null, articulation = null){
   if(!Number.isFinite(midi)) return; // guard: never hand NaN/Infinity to Web Audio
   const ctx = getAudioCtx();
   const t = when !== undefined ? when : ctx.currentTime;
@@ -770,14 +770,17 @@ function playMidi(midi, when, dur, peak = 0.22, position = null){
   gain.gain.setValueAtTime(0.0001, t);
   gain.gain.exponentialRampToValueAtTime(peak, t + attack);
   gain.gain.exponentialRampToValueAtTime(peak * .65, t + settle);
-  gain.gain.exponentialRampToValueAtTime(peak * .45, t + d * .68);
+  const held=articulation==='held';
+  const releaseAt=held?t+d-Math.min(.008,d*.05):t+d*.68;
+  const sustain=held?peak*.65:peak*.45;
+  gain.gain.exponentialRampToValueAtTime(sustain, releaseAt);
   gain.gain.exponentialRampToValueAtTime(0.0001, t + d);
   osc.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
   osc.addEventListener('ended', ()=>{osc.disconnect();filter.disconnect();gain.disconnect();});
-  osc.start(t); osc.stop(t + d + 0.05);
+  osc.start(t); osc.stop(t + d + (held?0:0.05));
   // Release from the actual envelope level, including voices scheduled in the future.
   let stopped=false;
-  const envelope=[[t,.0001],[t+attack,peak],[t+settle,peak*.65],[t+d*.68,peak*.45],[t+d,.0001]];
+  const envelope=[[t,.0001],[t+attack,peak],[t+settle,peak*.65],[releaseAt,sustain],[t+d,.0001]];
   const voice={
     get stopped(){return stopped;},
     addEventListener:(...args)=>osc.addEventListener(...args),
@@ -2889,6 +2892,49 @@ label.lesson-practice{font-size:16px;text-transform:none;letter-spacing:normal;c
 .block-plan summary,.lesson-purpose summary,.audio-options summary{
   min-height:44px;box-sizing:border-box;padding:11px 0;line-height:22px;
 }
+
+/* Rhythm: one aligned clock, one action at a time. */
+.rhythm-workspace{scroll-margin-top:64px}
+.rhythm-workspace #blockTaskTitle{font-size:21px;margin:8px 0 14px}
+.rhythm-intro{max-width:780px;margin:auto;min-height:640px}
+.rhythm-player{border:1px solid var(--border);background:var(--panel);border-radius:16px;padding:16px;position:relative}
+.rhythm-player h3{font-size:16px;line-height:1.5;margin:0;min-height:48px;outline:none}
+.rhythm-caption{margin:6px 0;font-size:15px;min-height:44px}
+.rhythm-unified{display:block;width:100%;max-width:none;height:auto;margin:0;color:var(--ink);overflow:visible}
+.rhythm-tile rect{fill:var(--bg);stroke:var(--border)}
+.rhythm-tile text{fill:var(--ink)}
+.rhythm-tile.is-rest rect{fill:none;stroke-dasharray:4 3}
+.rhythm-tile.is-playing rect{fill:var(--tonic-note);stroke:#6b4b16}
+.rhythm-tile.is-playing text{fill:#241e19}
+.rhythm-symbol.is-playing{color:var(--teal);filter:drop-shadow(0 0 2px var(--teal))}
+.rhythm-count circle{fill:transparent}.rhythm-count text,.rhythm-and{fill:var(--muted)}
+.rhythm-count.is-playing circle{fill:var(--tonic-note)}.rhythm-count.is-playing text{fill:#241e19}
+.rhythm-cursor{stroke:var(--teal);stroke-width:2;pointer-events:none}
+.rhythm-count-in{display:flex;gap:8px;justify-content:center;height:26px;margin:2px 0}
+.rhythm-count-in span{border:1px solid var(--border);border-radius:50%;font-size:13px;width:24px;height:24px;text-align:center;line-height:24px}
+.rhythm-count-in .is-playing{background:var(--tonic-note);color:#241e19;border-color:#6b4b16}
+.rhythm-player-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-top:4px}
+.rhythm-player-controls label{display:flex;gap:6px;align-items:center;margin:0;font-size:14px;text-transform:none;letter-spacing:0}
+.rhythm-player-controls input{width:70px;min-height:44px}
+.rhythm-settings summary,.rhythm-details summary{min-height:44px;line-height:44px;cursor:pointer;font-size:14px}
+.rhythm-settings p,.rhythm-details p{font-size:14px;line-height:1.6}
+.rhythm-flow{list-style:none;display:grid;grid-template-columns:repeat(4,1fr);padding:0;gap:5px;font-size:13px;counter-reset:rhythm;margin:14px 0}
+.rhythm-flow li{counter-increment:rhythm;color:var(--muted);border-bottom:3px solid var(--border);padding:8px 0}
+.rhythm-flow li::before{content:counter(rhythm) ' · ';}.rhythm-flow .is-current{color:var(--ink);border-color:var(--teal);font-weight:bold}.rhythm-flow .is-done::before{content:'✓ ';}
+.rhythm-stage-content{min-height:180px;animation:rhythm-reveal .2s ease-out}
+.rhythm-stage-content .rhythm-question{margin:0}.rhythm-stage-content p{line-height:1.5}
+.rhythm-question .correct-choice{border:2px solid var(--teal);color:var(--ink);background:var(--bg)}
+.rhythm-question .wrong-choice{border:2px solid #b34736}
+.rhythm-options{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.rhythm-options .rhythm-option{margin:0;padding:12px}.rhythm-options h3{font-size:16px}
+@keyframes rhythm-reveal{from{opacity:.4;transform:translateY(3px)}to{opacity:1;transform:none}}
+@media(max-width:600px){.rhythm-player{padding:12px}.rhythm-options{grid-template-columns:1fr}.rhythm-flow{font-size:12px}.rhythm-stage-content{min-height:200px}}
+@media(prefers-reduced-motion:reduce){.rhythm-stage-content{animation:none}.rhythm-cursor{display:none}}
+
+.rhythm-stage-content > :not([hidden]){animation:rhythm-reveal .2s ease-out}
+@media(prefers-reduced-motion:reduce){.rhythm-stage-content > :not([hidden]){animation:none}}
+
+.rhythm-workspace{overflow-anchor:none}
 </style>
 <script>/* Course sandbox adapter. The existing renderer and audio engine remain shared. */
 const CourseSandbox = (() => {
@@ -3364,6 +3410,63 @@ const CourseLesson = (() => {
 if(typeof module!=='undefined'&&module.exports)module.exports=CourseLesson;
 else window.courseLessons=CourseLesson.boot();
 </script>
+<script>/* Original rhythmic diagram. All positions share a four-beat coordinate system. */
+const CourseRhythmPlayer=(()=>{
+  const timeline=events=>{let offset=0;return events.map(e=>{const item={...e,offset};offset+=e.beats;return item;});};
+  function frame(events,elapsed,beat,lead=0){
+    const time=elapsed/beat,notes=timeline(events),length=events.reduce((n,e)=>n+e.beats,0);
+    if(time<0)return {waiting:true};
+    if(time<lead)return {countIn:Math.floor(time)};
+    const position=time-lead;
+    if(position>=length)return {done:true};
+    const index=notes.findIndex(e=>position>=e.offset&&position<e.offset+e.beats);
+    return {position,beat:Math.floor(position)%4,index:index>=0&&notes[index].midi!==null?index:-1};
+  }
+  function diagram(parent,pattern,{blocks=true,compact=false}={}){
+    const ns='http://www.w3.org/2000/svg',svg=document.createElementNS(ns,'svg');
+    svg.setAttribute('viewBox','0 0 480 180');svg.classList.add('rhythm-score','rhythm-unified');svg.setAttribute('role','img');
+    svg.setAttribute('aria-label','Размер 4/4. '+pattern.durations.map((d,i)=>(pattern.rests.includes(i)?'Пауза':d===1?'Четверть':'Восьмая')+': '+d+' доли').join('; '));
+    parent.appendChild(svg);
+    const add=(parent,tag,attrs,text)=>{const e=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>e.setAttribute(k,String(v)));if(text)e.textContent=text;parent.appendChild(e);return e;};
+    add(svg,'line',{x1:48,y1:64,x2:464,y2:64,stroke:'currentColor','stroke-width':1,opacity:.3});
+    for(const x of [38,464])add(svg,'line',{x1:x,y1:34,x2:x,y2:82,stroke:'currentColor','stroke-width':1.5});
+    for(const y of [50,73])add(svg,'text',{x:14,y,'font-size':23},'4');
+    let offset=0;const symbols=[],tiles=[];
+    pattern.durations.forEach((beats,i)=>{
+      const x=48+104*offset,rest=pattern.rests.includes(i),g=add(svg,'g',{'data-event':i,class:'rhythm-symbol'+(rest?' is-rest':'')});symbols.push(g);
+      if(rest)add(g,'path',{d:`M ${x-4} 36 l 11 11 -7 10 7 10 Q ${x-10} 59 ${x-6} 77 Q ${x-17} 66 ${x-5} 61 l -7 -10 9 -7 Z`,fill:'currentColor'});
+      else{
+        add(g,'ellipse',{cx:x,cy:64,rx:8,ry:5.5,transform:`rotate(-20 ${x} 64)`,fill:'currentColor','data-onset':offset});
+        add(g,'line',{x1:x+7,y1:63,x2:x+7,y2:28,stroke:'currentColor','stroke-width':2});
+        if(beats===.5&&Number.isInteger(offset)&&pattern.durations[i+1]===.5&&!pattern.rests.includes(i+1))add(g,'line',{x1:x+7,y1:28,x2:x+59,y2:28,stroke:'currentColor','stroke-width':5});
+      }
+      const tile=add(svg,'g',{class:'rhythm-tile'+(rest?' is-rest':''),'data-event':i});tiles.push(tile);
+      add(tile,'rect',{x,y:96,width:beats*104-4,height:34,rx:4,'data-onset':offset});
+      add(tile,'text',{x:x+(beats*104-4)/2,y:118,'text-anchor':'middle','font-size':beats===.5?15:16},rest?'пауза':'ТА');offset+=beats;
+    });
+    const counts=[];
+    for(let i=0;i<4;i++){
+      const g=add(svg,'g',{class:'rhythm-count','data-beat':i});counts.push(g);
+      add(g,'circle',{cx:48+i*104,cy:153,r:14});
+      add(g,'text',{x:48+i*104,y:159,'text-anchor':'middle','font-size':17},String(i+1));
+      add(svg,'text',{x:100+i*104,y:159,'text-anchor':'middle','font-size':15,class:'rhythm-and'},'и');
+    }
+    const cursor=add(svg,'line',{x1:48,x2:48,y1:20,y2:170,class:'rhythm-cursor',hidden:''});
+    function showBlocks(value){tiles.forEach(e=>e.style.display=value?'':'none');svg.classList.toggle('blocks-hidden',!value);}
+    showBlocks(blocks);
+    let last='';
+    function clear(){last='';symbols.concat(tiles,counts).forEach(e=>e.classList.remove('is-playing'));cursor.setAttribute('hidden','');}
+    function paint(f){
+      const key=`${f.index}/${f.beat}`;
+      if(key!==last){symbols.forEach((e,i)=>e.classList.toggle('is-playing',i===f.index));tiles.forEach((e,i)=>e.classList.toggle('is-playing',i===f.index));counts.forEach((e,i)=>e.classList.toggle('is-playing',i===f.beat));last=key;}
+      if(f.position!==undefined&&!matchMedia('(prefers-reduced-motion: reduce)').matches&&!compact){const x=48+f.position*104;cursor.removeAttribute('hidden');cursor.setAttribute('x1',x);cursor.setAttribute('x2',x);}else cursor.setAttribute('hidden','');
+    }
+    return {svg,paint,clear,showBlocks};
+  }
+  return {timeline,frame,diagram};
+})();
+if(typeof module!=='undefined'&&module.exports)module.exports=CourseRhythmPlayer;
+</script>
 <script>/* Block 1: original practice tasks. No book scores or recordings are bundled. */
 const CourseBlockOne = (() => {
   const KEY='fretlab-block1-v1';
@@ -3493,21 +3596,29 @@ const CourseBlockOne = (() => {
     const STUDY_KEY='fretlab-rhythm-study-v1';
     try{studyProgress=cleanRhythmStudy(JSON.parse(localStorage.getItem(STUDY_KEY)||'null'));}catch{}
     try{records=cleanRecords(JSON.parse(localStorage.getItem(KEY)||'null'));}catch{canStore=false;}
-    let activity=null, session=null, heard=false, tempo=60, voices=[],timers=[],boardScroll=null,stopButton=null,audioVersion=0;
+    let activity=null, session=null, heard=false, tempo=60, voices=[],timers=[],boardScroll=null,stopButton=null,audioVersion=0,audioFrame=0,visual=null;
     const storage=()=>{el('blockStorage').textContent=canStore?'Завершённые упражнения и шаги разбора ритма сохраняются в этом браузере. Незавершённая попытка проверки после перезагрузки начинается заново.':'Хранилище браузера недоступно: результаты сохраняются только до закрытия страницы.';if(!canStore)el('blockStorage').parentElement.open=true;};
     function save(){try{localStorage.setItem(KEY,JSON.stringify({version:1,records}));}catch{canStore=false;}storage();}
-    function stop(){audioVersion++;if(stopButton)stopButton.hidden=true;voices.forEach(v=>{try{v?.stop();}catch{}});voices=[];timers.forEach(clearTimeout);timers=[];}
-    function audio(events,{countIn=false,click=false}={}){
+    function stop(){audioVersion++;cancelAnimationFrame(audioFrame);audioFrame=0;visual?.clear();visual=null;if(stopButton)stopButton.hidden=true;voices.forEach(v=>{try{v?.stop();}catch{}});voices=[];timers.forEach(clearTimeout);timers=[];}
+    function audio(events,{countIn=false,click=false,player=null,onend=null}={}){
       stop();const version=audioVersion;const ctx=getAudioCtx(),beat=60/tempo,start=ctx.currentTime+.08,lead=countIn?4:0;
-      const add=(midi,time,dur,peak)=>{voices.push(playMidi(midi,time,dur,peak,activity?.kind==='compose'&&[48,50,52].includes(midi)?{boardId:'blockPracticeBoard',index:4*(FRET_COUNT+1)+midi-45}:null));};
+      visual=player;visual?.playing(true);
+      const held=['rhythm','compose'].includes(activity?.kind);
+      const add=(midi,time,dur,peak)=>{voices.push(playMidi(midi,time,dur,peak,activity?.kind==='compose'&&[48,50,52].includes(midi)?{boardId:'blockPracticeBoard',index:4*(FRET_COUNT+1)+midi-45}:null,held?'held':null));};
       if(countIn)for(let i=0;i<4;i++)voices.push(playMetronome(start+i*beat,i===0,.16));
       const length=events.reduce((n,e)=>n+e.beats,0);
       if(click)for(let i=0;i<length;i++)voices.push(playMetronome(start+(lead+i)*beat,i%4===0,.09));
       let offset=lead;
-      events.forEach(e=>{if(e.metronome)voices.push(playMetronome(start+offset*beat,offset===0,.16));else if(e.midi!==null)add(e.midi,start+offset*beat,Math.max(.07,e.beats*beat*.8),e.accent ? 0.2 : 0.14);offset+=e.beats;});
+      events.forEach(e=>{if(e.metronome)voices.push(playMetronome(start+offset*beat,offset===0,.16));else if(e.midi!==null)add(e.midi,start+offset*beat,held?e.beats*beat:Math.max(.07,e.beats*beat*.8),e.accent ? .2 : .14);offset+=e.beats;});
       if(stopButton)stopButton.hidden=false;
-      timers.push(setTimeout(()=>{if(version===audioVersion){voices=[];if(stopButton)stopButton.hidden=true;}},(start+(lead+length)*beat-ctx.currentTime)*1000+100));
-      feedback(countIn?'Четыре щелчка отсчёта, затем пример. Слушайте, где звук и где пауза.':'Слушайте пример; затем повторите или ответьте.');
+      function tick(){
+        if(version!==audioVersion)return;
+        const f=CourseRhythmPlayer.frame(events,ctx.currentTime-start,beat,lead);
+        if(f.done){voices=[];visual?.clear();visual=null;audioFrame=0;if(stopButton)stopButton.hidden=true;onend?.();return;}
+        visual?.paint(f);audioFrame=requestAnimationFrame(tick);
+      }
+      audioFrame=requestAnimationFrame(tick);
+      if(!player)feedback(countIn?'Четыре щелчка отсчёта, затем пример. Слушайте, где звук и где пауза.':'Слушайте пример; затем повторите или ответьте.');
     }
     function button(parent,text,fn,disabled=false){const b=node('button',text);b.type='button';b.className='play-btn'+(/^(Проверить|Завершить|Повторил|Продолжить)/.test(text)?' primary-btn':/^(Подсказка|Новая|■|Убрать|Очистить|←)/.test(text)?' text-btn':'');b.disabled=disabled;b.addEventListener('click',fn);parent.appendChild(b);return b;}
     function feedback(text,success=false){const box=el('blockTaskFeedback');box.textContent=text;box.hidden=!text;box.classList.toggle('answer-success',success);}
@@ -3554,7 +3665,7 @@ const CourseBlockOne = (() => {
     }
 
     function open(a){
-      stop();activity=a;el('panel-lesson').hidden=true;el('blockRoute').hidden=false;
+      stop();el('blockTaskBody').style.minHeight='';activity=a;el('panel-lesson').hidden=true;el('blockRoute').hidden=false;
       if(a.kind==='guided'){
         el('blockWorkspace').hidden=true;el('blockOverview').hidden=false;
         window.courseLessons.open(a.lesson);return;
@@ -3563,7 +3674,7 @@ const CourseBlockOne = (() => {
       if(a.kind==='compose'&&records[a.id]?.phrase)session.events=records[a.id].phrase.map(e=>({...e}));
       el('blockWorkspace').hidden=false;el('blockOverview').hidden=true;
       el('blockTaskTitle').textContent=a.title;
-      draw();el('blockTaskTitle').focus();
+      draw();el('blockTaskTitle').focus({preventScroll:true});el('blockWorkspace').scrollIntoView({block:'start'});
     }
     function board(str,marks,onClick,{all=false}={}){
       const outer=node('div');outer.className='board-outer';const b=node('div');b.id='blockPracticeBoard';b.className='board';outer.appendChild(b);el('blockTaskBody').appendChild(outer);
@@ -3609,7 +3720,9 @@ const CourseBlockOne = (() => {
       button(row,'Новая попытка',()=>open(activity));
     }
     function draw(){
-      stop();const body=el('blockTaskBody');body.innerHTML='';feedback('');el('blockTaskFeedback').classList.remove('task-reward');el('blockTaskInstruction').dataset.label=['ear','rhythm'].includes(activity.kind)?'Послушайте':activity.kind==='compose'?'Создайте фразу':'Задание';
+      stop();el('blockTaskActions').hidden=false;const body=el('blockTaskBody');body.innerHTML='';feedback('');el('blockTaskFeedback').classList.remove('task-reward');el('blockTaskInstruction').dataset.label=['ear','rhythm'].includes(activity.kind)?'Послушайте':activity.kind==='compose'?'Создайте фразу':'Задание';
+      el('blockWorkspace').classList.toggle('rhythm-workspace',activity.kind==='rhythm');
+      el('blockTaskExplanation').hidden=false;el('blockTaskInstruction').hidden=false;
       const final=activity.kind==='final';
       if(final&&session.phase===4){drawSelfCheck();return;}
       const s=final?session.parts[session.phase]:session;
@@ -3698,12 +3811,12 @@ const CourseBlockOne = (() => {
         s.introDone=true;
         const r=RHYTHMS[s.order[s.round]];
         el('blockTaskInstruction').textContent=`Пример ${s.round+1}/3. Нажмите «Отсчёт и ритм»: четыре щелчка для подготовки, затем один такт. Выберите, в каком рисунке звуки и пауза стоят на тех же долях.`;
-        const row=controls();let reviewed=false;
-        const listen=button(row,'▶ Отсчёт и ритм',()=>{audio(rhythmEvents(r),{countIn:true,click:true});heard=true;if(!reviewed)choices();});listen.classList.add('primary-btn');
+        const row=controls();let reviewed=false,reviewPlayer=null;
+        const listen=button(row,'▶ Отсчёт и ритм',()=>{audio(rhythmEvents(r),{countIn:true,click:true,player:reviewPlayer});heard=true;if(!reviewed)choices();});listen.classList.add('primary-btn');
         button(row,'Не слышно? Проверить звук',()=>window.courseHelp?.open('sound'));
         const help=node('details');help.appendChild(node('summary','Как читать рисунки'));help.appendChild(node('p','Четверть — одна доля, две соединённые восьмые — по половине доли, четвертная пауза — доля молчания. Это ритмическая строка: высота не показана, играем на C. Под записью можно открыть счёт и слоги.'));body.appendChild(help);
         const explain=button(row,'Разобрать ритм ещё раз',()=>{s.introDone=false;s.studyStep=0;draw();});
-        const answers=node('div');body.appendChild(answers);
+        const answers=node('div');answers.className='rhythm-options';body.appendChild(answers);
         function choices(){answers.innerHTML='';RHYTHMS.forEach((pattern,i)=>{const option=node('div');option.className='rhythm-option';option.appendChild(node('h3',`Вариант ${i+1}`));rhythmDiagram(option,pattern);
           option.appendChild(node('p',[
             'Звуки на 1, 2 и 4. На третьей доле — пауза.',
@@ -3712,88 +3825,84 @@ const CourseBlockOne = (() => {
           ][i]));
           button(option,'Этот рисунок',()=>{
             const correct=submit(s,i);
-            if(correct){stop();reviewed=true;explain.disabled=true;listen.classList.remove('primary-btn');feedback('✓ Ритм распознан. Повторите показанный рисунок голосом, затем на одной ноте на гитаре. Пример можно послушать снова.',true);answers.innerHTML='';rhythmDiagram(answers,pattern);button(answers,'Повторил голосом и на гитаре — дальше',()=>{if(s.done){s.practice=true;complete();}else{heard=false;draw();}}).classList.add('primary-btn');}
+            if(correct){stop();reviewed=true;explain.disabled=true;listen.hidden=true;feedback('✓ Ритм распознан. Повторите показанный рисунок голосом, затем на одной ноте на гитаре. Пример можно послушать снова.',true);answers.innerHTML='';answers.className='';reviewPlayer=rhythmPlayer(answers,pattern,{title:'Вот как это звучало',onPlay:player=>audio(rhythmEvents(pattern),{countIn:true,click:true,player})});audio(rhythmEvents(pattern),{countIn:true,click:true,player:reviewPlayer});button(answers,'Повторил голосом и на гитаре — дальше',()=>{if(s.done){s.practice=true;complete();}else{heard=false;draw();}}).classList.add('primary-btn');}
             else feedback('Пока неверно. Послушайте ещё раз: на какой доле пауза, а где два звука вместо одного?');
           },!heard);answers.appendChild(option);});}choices();
       }else if(s.kind==='compose')drawComposer();
       if(['ear','rhythm'].includes(s.kind))tempoControl();
       drawActions();
     }
+    function rhythmPlayer(parent,pattern,{step=null,title='Ритм 4/4',onPlay,blocks=true}={}){
+      const card=node('section');card.className='rhythm-player';parent.appendChild(card);
+      const heading=node('h3',step===null?title:`${'● '.repeat(step)}◉ ${'○ '.repeat(4-step)} · шаг ${step+1} из 5 · ${title}`);heading.tabIndex=-1;card.appendChild(heading);
+      const count=node('div');count.className='rhythm-count-in';count.setAttribute('aria-label','Четыре доли отсчёта');
+      for(let i=1;i<=4;i++)count.appendChild(node('span',String(i)));card.appendChild(count);
+      const diagram=CourseRhythmPlayer.diagram(card,pattern,{blocks});
+      const row=node('div');row.className='rhythm-player-controls';card.appendChild(row);
+      const play=button(row,step===0?'▶ Четыре доли':'▶ Послушать запись',()=>{if(play.dataset.playing==='true')stop();else onPlay(api);});play.classList.add('primary-btn');
+      const label=node('label','Темп '),input=node('input');input.type='number';input.min=40;input.max=100;input.value=tempo;input.setAttribute('aria-label','Темп, ударов в минуту');
+      input.onchange=()=>{tempo=Math.min(100,Math.max(40,Number(input.value)||60));input.value=tempo;stop();};label.appendChild(input);row.appendChild(label);
+      if(step!==null&&step>=3){const toggle=button(row,'Показать блоки',()=>{blocks=!blocks;diagram.showBlocks(blocks);toggle.textContent=blocks?'Скрыть блоки':'Показать блоки';toggle.setAttribute('aria-expanded',String(blocks));});toggle.setAttribute('aria-expanded',String(blocks));}
+      const settings=node('details');settings.className='rhythm-settings';settings.appendChild(node('summary','⚙ Настройки и помощь'));card.appendChild(settings);
+      button(settings,'Не слышно? Проверить звук',()=>window.courseHelp?.open('sound'));
+      settings.appendChild(node('p','Приложение не слушает хлопки, голос или гитару: практику отмечаете вы. Пройденные шаги сохраняются в этом браузере.'));
+      if(!canStore)settings.appendChild(node('p','Хранилище недоступно: прогресс сохранится только до закрытия страницы.'));
+      const idle=play.textContent;
+      const api={card,heading,diagram,playing(value){play.dataset.playing=String(value);play.textContent=value?'■ Стоп':idle;play.setAttribute('aria-pressed',String(value));},
+        paint(f){diagram.paint(f);Array.from(count.children).forEach((e,i)=>e.classList.toggle('is-playing',f.countIn===i));},
+        clear(){diagram.clear();Array.from(count.children).forEach(e=>e.classList.remove('is-playing'));api.playing(false);}};
+      return api;
+    }
     function drawRhythmStudy(s){
-      const lesson=RHYTHM_STUDY[s.studyStep],body=el('blockTaskBody');
-      el('blockTaskExplanation').textContent=lesson.text;
-      el('blockTaskInstruction').textContent=lesson.instruction;
-      el('blockTaskInstruction').dataset.label='Разбор ритма';
-      const intro=node('section');intro.className='rhythm-intro';body.appendChild(intro);
-      intro.appendChild(node('p',`Ритмическая запись · шаг ${s.studyStep+1} из ${RHYTHM_STUDY.length}`));
-      intro.appendChild(node('h3',lesson.title));
-      if(lesson.pattern)rhythmDiagram(intro,lesson.pattern);
-      else {const pulse=node('div');pulse.className='study-pulse';for(let i=1;i<=4;i++)pulse.appendChild(node('span',String(i)));intro.appendChild(pulse);}
-      intro.appendChild(node('p','Ритмическая строка показывает длительности, а не высоту. Все звуки играем на C.'));
-      let listened=false,correct=false,practiced=false;
-      const audioRow=node('div');audioRow.className='sandbox-controls';intro.appendChild(audioRow);
-      button(audioRow,s.studyStep===0?'▶ Четыре доли':'▶ Послушать запись',()=>{
-        audio(s.studyStep===0?Array.from({length:4},()=>({midi:null,beats:1,metronome:true})):rhythmEvents(lesson.pattern),{countIn:s.studyStep!==0,click:s.studyStep!==0});
-        listened=true;update();
-      });
-      button(audioRow,'Не слышно? Проверить звук',()=>window.courseHelp?.open('sound'));
-      intro.appendChild(node('p',s.studyStep===0?'Повторите счёт после четырёх ударов.':'Четыре удара отсчёта, затем один такт. Тихий метроном помогает сохранять доли.'));
-      const question=node('fieldset');question.className='rhythm-question';question.appendChild(node('legend',lesson.question));intro.appendChild(question);
+      stop();const beforeY=scrollY,lesson=RHYTHM_STUDY[s.studyStep],body=el('blockTaskBody');
+      el('blockTaskExplanation').hidden=true;el('blockTaskInstruction').hidden=true;feedback('');
+      let intro=body.querySelector('.rhythm-intro');const existing=!!intro;
+      if(!intro){body.replaceChildren();intro=node('section');intro.className='rhythm-intro';body.appendChild(intro);}else {intro.style.minHeight=Math.max(640,intro.offsetHeight)+'px';intro.replaceChildren();}
+      const pattern=lesson.pattern||{durations:[1,1,1,1],rests:[]};
+      let listened=false,correct=false,tapped=false,practiced=false;
+      const player=rhythmPlayer(intro,pattern,{step:s.studyStep,title:lesson.title,blocks:s.studyStep<3,onPlay:player=>{
+        const events=s.studyStep===0?Array.from({length:4},()=>({midi:48,beats:1,metronome:true})):rhythmEvents(pattern);
+        audio(events,{countIn:s.studyStep!==0,click:s.studyStep!==0,player,onend:()=>{listened=true;update();}});
+      }});
+      const short=[ 'Считайте четыре равные доли: 1, 2, 3, 4.', 'Четверть звучит одну долю, до следующего числа.', 'В паузе звука нет, но счёт продолжается.', 'Две ровные восьмые делят одну долю: число — и.', 'Соедините четверти, паузу и ровные восьмые.' ];
+      const caption=node('p',short[s.studyStep]);caption.className='rhythm-caption';player.card.insertBefore(caption,player.card.children[1]);
+      const flow=node('ol');flow.className='rhythm-flow';intro.appendChild(flow);
+      ['Послушайте','Ответьте','Простучите','Сыграйте'].forEach(text=>flow.appendChild(node('li',text)));
+      const stage=node('div');stage.className='rhythm-stage-content';intro.appendChild(stage);
+      const listenPane=node('p','Нажмите ▶ в плеере. После примера появится вопрос.');stage.appendChild(listenPane);
+      const question=node('fieldset');question.className='rhythm-question';question.appendChild(node('legend',lesson.question));stage.appendChild(question);
       const response=node('p');response.setAttribute('role','status');question.appendChild(response);
-      lesson.answers.forEach((text,i)=>{const choice=button(question,text,()=>{correct=i===lesson.correct;response.textContent=correct?'✓ Верно. Теперь закрепите это в практике.':'Пока неверно. Вернитесь к записи и пояснению, затем попробуйте ещё раз.';update();});choice.className='play-btn';});
-      const label=node('label');label.className='lesson-practice';const check=node('input');check.type='checkbox';check.addEventListener('change',()=>{practiced=check.checked;update();});label.appendChild(check);label.appendChild(node('span',lesson.practice));intro.appendChild(label);
-      intro.appendChild(node('p','Это ваша отметка практики. Приложение не слушает хлопки, голос или гитару.'));
-      const row=controls();
-      if(s.studyStep>0)button(row,'← Предыдущий шаг',()=>{s.studyStep--;draw();});
-      const next=button(row,s.studyStep===RHYTHM_STUDY.length-1?'Начать сравнение ритмов →':'Дальше по ритму →',()=>{
-        if(!listened||!correct||!practiced)return;
+      lesson.answers.forEach((text,i)=>{const choice=button(question,text,()=>{
+        correct=i===lesson.correct;question.querySelectorAll('button').forEach(b=>b.classList.remove('correct-choice','wrong-choice'));
+        choice.classList.add(correct?'correct-choice':'wrong-choice');response.textContent=correct?'✓ Верно':'× Пока неверно — попробуйте ещё раз.';
+        if(correct){stop();question.querySelectorAll('button').forEach(b=>b.disabled=true);proceed.hidden=false;proceed.disabled=false;}
+      });choice.className='play-btn';});
+      const proceed=button(question,'К практике →',()=>update());proceed.hidden=true;
+      const tap=node('div');stage.appendChild(tap);tap.appendChild(node('p','Включите пример ещё раз, затем простучите рисунок рукой, сохраняя счёт. В паузе продолжайте считать молча.'));
+      button(tap,'Я простучал — к гитаре',()=>{tapped=true;update();});
+      const practice=node('div');stage.appendChild(practice);
+      practice.appendChild(node('p',s.studyStep===0?'Сыграйте четыре равномерных звука C на гитаре.':lesson.instruction));
+      const label=node('label');label.className='lesson-practice';const check=node('input');check.type='checkbox';check.onchange=()=>{practiced=check.checked;update();};label.appendChild(check);label.appendChild(node('span','Я сыграл рисунок на гитаре и проверил себя.'));practice.appendChild(label);
+      const next=button(practice,s.studyStep===4?'Начать сравнение ритмов →':'Дальше по ритму →',()=>{
+        if(!listened||!correct||!tapped||!practiced)return;
         s.studyStep++;studyProgress=Math.max(studyProgress,s.studyStep);
         try{localStorage.setItem(STUDY_KEY,JSON.stringify({version:1,step:studyProgress}));}catch{canStore=false;}
-        heard=false;draw();
+        heard=false;if(s.studyStep<5)drawRhythmStudy(s);else {const y=scrollY;draw();const extra=Math.max(0,y+innerHeight-document.documentElement.scrollHeight);body.style.minHeight=(body.offsetHeight+extra)+'px';scrollTo(0,y);el('blockTaskTitle').focus({preventScroll:true});}
       },true);next.classList.add('primary-btn');
-      const help=node('p');help.className='rhythm-next-help';help.id='rhythmNextHelp';row.appendChild(help);next.setAttribute('aria-describedby',help.id);
-      function update(){next.disabled=!(listened&&correct&&practiced);help.textContent=!listened?(correct?'Ответ верный и сохранён. Теперь нажмите ▶ и послушайте пример.':'Сначала нажмите ▶ и послушайте пример.'):!correct?'Ответьте на вопрос о записи.':!practiced?'Повторите упражнение и отметьте свою практику.':'Шаг разобран — можно продолжить.';}
-      update();body.appendChild(node('p',canStore?'Пройденные шаги разбора сохраняются в этом браузере. Можно заниматься постепенно.':'Хранилище недоступно: шаги сохранятся только до закрытия страницы.'));tempoControl();drawActions();
+      const details=node('details');details.className='rhythm-details';details.appendChild(node('summary','Подробнее'));details.appendChild(node('p',lesson.text));
+      if(s.studyStep===0)details.appendChild(node('p','Ритмическая строка показывает длительности, а не высоту. Все звуки играем на C. Здесь ровные восьмые, без свинга.'));
+      intro.appendChild(details);
+      if(s.studyStep>0)button(intro,'← Предыдущий шаг',()=>{s.studyStep--;drawRhythmStudy(s);});
+      function update(){
+        const phase=!listened?0:!correct?1:!tapped?2:3;
+        [listenPane,question,tap,practice].forEach((e,i)=>e.hidden=i!==phase);
+        Array.from(flow.children).forEach((e,i)=>{e.classList.toggle('is-current',i===phase);e.classList.toggle('is-done',i<phase||(i===3&&practiced));e.setAttribute('aria-current',i===phase?'step':'false');});
+        next.disabled=!practiced;
+      }
+      update();drawActions();el('blockTaskActions').hidden=true;
+      if(existing){scrollTo(0,beforeY);player.heading.focus({preventScroll:true});}
     }
-    function rhythmScore(parent,rhythm){
-      const ns='http://www.w3.org/2000/svg';
-      const svg=document.createElementNS(ns,'svg');svg.setAttribute('viewBox','0 0 420 105');svg.classList.add('rhythm-score');svg.setAttribute('role','img');
-      const descriptions=[];let count=0;
-      rhythm.durations.forEach((beats,i)=>{descriptions.push(`${rhythm.rests.includes(i)?'пауза':beats===1?'четверть':'восьмая'} на счёт ${Number.isInteger(count)?count+1:Math.floor(count+1)+'-и'}`);count+=beats;});
-      svg.setAttribute('aria-label','Ритм 4/4: '+descriptions.join(', '));
-      const add=(tag,attrs,text)=>{const n=document.createElementNS(ns,tag);Object.entries(attrs).forEach(([k,v])=>n.setAttribute(k,String(v)));if(text)n.textContent=text;svg.appendChild(n);return n;};
-      add('line',{x1:42,y1:60,x2:408,y2:60,stroke:'currentColor','stroke-width':1,opacity:.35});
-      [42,408].forEach(x=>add('line',{x1:x,y1:35,x2:x,y2:78,stroke:'currentColor','stroke-width':1.5}));
-      add('text',{x:16,y:51,'font-size':23,'font-family':'serif','font-weight':'bold'},'4');add('text',{x:16,y:74,'font-size':23,'font-family':'serif','font-weight':'bold'},'4');
-      let offset=0;
-      rhythm.durations.forEach((beats,i)=>{
-        const x=64+offset*84,rest=rhythm.rests.includes(i);
-        if(rest){add('path',{d:`M ${x-4} 36 L ${x+7} 47 L ${x} 57 L ${x+7} 67 Q ${x-10} 59 ${x-6} 77 Q ${x-17} 66 ${x-5} 61 L ${x-12} 51 L ${x-3} 44 Z`,fill:'currentColor'});}
-        else {
-          add('ellipse',{cx:x,cy:60,rx:8,ry:5.5,transform:`rotate(-20 ${x} 60)`,fill:'currentColor'});
-          add('line',{x1:x+7,y1:59,x2:x+7,y2:25,stroke:'currentColor','stroke-width':2});
-          if(beats===.5&&Number.isInteger(offset)&&rhythm.durations[i+1]===.5&&!rhythm.rests.includes(i+1))add('line',{x1:x+7,y1:25,x2:x+49,y2:25,stroke:'currentColor','stroke-width':5});
-        }
-        offset+=beats;
-      });
-      parent.appendChild(svg);
-    }
-    function rhythmDiagram(parent,rhythm){
-      rhythmScore(parent,rhythm);
-      const support=node('details');support.className='rhythm-support';support.open=true;support.appendChild(node('summary','Счёт и слоги'));parent.appendChild(support);
-      const cells=rhythmCells(rhythm),grid=node('div');grid.className='rhythm-grid';
-      for(let beat=0;beat<4;beat++){
-        const group=node('div');group.className='rhythm-beat';
-        const rest=cells[beat*2]==='·'&&cells[beat*2+1]==='·';
-        for(let half=0;half<2;half++){
-          const symbol=cells[beat*2+half],cell=node('div');cell.className='rhythm-half';
-          cell.appendChild(node('span',half?'и':String(beat+1)));
-          if(!rest)cell.appendChild(node('strong',symbol==='●'?'ТА':symbol==='─'?'—':'пауза'));group.appendChild(cell);
-        }
-        if(rest){const label=node('strong','пауза');label.className='rhythm-rest-label';group.appendChild(label);}
-        grid.appendChild(group);
-      }support.appendChild(grid);
-    }
+    function rhythmDiagram(parent,rhythm){CourseRhythmPlayer.diagram(parent,rhythm,{compact:true});}
     function tempoControl(){const details=node('details');details.className='audio-options';details.appendChild(node('summary','Настройки звука'));el('blockTaskBody').appendChild(details);const row=node('div');row.className='sandbox-controls';details.appendChild(row);const label=node('label','Темп (уд/мин) '),input=node('input');input.type='number';input.min='40';input.max='100';input.value=String(tempo);input.addEventListener('change',()=>{const n=Number(input.value);tempo=Number.isFinite(n)?Math.min(100,Math.max(40,n)):60;input.value=String(tempo);stop();});label.appendChild(input);row.appendChild(label);}
     function drawComposer(){
       const s=session,body=el('blockTaskBody');
