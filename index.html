@@ -8,16 +8,16 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#F3EEE3; --panel:#FFFFFF; --ink:#241E19; --muted:#8A8073;
+    --bg:#F3EEE3; --panel:#FFFFFF; --ink:#241E19; --muted:#655C52;
     --wood:#D8C9A8; --wood-dark:#6E472C; --wood-mid:#8E603A; --wood-light:#B88958;
-    --brass:#A8672B; --teal:#3E5C55; --tonic-note:#F2C14E; --chord-note:#2F6F69;
+    --brass:#C38A49; --teal:#3E5C55; --tonic-note:#F2C14E; --chord-note:#2F6F69;
     --border:#DCD2BC; --string:#D8D0C2; --fret-wire:#D2C7B4; --danger:#B3453A;
     --warn:#8A6A1E; --warn-bg:#F3E6C4;
     --ov-outside:#D45F43; --ov-common:#3E5C55;
   }
   @media (prefers-color-scheme: dark){
     :root:not([data-theme="light"]){
-      --bg:#1B1714; --panel:#241E19; --ink:#EDE7DA; --muted:#9C948A;
+      --bg:#1B1714; --panel:#241E19; --ink:#EDE7DA; --muted:#B7ADA0;
       --wood:#3B2A20; --wood-dark:#291A12; --wood-mid:#4A2E1E; --wood-light:#6D4931; --brass:#D68C4C; --teal:#6FA093; --tonic-note:#F2C14E; --chord-note:#4A9488;
       --border:#3A3128; --string:#D8D2C4; --fret-wire:#8F8672; --danger:#D97C6F;
       --warn:#E3C878; --warn-bg:#3A2F16;
@@ -25,7 +25,7 @@
     }
   }
   :root[data-theme="dark"]{
-    --bg:#1B1714; --panel:#241E19; --ink:#EDE7DA; --muted:#9C948A;
+    --bg:#1B1714; --panel:#241E19; --ink:#EDE7DA; --muted:#B7ADA0;
     --wood:#3B2A20; --wood-dark:#291A12; --wood-mid:#4A2E1E; --wood-light:#6D4931; --brass:#D68C4C; --teal:#6FA093; --tonic-note:#F2C14E; --chord-note:#4A9488;
     --border:#3A3128; --string:#D8D2C4; --fret-wire:#8F8672; --danger:#D97C6F;
     --warn:#E3C878; --warn-bg:#3A2F16;
@@ -2878,6 +2878,17 @@ label.lesson-practice{font-size:16px;text-transform:none;letter-spacing:normal;c
 .course-help-dialog{color:var(--ink);background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px;width:min(640px,calc(100% - 24px));max-height:85dvh;overflow:auto;line-height:1.6}
 .course-help-dialog::backdrop{background:#0008}.course-help-dialog h2{margin-top:0}.course-help-dialog dt{font-weight:700;margin-top:16px}.course-help-dialog dd{margin:4px 0 0}.course-help-dialog button{min-height:44px}
 .rhythm-next-help{flex-basis:100%;margin:4px 0}.phrase-toolbar{position:static}
+
+/* Review: readable status, distinct disabled controls and consistent landmarks. */
+.play-btn:disabled,.play-btn.primary-btn:disabled,.play-btn.text-btn:disabled{
+  opacity:1;background:color-mix(in srgb,var(--ink) 10%,var(--panel));
+  color:var(--muted);border:1px dashed var(--muted);box-shadow:none;cursor:not-allowed;
+}
+.legend-start{color:var(--tonic-note);-webkit-text-stroke:1px #6b4b16}
+#lessonFeedback:empty{display:none}
+.block-plan summary,.lesson-purpose summary,.audio-options summary{
+  min-height:44px;box-sizing:border-box;padding:11px 0;line-height:22px;
+}
 </style>
 <script>/* Course sandbox adapter. The existing renderer and audio engine remain shared. */
 const CourseSandbox = (() => {
@@ -3040,7 +3051,7 @@ const CourseLessonContent = (() => {
   const line=frets.map((fret,i)=>({stringIdx:4,fret,midi:48+offsets[i],label:noteNames[i],degree:String(i%7+1)}));
   function majorLesson(){
     return [
-      {title:'Построим гамму своими руками',explanation:'Вы уже умеете откладывать тон и полутон. Теперь используем эти расстояния как инструкцию: выберем начальный звук C и последовательно найдём следующие ноты.\nГамма — это звуки лада, расположенные по высоте вверх или вниз. Сегодня строим до мажор: C major.\nНа одной струне легче увидеть расстояния между звуками. В Блоке 2 перенесём эту же гамму в позицию на нескольких струнах.',purpose:'К концу урока вы сможете объяснить, откуда взялась каждая нота гаммы, и сыграть её на одной струне.',instruction:'Нажмите на C на третьем ладу пятой струны. Это наша тоника — опорный звук и начало построения.',str:4,start:3,path:line.slice(0,1)},
+      {title:'Построим гамму своими руками',explanation:'Вы уже умеете откладывать тон и полутон. Теперь используем эти расстояния как инструкцию: выберем начальный звук C и последовательно найдём следующие ноты.\nГамма — это звуки лада, расположенные по высоте вверх или вниз. Здесь лад — система звуков вокруг тоники, а не место на грифе. Сегодня строим до мажор: C major.\nНа одной струне легче увидеть расстояния между звуками. В Блоке 2 перенесём эту же гамму в позицию на нескольких струнах.',purpose:'К концу урока вы сможете объяснить, откуда взялась каждая нота гаммы, и сыграть её на одной струне.',instruction:'Нажмите на C на третьем ладу пятой струны. Это наша тоника — опорный звук и начало построения.',str:4,start:3,path:line.slice(0,1)},
       {title:'Формула мажора — семь последовательных расстояний',explanation:formula+'.\nВ полутонах: 2–2–1–2–2–2–1. Каждый шаг отсчитываем от последней найденной ноты. Формула заканчивается возвращением к C на октаву выше.',purpose:'Формула помогает построить мажор от любой ноты. C удобно для первого примера: здесь получатся ноты без диезов и бемолей.',instruction:'Пока видна только исходная C. Послушайте, что мы соберём. Готовые ответы появятся на грифе постепенно, по мере построения.',str:4,start:3,path:line.slice(0,1),playback:line.map(n=>n.midi),formula},
       ...majorSteps.map((delta,i)=>({
         title:`Шаг ${i+1} формулы: ${delta===1?'полутон':'тон'}`,
@@ -3060,13 +3071,13 @@ const CourseLessonContent = (() => {
       return {stringIdx:found.stringIdx,fret:found.fret,midi:found.midi,label:n.label,degree:n.degree};
     });
     return [
-      {title:'Ступень — номер ноты в выбранном ладу',explanation:'В C major C — первая ступень, D — вторая, E — третья, F — четвёртая, G — пятая, A — шестая, B — седьмая.\nСледующая C снова первая ступень, но в другой октаве. Сейчас нумеруем ноты от тоники C, а не лады гитары.',purpose:'Номера позволяют описывать музыкальные связи независимо от названий нот. Позже из ступеней 1–3–5 мы соберём аккорд.',instruction:'Нажимайте на точки: подписи показывают ступени, а строка под формулой связывает их с нотами.',str:4,start:3,path:line,showDegrees:true,formula:'Ступени: 1–2–3–4–5–6–7–1 · Ноты: C–D–E–F–G–A–B–C',playback:line.map(n=>n.midi)},
+      {title:'Ступень — звук гаммы; считаем от тоники',explanation:'В C major C — первая ступень, D — вторая, E — третья, F — четвёртая, G — пятая, A — шестая, B — седьмая.\nСледующая C снова первая ступень, но в другой октаве. Сейчас нумеруем ноты от тоники C, а не лады гитары.',purpose:'Номера позволяют описывать музыкальные связи независимо от названий нот. Позже из ступеней 1–3–5 мы соберём аккорд.',instruction:'Нажимайте на точки: подписи показывают ступени, а строка под формулой связывает их с нотами.',str:4,start:3,path:line,showDegrees:true,formula:'Ступени: 1–2–3–4–5–6–7–1 · Ноты: C–D–E–F–G–A–B–C',playback:line.map(n=>n.midi)},
       {title:'Один звук можно найти на разных струнах',explanation:'C на третьем ладу пятой струны и C на восьмом ладу шестой имеют одну высоту — C3. Звучание по тембру может отличаться, но высота сохраняется.\nТочка на другом месте грифа не обязательно означает другой звук.',purpose:'Понимаем, как перенести мелодию на соседние струны, сохранив высоты.',instruction:'Послушайте две C по очереди и нажмите на каждую. Затем сравните на своей гитаре.',str:4,start:3,multi:true,path:[line[0],route[0]],playback:[48,48]},
-      {title:'Те же восемь звуков в компактной позиции',explanation:'Теперь C3–D3–E3–F3–G3–A3–B3–C4 расположены на шестой, пятой и четвёртой струнах, в пределах ладов 7–10.\nВысоты и порядок звуков точно такие же, как на одной струне. Меняется только расположение на инструменте.',purpose:'Так мы сокращаем перемещения руки. Формула гаммы продолжает описывать звучащие расстояния, даже когда ноты переходят на другую струну.',instruction:'Прослушайте гамму и нажмите на её точки. Золотые точки — C, первая ступень. Это однооктавный фрагмент проверенной формы E, а не вся форма целиком.',multi:true,str:5,start:8,path:route,showDegrees:true,playback:route.map(n=>n.midi)},
+      {title:'Те же восемь звуков в компактной позиции',explanation:'Теперь C3–D3–E3–F3–G3–A3–B3–C4 расположены на шестой, пятой и четвёртой струнах, в пределах ладов 7–10.\nВысоты и порядок звуков точно такие же, как на одной струне. Меняется только расположение на инструменте.',purpose:'Так мы сокращаем перемещения руки. Формула гаммы продолжает описывать звучащие расстояния, даже когда ноты переходят на другую струну.',instruction:'Прослушайте гамму и нажмите на её точки. Золотые точки — C, первая ступень. Это однооктавный фрагмент формы E, а не вся форма целиком.',multi:true,str:5,start:8,path:route,showDegrees:true,playback:route.map(n=>n.midi)},
       {title:'Найдите третью ступень',explanation:'В C major третья ступень — E. Вы уже знаете её место в гамме; теперь найдём её в позиции.',purpose:'Начинаем ориентироваться по функции ноты, а не только по направлению движения пальцев.',instruction:'На пятой струне выберите третью ступень. Остальные струны приглушены, чтобы сузить поиск.',str:4,start:7,target:{stringIdx:4,fret:7},targetHint:'Вспомните: C–D–E = 1–2–3. На пятой струне E находится на седьмом ладу.',showDegrees:true,path:route.filter(n=>n.degree!=='3')},
       {title:'Найдите пятую ступень',explanation:'Считаем от тоники C: C–D–E–F–G. Пятая ступень — G. Она звучит выше C на семь полутонов.',purpose:'Тоника, третья и пятая ступени понадобятся для построения мажорного трезвучия в следующем блоке.',instruction:'На пятой струне выберите пятую ступень. Сейчас ищем ступень гаммы от C, а не номер лада.',str:4,start:8,target:{stringIdx:4,fret:10},targetHint:'Пятая ступень — G. На пятой струне она на десятом ладу.',showDegrees:true,path:route.filter(n=>n.degree!=='5')},
       {title:'Сыграйте одну мелодию двумя способами',explanation:'Сначала сыграйте C major на одной струне, затем тот же порядок звуков в позиции. Позиция: шестая струна 8–10; пятая 7–8–10; четвёртая 7–9–10.\nНазывайте ступени 1–2–3–4–5–6–7–1. Если растяжка неудобна, сначала работайте с несколькими звуками медленно; положение руки уточните с преподавателем.',purpose:'Соединяем понимание формулы, слух и практическое движение. Одни и те же высоты должны узнаваться в обеих аппликатурах.',instruction:'Проверьте одинаковый порядок нот и высоту начальной/конечной C. Не считайте навык освоенным только потому, что узнали рисунок на экране.',multi:true,str:5,start:8,path:route,showDegrees:true,practice:true},
-      {title:'От гаммы — к звукам аккорда',explanation:'Теперь вы знаете, что ступени — номера нот от тоники, и видите одну гамму в двух расположениях.\nДальше оставим первую, третью и пятую ступени и услышим, как из них получается C major — до-мажорное трезвучие.',purpose:'Переходим к связи гаммы и аккорда на том же грифе.',instruction:'Повторите поиск ступеней позже без подсказок. Подсказки и практика на гитаре учитываются отдельно от правильных экранных ответов.',multi:true,str:5,start:8,path:route,showDegrees:true,finish:true}
+      {title:'От гаммы — к звукам аккорда',explanation:'Теперь вы знаете, что ступени — номера нот от тоники, и видите одну гамму в двух расположениях.\nБлок 2 в работе: пока доступен этот вводный урок. Продолжение про ступени и позиции появится позже. Затем перейдём к звукам аккорда.',purpose:'Переходим к связи гаммы и аккорда на том же грифе.',instruction:'Повторите поиск ступеней позже без подсказок. Подсказки и практика на гитаре учитываются отдельно от правильных экранных ответов.',multi:true,str:5,start:8,path:route,showDegrees:true,finish:true}
     ];
   }
   return {majorSteps,offsets,line,majorLesson,degreeLesson};
@@ -3203,7 +3214,7 @@ const CourseLesson = (() => {
       el('lessonProgress').max=steps.length;
       el('lessonSelect').value=String(activeLesson);
       el('lessonContinue').hidden=!s.finish;
-      el('lessonContinue').textContent=activeLesson<2?'Продолжить по маршруту →':'К маршруту →';
+      el('lessonContinue').textContent=activeLesson<2?'Продолжить по маршруту →':'К пройденному Блоку 1 →';
       el('lessonFormula').innerHTML='';
       el('lessonFormula').hidden=!s.formula;
       if(s.formula){
@@ -3223,8 +3234,8 @@ const CourseLesson = (() => {
       el('lessonBoard').parentElement && (el('lessonBoard').parentElement.hidden=!!s.finish);
       if(s.finish)el('lessonFormula').hidden=true;
       el('lessonPractice').checked=practiced;
-      el('lessonFeedback').textContent=isTask(s) ? solved.has(current) ? (s.target?'✓ Верно — нужная ступень найдена.':`✓ Верно — вы нашли ${Math.abs(s.delta)===1?'полутон':'тон'} ${s.delta>0?'вверх':'вниз'}.`) : 'Выберите ответ на указанной струне. Можно пробовать снова: ошибка не закрывает задание.' : s.finish ? `✓ Ответы: ${solved.size} из ${steps.filter(isTask).length} · ◇ Подсказки: ${hints.size} · ♫ Гитара: ${practiced ? 'вы отметили практику' : 'ещё не отмечено'}` : 'Нажмите «Послушать пример» или на отмеченную точку.';
-      if(s.buildFrets)el('lessonFeedback').textContent=solved.has(current)?'✓ Вы построили C–D–E–F–G–A–B–C по формуле. Послушайте целую гамму, затем сыграйте её.':`Выбрано ${(choices.get(current)||[]).length} из 7 нот после исходной C. Проверьте каждый шаг формулы; лишнюю точку можно убрать.`;
+      el('lessonFeedback').textContent=isTask(s) ? solved.has(current) ? (s.target?'✓ Верно — нужная ступень найдена.':`✓ Верно — вы нашли ${Math.abs(s.delta)===1?'полутон':'тон'} ${s.delta>0?'вверх':'вниз'}.`) : '' : s.finish ? `✓ Ответы: ${solved.size} из ${steps.filter(isTask).length} · ◇ Подсказки: ${hints.size} · ♫ Гитара: ${practiced ? 'вы отметили практику' : 'ещё не отмечено'}` : 'Нажмите «Послушать пример» или на отмеченную точку.';
+      if(s.buildFrets&&(choices.get(current)||[]).length)el('lessonFeedback').textContent=solved.has(current)?'✓ Вы построили C–D–E–F–G–A–B–C по формуле. Послушайте целую гамму, затем сыграйте её.':`Выбрано ${(choices.get(current)||[]).length} из 7 нот после исходной C. Проверьте каждый шаг формулы; лишнюю точку можно убрать.`;
       el('lessonFeedback').classList.toggle('answer-success',!!s.finish||solved.has(current));
       el('lessonFeedback').classList.toggle('task-reward',!!s.finish);
       if(s.finish)el('lessonFeedback').textContent=['✦ Линейка звуков — урок завершён. ','✦ Мажор собран на экране — урок завершён. ','✦ Ступени найдены на экране — урок завершён. '][activeLesson]+el('lessonFeedback').textContent;
@@ -3468,6 +3479,7 @@ const CourseBlockOne = (() => {
     final:'Вы завершили экранную проверку и отметили самопроверку на гитаре.'
   });
   function resumeLabel(records,resume){
+    if(ACTIVITIES.every(a=>records[a.id]?.done))return 'Дальше: Блок 2 · Ступени и позиция →';
     if(resume)return `Продолжить урок: шаг ${resume.step} из ${resume.total}`;
     const next=ACTIVITIES.find(a=>!records[a.id]?.done);
     if(!ACTIVITIES.some(a=>records[a.id]?.done))return 'Начать курс';
@@ -3523,7 +3535,8 @@ const CourseBlockOne = (() => {
       const next=ACTIVITIES.find(a=>!records[a.id]?.done);
       const resume=window.courseLessons?.getResume();
       el('blockResume').textContent=resumeLabel(records,resume);
-      el('blockResume').onclick=()=>resume?window.courseLessons.open(resume.index):open(next||ACTIVITIES[0]);
+      document.querySelector('.sound-welcome').hidden=count===ACTIVITIES.length;
+      el('blockResume').onclick=()=>count===ACTIVITIES.length?window.courseLessons.open(2):resume?window.courseLessons.open(resume.index):open(next||ACTIVITIES[0]);
       const list=el('blockActivities');list.innerHTML='';
       const groups=[['Расстояния',0,2],['Мажорная гамма',2,6],['Слух, ритм и своя фраза',6,9],['Проверка',9,10]];
       groups.forEach(([title,start,end])=>{
@@ -3605,7 +3618,7 @@ const CourseBlockOne = (() => {
         if(correct&&s.done){
           if(final){session.phase++;heard=false;draw();}
           else complete();
-        }else {heard=false;if(correct)boardScroll=null;draw();feedback(correct?message:'Пока неверно. Попробуйте ещё раз — можно вернуться к правилу или воспользоваться подсказкой.',correct);}
+        }else {heard=false;if(correct)boardScroll=null;draw();feedback(correct?message:final?'Пока неверно. Попробуйте ещё раз. В итоговой проверке подсказок нет.':'Пока неверно. Попробуйте ещё раз — можно вернуться к правилу или воспользоваться подсказкой.',correct);}
       }
       if(s.kind==='interval'){
         const q=s.intervalReview||s.questions[s.round];
