@@ -142,7 +142,7 @@
   }
   .degree-table th[scope="row"]{width:92px; text-align:left; color:var(--muted); font-family:'IBM Plex Sans',sans-serif; font-weight:600;}
   .degree-table td{background:var(--bg); border:1px solid var(--border); color:var(--ink); font-weight:600;}
-  .degree-table td.degree-root{background:var(--brass); color:#211408; border-color:var(--brass-dark);}
+  .degree-table td.degree-root{background:var(--brass); color:#211408; border-color:var(--brass);}
   .err{color:var(--danger); font-size:13px; margin-bottom:14px; font-family:'IBM Plex Mono',monospace; padding:10px 12px; border:1px solid var(--danger); border-radius:8px;}
   .warn{color:var(--warn); font-size:13px; margin-bottom:14px; font-family:'IBM Plex Mono',monospace; padding:10px 12px; border:1px solid var(--warn); background:var(--warn-bg); border-radius:8px;}
 
@@ -290,8 +290,8 @@
 <div class="v2-topbar">
   <div class="v2-brand">FretLab</div>
   <nav class="v2-tabs" role="tablist" aria-label="Разделы">
-    <button class="v2-tab-btn" id="tab-block" role="tab" aria-selected="true" aria-controls="panel-block" tabindex="0">Блок 1</button>
-    <button class="v2-tab-btn" id="tab-lesson" role="tab" aria-selected="false" aria-controls="panel-lesson" tabindex="-1">Уроки</button>
+    <button class="v2-tab-btn" id="tab-block" role="tab" aria-selected="true" aria-controls="panel-block" tabindex="0">Курс</button>
+    <button class="v2-tab-btn" id="tab-lesson" hidden role="tab" aria-selected="false" aria-controls="panel-lesson" tabindex="-1">Уроки</button>
     <button class="v2-tab-btn" id="tab-sandbox" role="tab" aria-selected="false" aria-controls="panel-sandbox" tabindex="-1">Свободный гриф</button>
     <button class="v2-tab-btn" id="tab-learn" role="tab" aria-selected="false" aria-controls="panel-learn" tabindex="-1">Изучать</button>
     <button class="v2-tab-btn" id="tab-explore" role="tab" aria-selected="false" aria-controls="panel-explore" tabindex="-1">Исследовать</button>
@@ -300,22 +300,27 @@
 
 <section id="panel-block" role="tabpanel" aria-labelledby="tab-block" class="v2-active">
   <div class="v2-wrap block-wrap">
+    <div id="blockOverview">
     <p class="hint">Блок 1 · Расстояния и мажорная гамма</p>
     <h1>От первого шага до своей фразы</h1>
     <p class="lesson-copy">Научитесь отмерять тон и полутон, строить C major и использовать несколько её нот в музыке. Здесь есть объяснения, самостоятельная практика, слух, ритм и итоговая проверка.</p>
     <details class="block-plan"><summary>Как заниматься: маршрут на 3–4 занятия</summary>
       <ol><li>Тон и полутон: первый урок, поиск расстояний, затем повторение на гитаре.</li><li>C major: второй урок, восстановление формулы и гаммы. Вернитесь к расстояниям без подсказок.</li><li>Слух, ритм и своя фраза из C, D, E. Повторите построение гаммы перед игрой.</li><li>На следующем занятии пройдите итоговую проверку. При затруднениях вернитесь к соответствующему упражнению.</li></ol>
-      <p>Ориентир на занятие: 5 минут повторения, 5 минут объяснения, 10 минут игры, 5 минут слуха/ритма и 5 минут своей музыки. Это план, а не таймер допуска. Не нужно проходить всё за один день или ждать до завтра, если материал уже освоен.</p>
+      <p>Ориентир на занятие: 5 минут повторения, 5 минут объяснения, 10 минут игры, 5 минут слуха/ритма и 5 минут своей музыки. Двигайтесь в удобном темпе и возвращайтесь к трудным заданиям.</p>
     </details>
-    <p id="blockStorage" class="hint"></p>
+    <details class="block-plan"><summary>Как это работает</summary><p>Ответы на экране проверяет приложение. Игра и пение — ваша самопроверка или работа с преподавателем.</p><p id="blockStorage" class="hint"></p></details>
     <p id="blockSummary" class="sandbox-readout" role="status" aria-live="polite"></p>
+    <progress id="blockProgress" max="10" value="0" aria-label="Завершённые части блока"></progress>
+    <p><button type="button" class="play-btn primary-btn" id="blockResume"></button></p>
     <div id="blockActivities" class="block-activities" aria-label="Уроки и практика блока"></div>
+    <p><button type="button" class="play-btn text-btn" id="blockNextLesson">Блок 2 · Ступени и позиция →</button></p>
+    </div>
     <section id="blockWorkspace" class="block-workspace" aria-labelledby="blockTaskTitle" hidden>
-      <button type="button" class="play-btn" id="blockClose">← К маршруту блока</button>
+      <button type="button" class="play-btn text-btn" id="blockClose">← К маршруту блока</button>
       <h2 id="blockTaskTitle" tabindex="-1"></h2>
       <p id="blockTaskExplanation" class="lesson-copy"></p>
-      <div class="lesson-purpose"><strong>Зачем это делать</strong><p id="blockTaskPurpose"></p></div>
-      <p id="blockTaskInstruction" class="lesson-copy"></p>
+      <details class="lesson-purpose"><summary>Зачем это делать</summary><p id="blockTaskPurpose"></p></details>
+      <p id="blockTaskInstruction" class="task-card"></p>
       <div id="blockTaskBody"></div>
       <p id="blockTaskFeedback" class="sandbox-readout" role="status" aria-live="polite"></p>
       <div class="sandbox-controls" id="blockTaskActions"></div>
@@ -323,32 +328,38 @@
     <p class="hint">Приложение проверяет экранные ответы и устройство вашей фразы. Чистота звука, ритм и исполнение на гитаре проверяются вами или преподавателем.</p>
   </div>
 </section>
-<section id="panel-lesson" role="tabpanel" aria-labelledby="tab-lesson">
+<section id="panel-lesson" role="tabpanel" aria-labelledby="tab-block">
   <div class="v2-wrap lesson-wrap">
-    <label class="lesson-picker">Основы · Выберите урок
-      <select id="lessonSelect"><option value="0">1. Тон и полутон</option><option value="1">2. Построение C major</option><option value="2">3. Ступени и удобная позиция</option></select>
-    </label>
+    <p class="course-breadcrumb"><button type="button" class="play-btn text-btn" id="lessonRoute">← К маршруту</button><span id="lessonBreadcrumb"></span></p>
     <progress id="lessonProgress" max="9" value="1" aria-label="Шаг урока"></progress>
     <p id="lessonPosition" class="hint"></p>
-    <h1 id="lessonTitle"></h1>
+    <div class="lesson-layout"><div class="lesson-text">
+    <h1 id="lessonTitle" tabindex="-1"></h1>
     <p id="lessonExplanation" class="lesson-copy"></p>
-    <div class="lesson-purpose"><strong>Зачем это делать</strong><p id="lessonPurpose"></p></div>
-    <p id="lessonInstruction" class="lesson-copy"></p>
+    <details class="lesson-purpose"><summary>Зачем это делать</summary><p id="lessonPurpose"></p></details>
+    <details id="lessonAlternative" class="lesson-purpose" hidden><summary>Если верхние лады недоступны</summary><p id="lessonAlternativeText"></p></details>
+    </div><div class="lesson-work">
+    <p id="lessonInstruction" class="task-card"></p>
     <div id="lessonFormula" class="lesson-formula" aria-label="Формула и текущий шаг"></div>
     <div class="board-outer"><div class="board" id="lessonBoard" aria-label="Учебный гриф, первая струна сверху"></div></div>
-    <div class="sandbox-controls">
-      <button type="button" class="play-btn" id="lessonListen">▶ Послушать пример</button>
-      <button type="button" class="play-btn" id="lessonHint">Подсказка</button>
-    </div>
     <p id="lessonFeedback" class="sandbox-readout" role="status" aria-live="polite"></p>
     <label id="lessonPracticeLabel" class="lesson-practice"><input type="checkbox" id="lessonPractice"> Я сыграл упражнение на гитаре и проверил себя по критериям выше</label>
+    <p id="lessonNextHelp" class="hint" role="status"></p>
     <nav class="sandbox-controls" aria-label="Шаги урока">
-      <button type="button" class="play-btn" id="lessonBack">← Назад</button>
-      <button type="button" class="play-btn" id="lessonNext">Далее →</button>
-      <button type="button" class="play-btn" id="lessonRestart">Начать заново</button>
-      <button type="button" class="play-btn" id="lessonContinue" hidden>Следующий урок →</button>
+      <button type="button" class="play-btn" id="lessonListen">▶ Послушать пример</button>
+      <button type="button" class="play-btn text-btn" id="lessonHint">Подсказка</button>
+
+      <button type="button" class="play-btn text-btn" id="lessonBack">← Назад</button>
+      <button type="button" class="play-btn primary-btn" id="lessonNext" aria-describedby="lessonNextHelp">Далее →</button>
+      <button type="button" class="play-btn text-btn" id="lessonRestart">Начать заново</button>
+      <button type="button" class="play-btn primary-btn" id="lessonContinue" hidden>Следующий урок →</button>
     </nav>
+    </div></div>
     <p class="hint">Номер струны считаем от тонкой: первая E сверху, шестая E снизу. Номера ладов указаны над грифом. Ноты звучат после нажатия.</p>
+    <details class="lesson-purpose"><summary>Другие объяснения</summary>    <label class="lesson-picker">Перейти к объяснению
+      <select id="lessonSelect"><option value="0">Блок 1 · Тон и полутон</option><option value="1">Блок 1 · Построение C major</option><option value="2">Блок 2 · Ступени и позиция</option></select>
+    </label>
+</details>
     <p class="hint">Прогресс сохраняется при переключении уроков в открытой странице. После перезагрузки задания начинаются заново.</p>
   </div>
 </section>
@@ -359,9 +370,9 @@
     <div class="sandbox-controls">
       <label>Действие <select id="sandboxAction"><option value="mark">Ставить и убирать ноты</option><option value="listen">Только слушать</option><option value="measure">Измерить интервал</option></select></label>
       <label>Названия <select id="sandboxSpelling"><option value="sharp">С диезами ♯</option><option value="flat">С бемолями ♭</option></select></label>
-      <button type="button" class="play-btn" id="sandboxClear">Очистить гриф</button>
+      <button type="button" class="play-btn text-btn" id="sandboxClear">Очистить гриф</button>
     </div>
-    <p class="hint" id="sandboxHelp">Отмечайте любые ноты на всех шести струнах.</p>
+    <p class="hint" id="sandboxHelp">Отмечайте любые ноты на всех шести струнах. С клавиатуры: Tab — вход на гриф, стрелки — выбор лада и струны, Enter — нота.</p>
     <div class="board-outer"><div class="board" id="sandboxBoard" aria-label="Интерактивный гриф, первая струна сверху"></div></div>
     <div class="sandbox-readout" id="sandboxReadout" role="status" aria-live="polite"></div>
     <div class="sandbox-controls">
@@ -737,13 +748,17 @@ function playMidi(midi, when, dur, peak = 0.22){
   gain.gain.exponentialRampToValueAtTime(0.0001, t + d);
   osc.connect(gain); gain.connect(ctx.destination);
   osc.start(t); osc.stop(t + d + 0.05);
+  if(typeof CourseSandbox!=='undefined')CourseSandbox.trackVoice(osc,midi,t,d,ctx);
   return osc;
 }
+let sequenceVoices=[];
+function stopSequence(){sequenceVoices.forEach(v=>{try{v?.stop();}catch{}});sequenceVoices=[];}
 function playSequence(midiList){
+  stopSequence();
   if(!midiList || !midiList.length) return;
   const ctx = getAudioCtx();
   let t = ctx.currentTime + 0.03;
-  midiList.forEach(midi => { playMidi(midi, t, 0.5); t += 0.32; });
+  midiList.forEach(midi => { sequenceVoices.push(playMidi(midi, t, 0.28)); t += 0.32; });
 }
 function ascendingMidiFromPcs(pcsOrdered, firstMidi){
   if(!pcsOrdered || !pcsOrdered.length || !Number.isFinite(firstMidi)) return [];
@@ -2062,6 +2077,7 @@ function render(){
     for(let f=0; f<=FRET_COUNT; f++){
       const cell = document.createElement('div');
       cell.className = 'cell' + (f === 0 ? ' nut' : '');
+      cell.dataset.midi=String(str.midi+f);
       cell.style['--string-thickness'] = `${[1,1.15,1.35,1.7,2.1,2.55][stringIdx]}px`;
       const line = document.createElement('div');
       line.className = 'string-line';
@@ -2357,6 +2373,7 @@ function v2RenderBoard(cellsMap, boardId = 'learnBoard'){
     for(let f=0; f<=FRET_COUNT; f++){
       const cell = document.createElement('div');
       cell.className = 'cell' + (f === 0 ? ' nut' : '');
+      cell.dataset.midi=String(str.midi+f);
       cell.style.position='relative'; cell.style.height='44px'; cell.style.display='flex';
       cell.style.alignItems='center'; cell.style.justifyContent='center';
       cell.style['--string-thickness'] = `${[1,1.15,1.35,1.7,2.1,2.55][stringIdx]}px`;
@@ -2566,19 +2583,24 @@ function v2InitTabs(){
   const exploreTab = document.getElementById('tab-explore');
   const tabs = [document.getElementById('tab-block'), document.getElementById('tab-lesson'), document.getElementById('tab-sandbox'), learnTab, exploreTab];
   function activate(tab){
+    stopSequence();
     tabs.forEach(t=>{
       const isActive = t===tab;
-      t.setAttribute('aria-selected', isActive?'true':'false');
-      t.tabIndex = isActive ? 0 : -1;
-      document.getElementById(t.getAttribute('aria-controls')).classList.toggle('v2-active', isActive);
+      const selected = (t.id==='tab-block' && tab.id==='tab-lesson') || (isActive && t.id!=='tab-lesson');
+      t.setAttribute('aria-selected', selected?'true':'false');
+      t.tabIndex = selected ? 0 : -1;
+      document.getElementById('panel-'+t.id.slice(4)).classList.toggle('v2-active', isActive);
     });
-    tab.focus();
+    document.getElementById('tab-block').setAttribute('aria-controls',tab.id==='tab-lesson'?'panel-lesson':'panel-block');
+    (tab.id==='tab-lesson' ? document.getElementById('lessonTitle') : tab).focus();
   }
-  tabs.forEach((tab,i)=>{
+  const visibleTabs=tabs.filter(t=>t.id!=='tab-lesson');
+  tabs.forEach(tab=>{
+    const i=visibleTabs.indexOf(tab);
     tab.addEventListener('click', ()=>activate(tab));
     tab.addEventListener('keydown', (e)=>{
-      if(e.key==='ArrowRight') { e.preventDefault(); activate(tabs[(i+1)%tabs.length]); }
-      if(e.key==='ArrowLeft') { e.preventDefault(); activate(tabs[(i-1+tabs.length)%tabs.length]); }
+      if(e.key==='ArrowRight') { e.preventDefault(); visibleTabs[(i+1)%visibleTabs.length].click(); }
+      if(e.key==='ArrowLeft') { e.preventDefault(); visibleTabs[(i-1+visibleTabs.length)%visibleTabs.length].click(); }
     });
   });
 }
@@ -2618,10 +2640,16 @@ v2Init();
 <style>.sandbox-controls{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin:16px 0}
 .sandbox-controls label{display:grid;gap:6px;font-size:14px}
 .sandbox-controls select{max-width:100%;min-height:44px}
-.sandbox-readout{min-height:64px;padding:16px;background:var(--panel);border:1px solid var(--line,#d8cdbb);border-radius:12px;margin:14px 0;line-height:1.7}
+.sandbox-readout{min-height:64px;padding:16px;background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;line-height:1.7}
 .board .sandbox-hit{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:0;border:0;border-radius:0;background:transparent;cursor:pointer;z-index:2}
-.board .sandbox-hit:hover{background:rgba(255,255,255,.15)}
-.board .sandbox-hit:focus-visible{outline:3px solid var(--ink);outline-offset:-3px}
+.board .sandbox-hit::before{content:'';position:absolute;left:50%;top:50%;width:36px;height:36px;border:2px solid rgba(255,247,225,.85);border-radius:50%;background:rgba(255,247,225,.1);box-shadow:0 0 12px rgba(242,193,78,.25);opacity:0;transform:translate(-50%,-50%) scale(.8);transition:opacity .18s ease,transform .18s ease;pointer-events:none}
+.board .sandbox-hit:focus-visible{outline:none}
+.board .sandbox-hit:focus-visible::before{opacity:1;transform:translate(-50%,-50%) scale(1);border-color:#fff7e1;box-shadow:0 0 0 2px #49301e}
+@media(hover:hover) and (pointer:fine){
+  .board .sandbox-hit:hover::before{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .board .sandbox-hit:hover .note{transform:scale(1.08)}
+}
+.board .sandbox-hit:active .note{transform:scale(.96)}
 .board .sandbox-hit .note{pointer-events:none;animation:none;flex-shrink:0}
 .lesson-copy{max-width:760px;font-size:18px;line-height:1.65;white-space:pre-line}
 .lesson-purpose{border-left:4px solid var(--chord-note);padding:12px 18px;background:var(--panel);margin:18px 0;max-width:760px}
@@ -2640,20 +2668,75 @@ v2Init();
 .block-plan{max-width:860px;padding:16px;background:var(--panel);border-radius:12px;line-height:1.7}
 .block-plan summary{cursor:pointer;font-weight:600}
 .block-activities{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:16px;margin:22px 0}
-.block-card{padding:18px;background:var(--panel);border:1px solid #d8cdbb;border-radius:12px;line-height:1.6}
+.block-card{padding:18px;background:var(--panel);border:1px solid var(--border);border-radius:12px;line-height:1.6}
 .block-card h2{font-size:19px;margin-top:0}
-.block-workspace{margin:22px 0;padding:20px 0;border-top:1px solid #d8cdbb}
+.block-workspace{margin:22px 0;padding:20px 0;border-top:1px solid var(--border)}
 .block-workspace button,.block-card button{min-height:44px}
-.rhythm-option{border:1px solid #d8cdbb;border-radius:10px;padding:12px;margin:12px 0;overflow-wrap:anywhere}
+.rhythm-option{border:1px solid var(--border);border-radius:10px;padding:12px;margin:12px 0;overflow-wrap:anywhere}
 .rhythm-option p:last-of-type{font-family:'IBM Plex Mono',monospace;font-size:13px}
 .phrase-timeline{display:flex;gap:8px;flex-wrap:wrap;list-style:none;padding:0}
-.phrase-timeline li{padding:10px;background:var(--panel);border-radius:8px;border:1px solid #d8cdbb}
+.phrase-timeline li{padding:10px;background:var(--panel);border-radius:8px;border:1px solid var(--border)}
 .block-workspace input[type=number]{max-width:100px;min-height:44px}
 .block-workspace .lesson-practice{margin:14px 0}
 #blockTaskTitle,#lessonTitle{scroll-margin-top:175px}
 .mobile-board-tip{display:none}
 @media(max-width:600px){.mobile-board-tip{display:block}}
 @media(max-width:600px){.sandbox-controls label{width:100%}.sandbox-controls select{width:100%}.sandbox-controls button{min-height:44px}.v2-tabs{flex-wrap:wrap}}
+
+/* Course presentation: one primary action, compact navigation and task-first lessons. */
+.play-btn{background:var(--panel);border-color:var(--border);color:var(--ink);min-height:44px}
+.play-btn.primary-btn{background:var(--brass);border-color:var(--brass);color:#211408}
+.play-btn.text-btn{background:transparent;border-color:transparent;color:var(--teal)}
+[hidden]{display:none!important}
+.v2-tabs{flex-wrap:nowrap;overflow-x:auto;min-width:0;max-width:100%}
+.v2-tab-btn{white-space:nowrap;flex-shrink:0}
+#tab-sandbox{border-left:1px solid var(--border);border-radius:0 8px 8px 0;margin-left:12px}
+.v2-topbar{flex-wrap:nowrap}
+.v2-wrap{min-width:0}
+.lesson-copy{font-size:16px;line-height:1.55;margin:12px 0}
+.lesson-picker{max-width:420px;margin:8px 0}
+.lesson-picker select{font-size:14px}
+.lesson-purpose{margin:12px 0;padding:10px 12px;font-size:14px}
+.lesson-purpose summary{cursor:pointer;font-weight:600}
+.task-card{font-size:16px;line-height:1.5;font-weight:500;border-left:4px solid var(--teal);background:var(--panel);padding:14px 16px;margin:0 0 12px;white-space:pre-line}
+.task-card::before{content:'Задание';display:block;font-size:12px;color:var(--teal);font-weight:600;margin-bottom:4px}
+.lesson-layout{display:grid;grid-template-columns:minmax(220px,1fr) minmax(0,2.5fr);gap:24px;align-items:start}
+.lesson-text h1{font-size:25px}
+.lesson-work{min-width:0}
+.lesson-work .board{min-width:700px}
+.lesson-work .sandbox-readout{min-height:0;margin:10px 0;padding:12px}
+.lesson-work .sandbox-controls{margin:10px 0}
+.course-breadcrumb{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:0;font-size:13px;color:var(--muted)}
+.block-plan{margin:12px 0;padding:12px 16px}
+#blockSummary{min-height:0;background:none;border:0;padding:0;margin:16px 0 8px}
+#blockProgress{width:100%;accent-color:var(--teal)}
+.block-activities{display:block}
+.block-stage{margin:24px 0}
+.block-stage h2{font-size:20px}
+.block-stage-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px}
+.block-card{padding:16px}
+.block-card h3{font-size:17px;margin:0}
+.block-card p{margin:8px 0;font-size:14px}
+.block-status{display:flex;gap:6px;flex-wrap:wrap}
+.block-status span{background:var(--bg);border-radius:12px;padding:2px 8px;font-size:12px}
+.block-workspace{margin:0;border:0;padding:0}
+#blockTaskTitle,#lessonTitle{scroll-margin-top:80px}
+@media(max-width:850px){.lesson-layout{grid-template-columns:1fr;gap:12px}.lesson-text h1{font-size:23px}}
+@media(max-width:600px){.v2-topbar{padding:6px 10px;gap:8px}.v2-brand{flex-basis:auto;font-size:15px}.v2-tabs{flex-basis:auto;flex-wrap:nowrap}.v2-tab-btn{padding:8px 12px}.lesson-copy{font-size:15px}.course-breadcrumb{gap:4px}.board-outer{padding-left:8px;padding-right:8px}}
+
+.step-half{--step-color:var(--brass)}
+.step-whole{--step-color:var(--teal)}
+.lesson-formula span{border:2px solid var(--step-color,var(--border));font-size:12px;padding:4px 7px}
+.lesson-formula .current-step{background:var(--step-color,var(--teal));color:var(--panel);outline:2px solid var(--ink)}
+.interval-arc{position:absolute;left:50%;top:-10px;height:20px;border-top:3px solid var(--step-color);border-radius:50% 50% 0 0;z-index:4;pointer-events:none;text-align:center;color:var(--step-color);font:700 12px/14px 'IBM Plex Mono',monospace;text-shadow:0 0 3px var(--panel);background:var(--panel)}
+.cell.sounding::before{content:'';position:absolute;left:50%;top:50%;width:38px;height:38px;border-radius:50%;background:rgba(242,193,78,.24);box-shadow:0 0 14px rgba(242,193,78,.5);transform:translate(-50%,-50%);pointer-events:none;z-index:1}
+.cell.sounding .note{outline:3px solid var(--tonic-note);outline-offset:3px;transform:scale(1.12)}
+
+body{padding:0 0 40px}
+.lesson-work .hint:empty{display:none}
+.lesson-work .sandbox-controls{gap:8px}
+
+@media(prefers-reduced-motion:reduce){.board .sandbox-hit::before,.board .sandbox-hit .note{transition:none}.board .sandbox-hit:hover .note,.board .sandbox-hit:active .note,.cell.sounding .note{transform:none}}
 </style>
 <script>/* Course sandbox adapter. The existing renderer and audio engine remain shared. */
 const CourseSandbox = (() => {
@@ -2685,10 +2768,40 @@ const CourseSandbox = (() => {
     const titles = ['прима','секунда','терция','кварта','квинта','секста','септима','октава','нона','децима','ундецима','дуодецима','терцдецима','квартдецима','квинтдецима'];
     return {degree, semitones, title: `${quality} ${titles[steps] || `${degree}-я`}`, direction: to === from ? 'одинаковая высота' : to > from ? 'вверх' : 'вниз'};
   }
+  // Observe the shared audio clock; do not infer playing or singing from it.
+  const voices=new Set();
+  let frame=null,lastNotes='';
+  function paintVoices(){
+    const notes=new Set();
+    voices.forEach(v=>{if(v.ctx.currentTime>=v.start&&v.ctx.currentTime<v.end)notes.add(v.midi);});
+    const key=[...notes].sort().join(',');
+    if(key!==lastNotes){
+      document.querySelectorAll('.cell').forEach(cell=>cell.classList.toggle('sounding',notes.has(Number(cell.dataset.midi))));
+      lastNotes=key;
+    }
+    frame=voices.size?requestAnimationFrame(paintVoices):null;
+  }
+  function trackVoice(osc,midi,start,duration,ctx){
+    const voice={midi,start,end:start+duration,ctx};voices.add(voice);
+    osc.addEventListener('ended',()=>{voices.delete(voice);});
+    if(frame===null)frame=requestAnimationFrame(paintVoices);
+  }
+  // A curved bracket sits over the two endpoints on a single string.
+  function drawDistances(board,points){
+    const cells=board.querySelectorAll('.cell');
+    for(let i=1;i<points.length;i++){
+      const a=points[i-1],b=points[i],distance=Math.abs(a.fret-b.fret);
+      if(a.stringIdx!==b.stringIdx||![1,2].includes(distance))continue;
+      const arc=document.createElement('span');arc.className='interval-arc '+(distance===1?'step-half':'step-whole');
+      arc.textContent=distance===1?'½':'1';arc.setAttribute('aria-label',distance===1?'Полутон':'Тон');
+      arc.style.width=`calc(${distance*100}% + ${distance*2}px)`;
+      cells[a.stringIdx*(FRET_COUNT+1)+Math.min(a.fret,b.fret)].appendChild(arc);
+    }
+  }
   function boot() {
     const el = id => document.getElementById(id);
     const marks = new Map();
-    let pair = [], action = 'mark', spelling = 'sharp';
+    let pair = [], action = 'mark', spelling = 'sharp', focusIndex=0;
     const readout = el('sandboxReadout');
     function selected() { return action === 'measure' ? pair : [...marks.values()]; }
     function render() {
@@ -2704,6 +2817,17 @@ const CourseSandbox = (() => {
         const position = selected().findIndex(n => n.key === key);
         const button = document.createElement('button');
         button.type = 'button'; button.className = 'sandbox-hit';
+        button.tabIndex=index===focusIndex?0:-1;
+        button.addEventListener('focus',()=>{focusIndex=index;board.querySelectorAll('.sandbox-hit').forEach((b,i)=>b.tabIndex=i===index?0:-1);});
+        button.addEventListener('keydown',e=>{
+          const moves={ArrowLeft:[0,-1],ArrowRight:[0,1],ArrowUp:[-1,0],ArrowDown:[1,0]};
+          if(!moves[e.key])return;
+          e.preventDefault();const [ds,df]=moves[e.key];
+          const row=Math.max(0,Math.min(5,stringIdx+ds)),col=Math.max(0,Math.min(FRET_COUNT,fret+df));
+          focusIndex=row*(FRET_COUNT+1)+col;
+          board.querySelectorAll('.sandbox-hit').forEach((b,i)=>b.tabIndex=i===focusIndex?0:-1);
+          board.querySelectorAll('.sandbox-hit')[focusIndex].focus();
+        });
         button.setAttribute('aria-label', `${pitch(midi, spelling).label}, струна ${stringIdx + 1}, лад ${fret}`);
         if (action !== 'listen') button.setAttribute('aria-pressed', position >= 0 ? 'true' : 'false');
         if (position >= 0) {
@@ -2713,6 +2837,7 @@ const CourseSandbox = (() => {
           button.appendChild(dot);
         }
         button.addEventListener('click', () => {
+          focusIndex=index;
           if (action === 'listen') {
             playMidi(midi);
             readout.textContent = `${pitch(midi, spelling).label} · струна ${stringIdx + 1}, лад ${fret}`;
@@ -2753,7 +2878,7 @@ const CourseSandbox = (() => {
     });
     render();
   }
-  return {pitch, interval, boot};
+  return {pitch, interval, boot, trackVoice, drawDistances};
 })();
 if (typeof module !== 'undefined' && module.exports) module.exports = CourseSandbox;
 else CourseSandbox.boot();
@@ -2778,7 +2903,7 @@ const CourseLessonContent = (() => {
         instruction:'Выберите следующую ноту на пятой струне. Уже найденные точки остаются видны.',str:4,start:frets[i],delta,path:line.slice(0,i+1),noteLabels:true,formula,formulaIndex:i
       })),
       {title:'Семь разных нот и повторение тоники',explanation:'Получилось C–D–E–F–G–A–B–C: до, ре, ми, фа, соль, ля, си и снова до.\nЗдесь семь разных названий нот. Последняя C — та же нота по названию, но на октаву выше: от начальной C до неё 12 полутонов.',purpose:'Различаем количество нот, количество переходов и повторение тоники. Это подготовка к нумерации ступеней.',instruction:'Прослушайте гамму вверх и вниз. Сравните расстояния E–F и B–C с остальными соседними нотами: именно здесь полутона.',str:4,start:3,path:line,playback:[...line.map(n=>n.midi),...line.slice(0,-1).reverse().map(n=>n.midi)],formula},
-      {title:'Сыграйте построенную гамму',explanation:'На пятой струне сыграйте лады 3–5–7–8–10–12–14–15, затем вернитесь обратно. Если до верхних ладов вашей гитары трудно добраться, используйте шестую струну: 0–2–4–5–7–9–11–12. Это та же мажорная формула от E — ми мажор, а не до мажор.',purpose:'Закрепляем построение движением руки и слухом. Длинная линия нужна, чтобы увидеть расстояния; следующий урок перенесёт те же высоты C major в компактную позицию.',instruction:'Проверьте: не пропускаете шаги, различаете тон и полутон, заканчиваете на октаве и можете объяснить каждое расстояние. Играйте медленно, переносите руку свободно; не пытайтесь растянуть пальцы на всю струну.',str:4,start:3,path:line,practice:true,formula},
+      {title:'Сыграйте построенную гамму',explanation:'На пятой струне сыграйте лады 3–5–7–8–10–12–14–15, затем вернитесь обратно.',alternative:'Если до верхних ладов вашей гитары трудно добраться, используйте шестую струну: 0–2–4–5–7–9–11–12. Это та же мажорная формула от E — ми мажор, а не до мажор.',purpose:'Закрепляем построение движением руки и слухом. Длинная линия нужна, чтобы увидеть расстояния; следующий урок перенесёт те же высоты C major в компактную позицию.',instruction:'Проверьте: не пропускаете шаги, различаете тон и полутон, заканчиваете на октаве и можете объяснить каждое расстояние. Играйте медленно, переносите руку свободно; не пытайтесь растянуть пальцы на всю струну.',str:4,start:3,path:line,practice:true,formula},
       {title:'Теперь формула стала гаммой',explanation:'Вы собрали C major из семи шагов. Формула задаёт расстояния между соседними нотами, а тоника определяет, откуда начать.\nСледующий урок даст нотам номера — ступени — и покажет те же звуки на соседних струнах.',purpose:'Подготовимся видеть связь между гаммой, её ступенями и удобной аппликатурой.',instruction:'Для повторения попробуйте восстановить формулу по памяти. Если использовали подсказки, вернитесь к этим шагам позже и выполните их самостоятельно.',str:4,start:3,path:line,finish:true,formula}
     ];
   }
@@ -2865,29 +2990,41 @@ const CourseLesson = (() => {
     const isTask=s=>s.delta!==undefined || !!s.target;
     function ready() {const s=steps[current]; return isTask(s) ? solved.has(current) : s.practice ? practiced : true;}
     function render() {
+      stopSequence();
+      const boardOuter=el('lessonBoard').parentElement, boardScroll=boardOuter?.scrollLeft||0;
       const s = steps[current];
       el('lessonTitle').textContent=s.title;
+      el('lessonBreadcrumb').textContent=activeLesson===2?'Блок 2 · Ступени и позиция':`Блок 1 · ${activeLesson===0?'1. Тон и полутон':'3. Построение C major'}`;
+      el('lessonAlternative').hidden=!s.alternative;
+      el('lessonAlternativeText').textContent=s.alternative||'';
       el('lessonExplanation').textContent=s.explanation;
       el('lessonPurpose').textContent=s.purpose;
       el('lessonInstruction').textContent=s.instruction;
       el('lessonProgress').value=current+1;
       el('lessonProgress').max=steps.length;
       el('lessonSelect').value=String(activeLesson);
-      el('lessonContinue').hidden=!s.finish || activeLesson===lessons.length-1;
+      el('lessonContinue').hidden=!s.finish;
+      el('lessonContinue').textContent=activeLesson<2?'Продолжить по маршруту →':'К маршруту →';
       el('lessonFormula').innerHTML='';
       el('lessonFormula').hidden=!s.formula;
       if(s.formula){
-        const parts=s.formulaIndex===undefined?[s.formula]:content.majorSteps.map(n=>n===1?'Полутон':'Тон');
-        parts.forEach((text,i)=>{const span=document.createElement('span');span.textContent=text;if(i===s.formulaIndex){span.className='current-step';span.setAttribute('aria-current','step');}el('lessonFormula').appendChild(span);});
+        const parts=s.showDegrees?[s.formula]:content.majorSteps.map(n=>n===1?'½ · Полутон':'1 · Тон');
+        parts.forEach((text,i)=>{const span=document.createElement('span');span.textContent=text;if(!s.showDegrees)span.className=content.majorSteps[i]===1?'step-half':'step-whole';if(i===s.formulaIndex){span.classList.add('current-step');span.setAttribute('aria-current','step');}el('lessonFormula').appendChild(span);});
       }
       el('lessonPosition').textContent=`Шаг ${current+1} из ${steps.length}`;
       el('lessonBack').disabled=current===0;
       el('lessonNext').disabled=!ready() || !!s.finish;
+      el('lessonNext').hidden=!!s.finish;
+      el('lessonNextHelp').textContent=!ready()?(s.practice?'Сначала сыграйте на гитаре и отметьте самопроверку.':'Сначала выберите нужную ноту на грифе.') : '';
+      el('lessonBack').hidden=!!s.finish;
       el('lessonListen').hidden=isTask(s) || !!s.practice || !!s.finish;
       el('lessonHint').hidden=!isTask(s);
       el('lessonPracticeLabel').hidden=!s.practice;
+      el('lessonFeedback').hidden=!isTask(s)&&!s.finish&&!s.practice;
+      el('lessonBoard').parentElement && (el('lessonBoard').parentElement.hidden=!!s.finish);
+      if(s.finish)el('lessonFormula').hidden=true;
       el('lessonPractice').checked=practiced;
-      el('lessonFeedback').textContent=isTask(s) ? solved.has(current) ? 'Верно. Можно переходить дальше.' : 'Выберите ответ на указанной струне. Можно пробовать снова: ошибка не закрывает задание.' : s.finish ? `Экранных заданий выполнено: ${solved.size} из ${steps.filter(isTask).length}. Заданий с подсказкой: ${hints.size}. Практика на гитаре отмечена вами: ${practiced ? 'да' : 'нет'}.` : 'Нажмите «Послушать пример» или на отмеченную точку.';
+      el('lessonFeedback').textContent=isTask(s) ? solved.has(current) ? 'Верно. Можно переходить дальше.' : 'Выберите ответ на указанной струне. Можно пробовать снова: ошибка не закрывает задание.' : s.finish ? `✓ Ответы: ${solved.size} из ${steps.filter(isTask).length} · ◇ Подсказки: ${hints.size} · ♫ Гитара: ${practiced ? 'сыграно (самооценка)' : 'ещё не отмечено'}` : 'Нажмите «Послушать пример» или на отмеченную точку.';
       if(s.practice) el('lessonFeedback').textContent='Отметьте практику после игры и самопроверки. Нажатия на грифе не заменяют это задание.';
       if(s.finish && document.dispatchEvent && typeof CustomEvent!=='undefined') document.dispatchEvent(new CustomEvent('course-lesson-progress',{detail:{lessonId:activeLesson,complete:solved.size===steps.filter(isTask).length&&practiced,assisted:hints.size>0,practice:practiced}}));
       v2RenderBoard(new Map(), 'lessonBoard');
@@ -2921,12 +3058,17 @@ const CourseLesson = (() => {
             el('lessonFeedback').textContent='Пока не та ступень. Отсчитайте нужный номер от C. Можно воспользоваться подсказкой и попробовать снова.';
           }else if(!solved.has(current)){
             const difference=fret-s.start;
-            el('lessonFeedback').textContent=difference===0 ? 'Это исходный звук: пока ни одного перехода. Выберите другой лад.' : `Число выбранных переходов: ${Math.abs(difference)}, направление — ${difference>0?'вверх':'вниз'}. Нужно ${Math.abs(s.delta)===1?'один переход':'два перехода'} ${s.delta>0?'вверх':'вниз'}. Считайте промежутки между ладами на той же струне.`;
+            el('lessonFeedback').textContent=difference===0 ? 'Это исходный звук: пока ни одного перехода. Выберите другой лад.' : `Вы отложили ${Math.abs(difference)} ${Math.abs(difference)===1?'лад':Math.abs(difference)<5?'лада':'ладов'} ${difference>0?'вверх':'вниз'}, а нужно ${Math.abs(s.delta)===1?'один лад':'два лада'} ${s.delta>0?'вверх':'вниз'}.`;
           }else playSequence([s.target?48:OPEN_STRINGS_TOP_TO_BOTTOM[s.str].midi+s.start,OPEN_STRINGS_TOP_TO_BOTTOM[s.str].midi+fret]);
           el('lessonBoard').querySelectorAll('.sandbox-hit')[fret].focus({preventScroll:true});
         });
         cell.appendChild(button);
       });
+      const points=s.path?[...s.path]:[{stringIdx:s.str,fret:s.start}];
+      const endpoint=s.demo!==undefined?s.demo:solved.has(current)&&s.delta!==undefined?s.start+s.delta:null;
+      if(endpoint!==null)points.push({stringIdx:s.str,fret:endpoint});
+      sandbox.drawDistances(el('lessonBoard'),points);
+      if(boardOuter)boardOuter.scrollLeft=boardScroll;
     }
     el('lessonListen').addEventListener('click',()=>{
       const s=steps[current],open=OPEN_STRINGS_TOP_TO_BOTTOM[s.str].midi;
@@ -2938,11 +3080,24 @@ const CourseLesson = (() => {
       el('lessonFeedback').textContent=s.targetHint || `Начните с ${s.start}-го лада. ${Math.abs(s.delta)===1?'Сделайте один переход':'Сделайте два перехода'} к ${s.delta>0?'большим':'меньшим'} номерам. Исходный лад не считается переходом.`;
     });
     el('lessonPractice').addEventListener('change',e=>{practiced=e.target.checked;render();});
-    el('lessonBack').addEventListener('click',()=>{if(current>0){current--;render();}});
-    el('lessonNext').addEventListener('click',()=>{if(ready()&&current<steps.length-1){current++;render();el('lessonTitle').setAttribute('tabindex','-1');el('lessonTitle').focus();}});
-    el('lessonRestart').addEventListener('click',()=>{current=0;solved.clear();choices.clear();hints.clear();practiced=false;render();});
+    function moveStep(direction){
+      if(direction>0&&(!ready()||current===steps.length-1)||direction<0&&current===0)return;
+      const view=document.defaultView, panel=el('panel-lesson');
+      const top=view?.scrollY, left=view?.scrollX;
+      // Keep a shorter next step from clamping the viewport to the new page bottom.
+      // Reserve only this lesson's already displayed height; reset for another lesson.
+      if(view)panel.style.minHeight=panel.getBoundingClientRect().height+'px';
+      current+=direction;render();
+      el('lessonTitle').focus({preventScroll:true});
+      if(view)view.scrollTo({top,left,behavior:'instant'});
+    }
+    document.defaultView?.addEventListener('resize',()=>{el('panel-lesson').style.minHeight='';});
+    el('lessonBack').addEventListener('click',()=>moveStep(-1));
+    el('lessonNext').addEventListener('click',()=>moveStep(1));
+    el('lessonRestart').addEventListener('click',()=>{el('panel-lesson').style.minHeight='';current=0;solved.clear();choices.clear();hints.clear();practiced=false;render();});
     function switchLesson(index){
       if(!Number.isInteger(index)||!lessons[index])return;
+      el('panel-lesson').style.minHeight='';
       sessions.set(activeLesson,{current,solved,choices,hints,practiced});
       activeLesson=index;steps=lessons[index];
       const saved=sessions.get(index);
@@ -2950,7 +3105,12 @@ const CourseLesson = (() => {
       render();
     }
     el('lessonSelect').addEventListener('change',e=>switchLesson(Number(e.target.value)));
-    el('lessonContinue').addEventListener('click',()=>{if(steps[current].finish)switchLesson(activeLesson+1);});
+    el('lessonRoute').addEventListener('click',()=>el('tab-block').click());
+    el('lessonContinue').addEventListener('click',()=>{
+      if(!steps[current].finish)return;
+      el('tab-block').click();
+      if(activeLesson<2)window.courseBlockOne.open(window.courseBlockOne.activities[activeLesson===0?1:3]);
+    });
     render();
     return {open:switchLesson};
   }
@@ -3057,7 +3217,7 @@ const CourseBlockOne = (() => {
     let records={},canStore=true;
     try{records=cleanRecords(JSON.parse(localStorage.getItem(KEY)||'null'));}catch{canStore=false;}
     let activity=null, session=null, heard=false, tempo=60, voices=[],timers=[],boardScroll=null;
-    const storage=()=>{el('blockStorage').textContent=canStore?'Завершённые упражнения сохраняются в этом браузере. Незавершённая попытка после перезагрузки начинается заново.':'Хранилище браузера недоступно: результаты сохраняются только до закрытия страницы.';};
+    const storage=()=>{el('blockStorage').textContent=canStore?'Завершённые упражнения сохраняются в этом браузере. Незавершённая попытка после перезагрузки начинается заново.':'Хранилище браузера недоступно: результаты сохраняются только до закрытия страницы.';if(!canStore)el('blockStorage').parentElement.open=true;};
     function save(){try{localStorage.setItem(KEY,JSON.stringify({version:1,records}));}catch{canStore=false;}storage();}
     function stop(){voices.forEach(v=>{try{v?.stop();}catch{}});voices=[];timers.forEach(clearTimeout);timers=[];}
     function audio(events,{countIn=false,click=false}={}){
@@ -3070,7 +3230,7 @@ const CourseBlockOne = (() => {
       events.forEach(e=>{if(e.midi!==null)add(e.midi,start+offset*beat,Math.max(.07,e.beats*beat*.8),e.accent ? 0.2 : 0.14);offset+=e.beats;});
       el('blockTaskFeedback').textContent=countIn?'Четыре щелчка отсчёта, затем пример. Слушайте, где звук и где пауза.':'Слушайте пример; затем повторите или ответьте.';
     }
-    function button(parent,text,fn,disabled=false){const b=node('button',text);b.type='button';b.className='play-btn';b.disabled=disabled;b.addEventListener('click',fn);parent.appendChild(b);return b;}
+    function button(parent,text,fn,disabled=false){const b=node('button',text);b.type='button';b.className='play-btn'+(/^(Проверить|Завершить|Повторил|Продолжить)/.test(text)?' primary-btn':/^(Подсказка|Новая|■|Убрать|Очистить)/.test(text)?' text-btn':'');b.disabled=disabled;b.addEventListener('click',fn);parent.appendChild(b);return b;}
     function feedback(text){el('blockTaskFeedback').textContent=text;}
     function complete(s=session){
       stop();s.done=true;
@@ -3083,23 +3243,35 @@ const CourseBlockOne = (() => {
     }
     function overview(){
       const count=ACTIVITIES.filter(a=>records[a.id]?.done).length;
-      const practice=records.final?.practice===true;
-      el('blockSummary').textContent=`Выполнено ${count} из ${ACTIVITIES.length} частей. Игра на гитаре: ${practice?'отмечена вами в итоговой проверке':'итоговая самопроверка ещё не отмечена'}.${count===ACTIVITIES.length?' Блок пройден; вернитесь к заданиям через несколько дней для повторения.':''}`;
+      el('blockSummary').textContent=`Выполнено ${count} из ${ACTIVITIES.length} частей${count===ACTIVITIES.length?' · Блок пройден':''}`;
+      el('blockProgress').value=count;
+      const next=ACTIVITIES.find(a=>!records[a.id]?.done);
+      el('blockResume').textContent=next?`Продолжить: ${next.title}`:'Повторить: 1. Тон и полутон';
+      el('blockResume').onclick=()=>open(next||ACTIVITIES[0]);
       const list=el('blockActivities');list.innerHTML='';
-      ACTIVITIES.forEach(a=>{
-        const card=node('article');card.className='block-card';card.appendChild(node('h2',a.title));card.appendChild(node('p',a.why));
-        const r=records[a.id];card.appendChild(node('p',r?.done?`✓ Выполнено${r.assisted?' · с подсказкой':''}${r.total?` · с первой попытки ${r.firstCorrect}/${r.total}`:''}`:'Ещё не выполнено'));
-        button(card,r?.done?'Повторить':'Открыть',()=>open(a));list.appendChild(card);
+      const groups=[['Расстояния',0,2],['Мажорная гамма',2,6],['Слух, ритм и своя фраза',6,9],['Проверка',9,10]];
+      groups.forEach(([title,start,end])=>{
+        const group=node('section');group.className='block-stage';group.appendChild(node('h2',title));
+        const cards=node('div');cards.className='block-stage-cards';group.appendChild(cards);
+        ACTIVITIES.slice(start,end).forEach(a=>{
+          const card=node('article');card.className='block-card';card.appendChild(node('h3',a.title));card.appendChild(node('p',a.why));
+          const r=records[a.id],status=node('p');status.className='block-status';
+          [r?.done?'✓ Выполнено':'○ Впереди',r?.assisted?'С подсказкой':null,r?.practice?'♫ Сыграно · самооценка':null].filter(Boolean).forEach(t=>status.appendChild(node('span',t)));
+          card.appendChild(status);button(card,r?.done?'Повторить':'Открыть',()=>open(a));cards.appendChild(card);
+        });
+        list.appendChild(group);
       });
     }
+
     function open(a){
       stop();activity=a;
       if(a.kind==='guided'){
+        el('blockWorkspace').hidden=true;el('blockOverview').hidden=false;
         window.courseLessons.open(a.lesson);el('tab-lesson').click();return;
       }
       session=makeSession(a.kind);heard=false;boardScroll=null;
       if(a.kind==='compose'&&records[a.id]?.phrase)session.events=records[a.id].phrase.map(e=>({...e}));
-      el('blockWorkspace').hidden=false;el('blockActivities').hidden=true;
+      el('blockWorkspace').hidden=false;el('blockOverview').hidden=true;
       el('blockTaskTitle').textContent=a.title;el('blockTaskPurpose').textContent=a.why;
       draw();el('blockTaskTitle').focus();
     }
@@ -3131,6 +3303,7 @@ const CourseBlockOne = (() => {
         if(activity.kind==='ear')audio([{midi:48,beats:1},{midi:49,beats:1},{midi:null,beats:1},{midi:48,beats:1},{midi:50,beats:1}]);
         feedback(hints[activity.kind]);
       });
+      if(done){const next=ACTIVITIES[ACTIVITIES.indexOf(activity)+1];if(next)button(row,'Продолжить: '+next.title,()=>open(next));else button(row,'К маршруту',()=>el('blockClose').click());}
       button(row,'Новая попытка',()=>open(activity));
     }
     function draw(){
@@ -3213,7 +3386,7 @@ const CourseBlockOne = (() => {
       button(row,'Добавить паузу',()=>append(null));
       board(4,[{str:4,fret:3,label:'C',root:true},{str:4,fret:5,label:'D'},{str:4,fret:7,label:'E'}],(str,fret)=>{if(![3,5,7].includes(fret)){feedback('Для этой фразы используйте только отмеченные C, D и E.');return;}playMidi(45+fret);append(45+fret);});
       const timeline=node('ol');timeline.className='phrase-timeline';
-      s.events.forEach((e,i)=>timeline.appendChild(node('li',`${i+1}. ${e.midi===null?'Пауза':pitchNames.pitch(e.midi).name} · ${e.beats} доли`)));body.appendChild(timeline);
+      s.events.forEach((e,i)=>timeline.appendChild(node('li',`${i+1}. ${e.midi===null?'Пауза':pitchNames.pitch(e.midi).name} · ${e.beats===.5?'½ доли':e.beats===1?'1 доля':e.beats+' доли'}`)));body.appendChild(timeline);
       body.appendChild(node('p',`Заполнено ${total()}/8 долей.`));
       const playback=controls();button(playback,'Убрать последнее',()=>{s.events.pop();draw();},!s.events.length);button(playback,'Очистить фразу',()=>{s.events=[];s.checks=[false,false];draw();},!s.events.length);button(playback,'▶ Сыграть с отсчётом',()=>audio(s.events,{countIn:true,click:true}),!s.events.length);tempoControl();
       checklist(body,['Я пропел свою фразу, затем сыграл её на гитаре.','Я сохранил пульс и паузу; если сбивался, замедлил темп и повторил.'],s.checks);
@@ -3227,7 +3400,9 @@ const CourseBlockOne = (() => {
       checklist(body,['На одной струне нахожу тон и полутон вверх и вниз от разных ладов.','Строю и играю C major на одной струне, объясняю шаги и октаву. Если верхние лады недоступны, показываю формулу от открытой шестой струны как E major.','Играю короткую фразу из C, D, E с паузой и ровным пульсом.'],session.checks);
       const row=controls();button(row,'Завершить проверку',()=>{if(!session.checks.every(Boolean)){feedback('Отметьте только то, что получилось на гитаре. Остальные пункты — задачи для повторения, завершать сейчас необязательно.');return;}session.practice=true;complete();});drawActions();
     }
-    el('blockClose').addEventListener('click',()=>{stop();el('blockWorkspace').hidden=true;el('blockActivities').hidden=false;overview();});
+    el('blockClose').addEventListener('click',()=>{stop();el('blockWorkspace').hidden=true;el('blockOverview').hidden=false;overview();el('blockResume').focus();});
+    el('tab-block').addEventListener('click',()=>{stop();el('blockWorkspace').hidden=true;el('blockOverview').hidden=false;overview();});
+    el('blockNextLesson').addEventListener('click',()=>{window.courseLessons.open(2);el('tab-lesson').click();});
     document.addEventListener('course-lesson-progress',e=>{
       const d=e.detail;if(![0,1].includes(d.lessonId)||!d.complete)return;
       records['lesson'+d.lessonId]={done:true,practice:d.practice,assisted:d.assisted,at:new Date().toISOString()};save();overview();
@@ -3235,7 +3410,7 @@ const CourseBlockOne = (() => {
     document.querySelectorAll('[role="tab"]').forEach(tab=>tab.addEventListener('click',()=>{if(tab.id!=='tab-block')stop();}));
     window.addEventListener('pagehide',stop);
     storage();overview();
-    return {open,stop,getRecords:()=>records};
+    return {open,stop,activities:ACTIVITIES,getRecords:()=>records};
   }
   function rhythmEvents(rhythm){
     let offset=0;return rhythm.durations.map((beats,i)=>{const e={midi:rhythm.rests.includes(i)?null:48,beats,accent:Number.isInteger(offset)};offset+=beats;return e;});
