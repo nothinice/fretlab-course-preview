@@ -290,7 +290,8 @@
 <div class="v2-topbar">
   <div class="v2-brand">FretLab</div>
   <nav class="v2-tabs" role="tablist" aria-label="Разделы">
-    <button class="v2-tab-btn" id="tab-block" role="tab" aria-selected="true" aria-controls="panel-block" tabindex="0">Курс</button>
+    <button class="v2-tab-btn" id="tab-block" role="tab" aria-selected="true" aria-controls="panel-block" tabindex="0">Блок 1</button>
+    <button class="v2-tab-btn" id="tab-block2" role="tab" aria-selected="false" aria-controls="panel-block2" tabindex="-1">Блок 2</button>
     <button class="v2-tab-btn" id="tab-sandbox" role="tab" aria-selected="false" aria-controls="panel-sandbox" tabindex="-1">Гриф</button>
     <button class="v2-tab-btn" id="tab-learn" role="tab" aria-selected="false" aria-controls="panel-learn" tabindex="-1">Формы</button>
     <button class="v2-tab-btn" id="tab-explore" role="tab" aria-selected="false" aria-controls="panel-explore" tabindex="-1">Теория</button>
@@ -302,6 +303,7 @@
   <div class="course-helpbar v2-wrap"><button type="button" class="play-btn text-btn" data-course-help="sound">Звук</button><button type="button" class="play-btn text-btn" data-course-help="terms">Термины и гриф</button><button type="button" class="play-btn text-btn" data-course-help="setup">Подготовить гитару</button></div>
   <div class="v2-wrap block-wrap" id="blockRoute">
     <div id="blockOverview">
+    <div class="b2-reminders" data-b2-reviews hidden role="region" aria-label="Повторение пройденного"></div>
     <p class="hint">Блок 1 · Расстояния и мажорная гамма</p>
     <h1>От первого шага до своей фразы</h1>
     <p class="lesson-copy">Научитесь отмерять тон и полутон, строить C major и использовать несколько её нот в музыке. Здесь есть объяснения, самостоятельная практика, слух, ритм и итоговая проверка.</p>
@@ -364,6 +366,66 @@
     <p id="lessonStorage" class="hint">Шаг урока сохраняется в этом браузере. После перезагрузки откройте урок, чтобы продолжить.</p>
   </div>
 </section>
+</section>
+<section id="panel-block2" role="tabpanel" aria-labelledby="tab-block2">
+  <div class="v2-wrap b2-wrap">
+    <div id="b2Overview">
+      <p class="course-breadcrumb">Блок 2 · От ступеней к своей музыке</p>
+      <h1>Гамма, позиция и звуки аккорда</h1>
+      <p class="lesson-copy">Научитесь видеть ступени в C major, переносить те же звуки на соседние струны и собирать из них аккорд. Во второй части сыграете свою фразу под C major.</p>
+      <div class="b2-reminders" data-b2-reviews hidden role="region" aria-label="Повторение пройденного"></div>
+      <div class="b2-part-grid">
+        <article class="b2-part-card">
+          <p class="b2-eyebrow">2A · 3–4 занятия</p><h2>Ступени и позиция</h2>
+          <p>Номера ступеней, одинаковые высоты на разных струнах и одна компактная позиция C major с понятной аппликатурой.</p>
+          <p id="b2Statusa" tabindex="-1" role="status"></p>
+          <button type="button" class="play-btn primary-btn" id="b2Resumea">Начать блок 2A</button>
+          <details><summary>Шаги и практика</summary><div id="b2Stepsa" class="b2-step-list"></div></details>
+        </article>
+        <article class="b2-part-card">
+          <p class="b2-eyebrow">2B · 3–4 занятия</p><h2>Из гаммы — аккорд</h2>
+          <p>C–E–G, роль терции, аккорд и арпеджио. Конструктор, слуховая практика и своя фраза под сопровождение.</p>
+          <p id="b2Statusb" tabindex="-1" role="status"></p>
+          <button type="button" class="play-btn primary-btn" id="b2Resumeb">Начать блок 2B</button>
+          <details><summary>Шаги и практика</summary><div id="b2Stepsb" class="b2-step-list"></div></details>
+        </article>
+      </div>
+      <details class="block-plan"><summary>Как заниматься и возвращаться к материалу</summary>
+        <p>Сначала пройдите 2A, затем 2B. На занятии оставляйте время на медленную игру, слух и повторение. Три-четыре занятия на часть — ориентир; календарной блокировки нет.</p>
+        <p>Через три дня после завершения части здесь появится «Проверьте, что осталось». Рекомендуется повторить без подсказок через 3–7 дней. Если вернётесь позже, проверка останется доступной.</p>
+      </details>
+    </div>
+    <section id="b2Work" hidden aria-labelledby="b2Title">
+      <p class="course-breadcrumb"><button type="button" class="play-btn text-btn" id="b2Route">← К маршруту блока 2</button><span id="b2Crumb"></span></p>
+      <progress id="b2StepProgress" max="1" value="1" aria-label="Шаг блока 2"></progress>
+      <div class="lesson-layout b2-layout">
+        <div class="b2-copy">
+          <h1 id="b2Title" tabindex="-1"></h1>
+          <p id="b2Text" class="lesson-copy"></p>
+          <details id="b2Why" class="lesson-purpose"><summary>Почему так</summary><p id="b2WhyText"></p></details>
+        </div>
+        <div class="b2-workspace">
+          <p id="b2Instruction" class="task-card" data-label="На грифе и на гитаре"></p>
+          <div id="b2TaskBody"></div>
+          <p id="b2Feedback" class="sandbox-readout" role="status" aria-live="polite" hidden></p>
+          <div class="sandbox-controls b2-audio-controls">
+            <button type="button" id="b2Stop" class="play-btn" hidden>■ Стоп</button>
+            <span id="b2AudioStatus" role="status" aria-live="off"></span>
+          </div>
+          <details class="audio-options"><summary>Темп и повторение</summary>
+            <label>Темп (уд/мин) <input type="number" id="b2Tempo" min="40" max="120" value="80"></label>
+            <button type="button" class="play-btn text-btn" id="b2Retry">Повторить текущий шаг</button>
+          </details>
+          <nav class="sandbox-controls b2-navigation" aria-label="Шаги второго блока">
+            <button type="button" class="play-btn text-btn" id="b2Back">← Назад</button>
+            <button type="button" class="play-btn text-btn" id="b2Hint">Подсказка</button>
+            <div class="lesson-next-action"><button type="button" class="play-btn primary-btn" id="b2Next" aria-describedby="b2NextHelp">Дальше →</button><p id="b2NextHelp" role="status"></p></div>
+          </nav>
+        </div>
+      </div>
+    </section>
+    <p id="b2Storage" class="hint"></p>
+  </div>
 </section>
 <section id="panel-sandbox" role="tabpanel" aria-labelledby="tab-sandbox">
   <div class="v2-wrap">
@@ -560,8 +622,10 @@ const TETRAD_QUALITY = {
   '4,6,10':'7b5', '4,6,11':'maj7b5', '5,7,10':'7sus4', '2,7,10':'7sus2'
 };
 function nameChord(rootNote, otherNotes){
-  const key = otherNotes.map(n => ((n.semitone - rootNote.semitone) % 12 + 12) % 12).sort((a,b)=>a-b).join(',');
-  const table = otherNotes.length === 2 ? TRIAD_QUALITY : TETRAD_QUALITY;
+  // Voicings can double chord tones and roots in different octaves.
+  const intervals = [...new Set(otherNotes.map(n => ((n.semitone - rootNote.semitone) % 12 + 12) % 12))].filter(n=>n!==0).sort((a,b)=>a-b);
+  const key = intervals.join(',');
+  const table = intervals.length === 2 ? TRIAD_QUALITY : TETRAD_QUALITY;
   const quality = table[key];
   if(quality) return rootNote.noteName + quality;
   return rootNote.noteName + '(' + [rootNote, ...otherNotes].map(n=>n.noteName).join(' ') + ')';
@@ -2642,7 +2706,7 @@ function renderLearn(){
 function v2InitTabs(){
   const learnTab = document.getElementById('tab-learn');
   const exploreTab = document.getElementById('tab-explore');
-  const tabs = [document.getElementById('tab-block'), document.getElementById('tab-sandbox'), learnTab, exploreTab];
+  const tabs = [document.getElementById('tab-block'), document.getElementById('tab-block2'), document.getElementById('tab-sandbox'), learnTab, exploreTab];
   function activate(tab){
     stopSequence();
     tabs.forEach(t=>{
@@ -2716,6 +2780,51 @@ v2Init();
 <style>.sandbox-controls{display:flex;align-items:end;flex-wrap:wrap;gap:12px;margin:16px 0}
 .sandbox-controls label{display:grid;gap:6px;font-size:14px}
 .sandbox-controls select{max-width:100%;min-height:44px}
+
+/* Block 2: two clear routes, the same fretboard and a compact practice workspace. */
+.b2-wrap{max-width:1260px}
+.b2-part-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px;margin:24px 0}
+.b2-part-card{padding:24px;border:1px solid var(--border);border-radius:16px;background:var(--panel)}
+.b2-part-card h2{font-size:26px;margin:8px 0 12px}
+.b2-part-card p{line-height:1.65}
+.b2-eyebrow{color:var(--teal);font-size:13px;letter-spacing:.04em;margin:0}
+.b2-part-card details{margin-top:20px}
+.b2-part-card summary,.b2-wrap summary{cursor:pointer;min-height:32px;line-height:1.6}
+.b2-step-list{display:grid;gap:8px;margin-top:14px}
+.b2-step-link{text-align:left;white-space:normal;font-size:14px}
+.b2-reminders{padding:18px;border:2px solid var(--teal);border-radius:12px;margin:16px 0;line-height:1.6}
+.b2-layout{grid-template-columns:minmax(220px,.85fr) minmax(0,2fr);gap:28px}
+.b2-workspace{min-width:0}
+#b2Title{font-size:27px;line-height:1.25;margin:10px 0 16px;scroll-margin-top:90px}
+#b2Work,#b2Statusa,#b2Statusb{scroll-margin-top:85px}
+#b2StepProgress{width:100%;accent-color:var(--teal);margin:8px 0 16px}
+#b2Text{line-height:1.65}
+#b2TaskBody p{line-height:1.6}
+#b2TaskBody .board-outer{margin:12px 0;max-width:100%;overscroll-behavior-inline:contain}
+#b2Board{padding-bottom:8px}
+#b2Board .note{width:30px;height:30px;font-size:14px}
+#b2Board .b2-target::before{opacity:1;border:3px solid var(--teal);transform:translate(-50%,-50%) scale(1);box-shadow:none}
+#b2Board .b2-finger{position:absolute;right:1px;bottom:0;font:600 10px/14px sans-serif;color:var(--ink);background:var(--panel);border:1px solid var(--border);border-radius:4px;min-width:14px;text-align:center;z-index:3}
+.b2-transfer{font-family:'IBM Plex Mono',monospace;background:var(--panel);padding:12px;border-radius:8px;font-size:14px}
+.b2-string-states{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin:12px 0}
+.b2-string-states>div{display:grid;gap:5px;border:1px solid var(--border);border-radius:8px;padding:10px;font-size:12px}
+.b2-string-states button{font-size:12px;min-height:40px;padding:6px}
+.b2-string-states span{color:var(--muted)}
+.b2-phrase{display:grid;grid-template-columns:repeat(16,minmax(0,1fr));gap:4px;list-style:none;padding:0;border:1px solid var(--border);border-radius:10px;min-height:52px;overflow:hidden}
+.b2-phrase li{font:12px/1.5 'IBM Plex Mono',monospace;overflow-wrap:anywhere;padding:10px 4px;background:var(--panel);border-right:1px solid var(--border);text-align:center}
+.b2-phrase li.is-playing{background:var(--teal);color:var(--panel);outline:2px solid var(--ink);outline-offset:-2px}
+.b2-navigation{padding:12px 0;border-top:1px solid var(--border);margin-top:18px}
+#b2NextHelp{font-size:13px;line-height:1.4;max-width:270px;margin:0;color:var(--muted)}
+#b2Next{min-width:140px}
+.b2-wrap .sandbox-controls button[aria-pressed=true]{border-color:var(--teal);box-shadow:inset 0 -3px var(--teal)}
+#b2AudioStatus{font:13px/1.5 'IBM Plex Mono',monospace;min-height:20px}
+#b2Feedback{min-height:0;padding:12px}
+.b2-wrap input[type=number]{max-width:90px;min-height:44px}
+.b2-wrap .sandbox-controls button{min-height:44px}
+.b2-wrap .lesson-practice{margin:16px 0}
+.b2-wrap .audio-options{border-top:1px solid var(--border);padding-top:10px}
+@media(max-width:850px){.b2-layout{grid-template-columns:1fr;gap:12px}.b2-part-grid{gap:14px}.b2-part-card{padding:18px}#b2Title{font-size:24px}}
+@media(max-width:600px){.b2-part-grid{grid-template-columns:1fr}.b2-string-states{grid-template-columns:repeat(2,minmax(0,1fr))}.b2-wrap{padding-left:14px;padding-right:14px}.b2-phrase li{font-size:10px}.b2-navigation .lesson-next-action{width:100%}.b2-navigation .primary-btn{flex:1}#b2Board .note{width:28px;height:28px}#b2NextHelp{max-width:none}}
 .sandbox-readout{min-height:64px;padding:16px;background:var(--panel);border:1px solid var(--border);border-radius:12px;margin:14px 0;line-height:1.7}
 .board .sandbox-hit{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;width:100%;height:100%;padding:0;border:0;border-radius:0;background:transparent;cursor:pointer;z-index:2}
 .board .sandbox-hit::before{content:'';position:absolute;left:50%;top:50%;width:36px;height:36px;border:2px solid rgba(255,247,225,.85);border-radius:50%;background:rgba(255,247,225,.1);box-shadow:0 0 12px rgba(242,193,78,.25);opacity:0;transform:translate(-50%,-50%) scale(.8);transition:opacity .18s ease,transform .18s ease;pointer-events:none}
@@ -3123,7 +3232,7 @@ const CourseLessonContent = (() => {
       {title:'Найдите третью ступень',explanation:'В C major третья ступень — E. Вы уже знаете её место в гамме; теперь найдём её в позиции.',purpose:'Начинаем ориентироваться по функции ноты, а не только по направлению движения пальцев.',instruction:'На пятой струне выберите третью ступень. Остальные струны приглушены, чтобы сузить поиск.',str:4,start:7,target:{stringIdx:4,fret:7},targetHint:'Вспомните: C–D–E = 1–2–3. На пятой струне E находится на седьмом ладу.',showDegrees:true,path:route.filter(n=>n.degree!=='3')},
       {title:'Найдите пятую ступень',explanation:'Считаем от тоники C: C–D–E–F–G. Пятая ступень — G. Она звучит выше C на семь полутонов.',purpose:'Тоника, третья и пятая ступени понадобятся для построения мажорного трезвучия в следующем блоке.',instruction:'На пятой струне выберите пятую ступень. Сейчас ищем ступень гаммы от C, а не номер лада.',str:4,start:8,target:{stringIdx:4,fret:10},targetHint:'Пятая ступень — G. На пятой струне она на десятом ладу.',showDegrees:true,path:route.filter(n=>n.degree!=='5')},
       {title:'Сыграйте одну мелодию двумя способами',explanation:'Сначала сыграйте C major на одной струне, затем тот же порядок звуков в позиции. Позиция: шестая струна 8–10; пятая 7–8–10; четвёртая 7–9–10.\nНазывайте ступени 1–2–3–4–5–6–7–1. Если растяжка неудобна, сначала работайте с несколькими звуками медленно; положение руки уточните с преподавателем.',purpose:'Соединяем понимание формулы, слух и практическое движение. Одни и те же высоты должны узнаваться в обеих аппликатурах.',instruction:'Проверьте одинаковый порядок нот и высоту начальной/конечной C. Не считайте навык освоенным только потому, что узнали рисунок на экране.',multi:true,str:5,start:8,path:route,showDegrees:true,practice:true},
-      {title:'От гаммы — к звукам аккорда',explanation:'Теперь вы знаете, что ступени — номера нот от тоники, и видите одну гамму в двух расположениях.\nБлок 2 в работе: пока доступен этот вводный урок. Продолжение про ступени и позиции появится позже. Затем перейдём к звукам аккорда.',purpose:'Переходим к связи гаммы и аккорда на том же грифе.',instruction:'Повторите поиск ступеней позже без подсказок. Подсказки и практика на гитаре учитываются отдельно от правильных экранных ответов.',multi:true,str:5,start:8,path:route,showDegrees:true,finish:true}
+      {title:'От гаммы — к звукам аккорда',explanation:'Теперь вы знаете, что ступени — номера нот от тоники, и видите одну гамму в двух расположениях.\nПродолжите во вкладке «Блок 2»: в 2A восстановите позицию и проверьте перенос звуков, а в 2B соберёте C–E–G и сыграете свою фразу под аккорд.',purpose:'Переходим к связи гаммы и аккорда на том же грифе.',instruction:'Повторите поиск ступеней позже без подсказок. Подсказки и практика на гитаре учитываются отдельно от правильных экранных ответов.',multi:true,str:5,start:8,path:route,showDegrees:true,finish:true}
     ];
   }
   return {majorSteps,offsets,line,majorLesson,degreeLesson};
@@ -3376,7 +3485,11 @@ const CourseLesson = (() => {
       current=saved?.current||0;solved=saved?.solved||new Set();choices=saved?.choices||new Map();hints=saved?.hints||new Set();practiced=saved?.practiced||false;
       render();
     }
-    el('lessonSelect').addEventListener('change',e=>switchLesson(Number(e.target.value)));
+    el('lessonSelect').addEventListener('change',e=>{
+      const index=Number(e.target.value);
+      if(index===2&&typeof window!=='undefined'&&window.courseBlockTwo){window.courseBlockTwo.open('a');return;}
+      switchLesson(index);
+    });
     el('lessonRoute').addEventListener('click',()=>el('tab-block').click());
     el('lessonContinue').addEventListener('click',()=>{
       if(!steps[current].finish)return;
@@ -3463,7 +3576,43 @@ const CourseRhythmPlayer=(()=>{
     }
     return {svg,paint,clear,showBlocks};
   }
-  return {timeline,frame,diagram};
+  // Shared phrase/backing clock. Times are seconds relative to the transport start.
+  function schedule(events,{tempo=60,countIn=false,metronome=false,accompaniment=null}={}){
+    if(!Array.isArray(events)||!events.length||events.length>64||events.some(e=>![.5,1,2,4].includes(e.beats)||!(e.midi===null||Number.isInteger(e.midi)&&e.midi>=0&&e.midi<=127)))throw Error('Некорректная фраза');
+    const beat=60/Math.max(40,Math.min(120,Number(tempo)||60)),lead=countIn?4:0,length=events.reduce((n,e)=>n+e.beats,0),items=[];
+    if(length>32)throw Error('Фраза слишком длинная');
+    if(countIn)for(let i=0;i<4;i++)items.push({kind:'click',at:i*beat,accent:i===0});
+    if(metronome)for(let i=0;i<length;i++)items.push({kind:'click',at:(lead+i)*beat,accent:i%4===0});
+    timeline(events).forEach((e,i)=>{if(e.midi!==null)items.push({kind:'melody',midi:e.midi,at:(lead+e.offset)*beat,duration:e.beats*beat,index:i});});
+    if(accompaniment){
+      const notes=[...new Set(accompaniment.notes)];
+      if(!notes.length||notes.length>6||notes.some(n=>!Number.isInteger(n)||n<0||n>127))throw Error('Некорректный аккорд сопровождения');
+      const period=accompaniment.mode==='sustain'?length:4;
+      for(let i=0;i<length;i+=period)notes.forEach(midi=>items.push({kind:'backing',midi,at:(lead+i)*beat,duration:Math.min(period,length-i)*beat}));
+    }
+    return {beat,lead,length,duration:(lead+length)*beat,items};
+  }
+  function createTransport({context=()=>getAudioCtx(),note=(...args)=>playMidi(...args),tap=(...args)=>playMetronome(...args),request=fn=>requestAnimationFrame(fn),cancel=id=>cancelAnimationFrame(id)}={}){
+    let voices=[],animation=0,version=0,playing=false,finish=null;
+    function stop(){version++;if(animation)cancel(animation);animation=0;voices.forEach(v=>{try{v?.stop();}catch{}});voices=[];playing=false;const callback=finish;finish=null;callback?.(false);}
+    function play(events,options={}){
+      stop();const plan=schedule(events,options),ctx=context(),start=ctx.currentTime+.08,ticket=version;
+      playing=true;finish=options.onend||null;
+      plan.items.forEach(e=>{
+        const voice=e.kind==='click'?tap(start+e.at,e.accent,.09):note(e.midi,start+e.at,e.duration,e.kind==='backing'?.045:.18,e.kind==='melody'?options.positions?.[e.index]||null:null,'held');
+        voices.push(voice);
+      });
+      function tick(){
+        if(ticket!==version)return;
+        const f=frame(events,ctx.currentTime-start,plan.beat,plan.lead);options.onframe?.(f);
+        if(f.done){animation=0;playing=false;voices=[];const callback=finish;finish=null;callback?.(true);return;}
+        animation=request(tick);
+      }
+      animation=request(tick);return plan;
+    }
+    return {play,stop,get playing(){return playing;}};
+  }
+  return {timeline,frame,diagram,schedule,createTransport};
 })();
 if(typeof module!=='undefined'&&module.exports)module.exports=CourseRhythmPlayer;
 </script>
@@ -3647,7 +3796,7 @@ const CourseBlockOne = (() => {
       const resume=window.courseLessons?.getResume();
       el('blockResume').textContent=resumeLabel(records,resume);
       document.querySelector('.sound-welcome').hidden=count===ACTIVITIES.length;
-      el('blockResume').onclick=()=>count===ACTIVITIES.length?window.courseLessons.open(2):resume?window.courseLessons.open(resume.index):open(next||ACTIVITIES[0]);
+      el('blockResume').onclick=()=>count===ACTIVITIES.length?window.courseBlockTwo.open('a'):resume?window.courseLessons.open(resume.index):open(next||ACTIVITIES[0]);
       const list=el('blockActivities');list.innerHTML='';
       const groups=[['Расстояния',0,2],['Мажорная гамма',2,6],['Слух, ритм и своя фраза',6,9],['Проверка',9,10]];
       groups.forEach(([title,start,end])=>{
@@ -3945,7 +4094,7 @@ const CourseBlockOne = (() => {
     }
     el('blockClose').addEventListener('click',()=>{stop();el('blockWorkspace').hidden=true;el('blockOverview').hidden=false;overview();el('blockResume').focus();});
     el('tab-block').addEventListener('click',()=>{stop();el('panel-lesson').hidden=true;el('blockRoute').hidden=false;el('blockWorkspace').hidden=true;el('blockOverview').hidden=false;overview();});
-    el('blockNextLesson').addEventListener('click',()=>{window.courseLessons.open(2);});
+    el('blockNextLesson').addEventListener('click',()=>{window.courseBlockTwo.open('a');});
     document.addEventListener('course-lesson-progress',e=>{
       const d=e.detail;if(![0,1].includes(d.lessonId)||!d.complete)return;
       records['lesson'+d.lessonId]={done:true,practice:d.practice,assisted:d.assisted,at:new Date().toISOString()};save();overview();
@@ -3964,6 +4113,371 @@ const CourseBlockOne = (() => {
 if(typeof module!=='undefined'&&module.exports)module.exports=CourseBlockOne;
 else window.courseBlockOne=CourseBlockOne.boot();
 </script>
+<script>/* Original FretLab examples. String numbers below are the physical 1–6. */
+const CourseBlockTwoContent=(()=>{
+  const OPEN={1:64,2:59,3:55,4:50,5:45,6:40};
+  const OFFSETS=[0,2,4,5,7,9,11,12],NAMES=['C','D','E','F','G','A','B','C'];
+  const point=(str,fret)=>({str,fret,midi:OPEN[str]+fret,key:`${str}/${fret}`});
+  const POSITION=[[6,8],[6,10],[5,7],[5,8],[5,10],[4,7],[4,9],[4,10]].map(([s,f],i)=>({...point(s,f),name:NAMES[i],degree:i%7+1,finger:f-6}));
+  const LINE=OFFSETS.map((n,i)=>({...point(5,3+n),name:NAMES[i],degree:i%7+1}));
+  const LOW=[[5,3],[4,2],[3,0]].map(([s,f])=>point(s,f));
+  const OPEN_C=[[5,3],[4,2],[3,0],[2,1],[1,0]].map(([s,f])=>point(s,f));
+  const transfer=(id,title,from,to,extra={})=>({id,kind:'transfer',title,from:point(...from),target:point(...to),text:'Тот же звук можно найти на соседней струне. Высота сохранится; тембр может немного отличаться.',instruction:`Найдите тот же звук на ${to[0]}-й струне. Сначала рассчитайте лад, затем нажмите.`,why:'На более высокой по звучанию струне вычитаем пять ладов; между третьей и второй — четыре. В обратном направлении прибавляем столько же.',...extra});
+  const A=[
+    {id:'a-recall',kind:'select',title:'Восстановите C major',points:LINE,base:LINE.slice(0,1),range:[3,15],strings:[5],text:'Вернёмся к мажорной формуле из первого блока. Сейчас важен каждый шаг между соседними звуками.',instruction:'C уже выбрана. Добавьте остальные семь звуков C major на пятой струне, затем проверьте.',why:'Семь шагов: 2–2–1–2–2–2–1 полутонов. От C до следующей C — 12 полутонов.'},
+    {id:'a-degrees',kind:'learn',title:'У каждой ноты есть номер',points:LINE,range:[3,15],degreeToggle:true,text:'В C major: C — 1, D — 2, E — 3, F — 4, G — 5, A — 6, B — 7. Следующая C снова первая ступень, на октаву выше.',instruction:'Переключите ноты и ступени. Послушайте гамму, затем сыграйте её, называя номера.',why:'Название ноты указывает звук, а ступень — его положение относительно тоники выбранной гаммы. Номер ступени не равен номеру лада.'},
+    {id:'a-degree-check',kind:'degrees',title:'Узнайте ступень',points:LINE,range:[3,15],order:[2,4,6,1],text:'Теперь номера скрыты. Вычисляйте ступень от C, а не угадывайте по номеру лада.',instruction:'Назовите ступень выделенной ноты. Все вопросы относятся к C major.'},
+    {id:'a-octaves',kind:'choice',title:'Две C — разные октавы',points:[POSITION[0],POSITION[7]],range:[7,10],text:'C3 и C4 носят одно имя, но звучат на разной высоте. Между ними октава — 12 полутонов.',instruction:'Послушайте обе C. Что сохраняется?',answers:['Абсолютная высота','Первая ступень C major','Номер лада'],correct:1,listenRequired:true,why:'Октава повторяет класс звука. C4 на 12 полутонов выше C3; это не унисон.'},
+    transfer('a-same','Тот же C на соседней струне',[6,8],[5,3]),
+    transfer('a-reverse','Перенос в обратную сторону',[5,5],[6,10],{text:'С более высокой по звучанию струны переносим звук на более низкую. Здесь к ладу нужно прибавить пять.'}),
+    transfer('a-tuning','Особенность второй струны',[3,7],[2,3],{text:'Между третьей G и второй B струнами четыре полутона. Поэтому вычитаем четыре лада, а не пять.',why:'Стандартный строй от шестой струны: E–A–D–G–B–E. Между соседними струнами пять полутонов, кроме G–B: там четыре.'}),
+    {id:'a-pack',kind:'pack',title:'Сложите гамму в позицию',points:POSITION,range:[7,10],text:'Теперь переносите каждый звук линии C3–C4 в пределы ладов 7–10. Сохраняются высоты и порядок нот.',instruction:'Найдите место указанной ноты на нужной струне. Подсказка объяснит путь переноса.',why:'C на 5/3 переносится на 6/8. Верхние A, B, C с пятой струны переходят на четвёртую на пять ладов назад.'},
+    {id:'a-position',kind:'learn',title:'Те же восемь звуков в компактной позиции',points:POSITION,range:[7,10],degreeToggle:true,fingers:true,text:'Это те же C3–D3–E3–F3–G3–A3–B3–C4. Рука остаётся в пределах четырёх ладов.',instruction:'Послушайте позицию вверх и вниз. Сыграйте медленно: шестая 8–10, пятая 7–8–10, четвёртая 7–9–10.',why:'Пальцы: указательный — 1, средний — 2, безымянный — 3, мизинец — 4. На ладах 7–10 используем по пальцу на лад.'},
+    {id:'a-rebuild',kind:'select',title:'Позиция без готового рисунка',points:POSITION,range:[7,10],strings:[6,5,4],text:'Восстановите знакомую позицию, опираясь на высоты и ступени.',instruction:'Выберите все восемь точек C major на струнах 6, 5 и 4 в пределах ладов 7–10. Лишнюю точку можно убрать.'},
+    {id:'a-repair',kind:'repair',title:'Найдите и исправьте ошибку',points:POSITION,range:[7,10],bad:point(5,9),target:POSITION[4],text:'Один звук в позиции сдвинут на лад. Сначала найдите его, затем исправьте.',instruction:'Нажмите на ошибочную точку. Проверяйте последовательность C–D–E–F–G–A–B–C.'},
+    {id:'a-practice',kind:'practice',title:'Позиция на настоящей гитаре',points:POSITION,range:[7,10],fingers:true,text:'Сыграйте гамму вверх, вниз и группами 1–2–3, 2–3–4, 3–4–5. Сначала называйте ступени, затем слушайте себя.',instruction:'Отметьте только то, что проверили на инструменте.',checks:['Я сыграл позицию вверх и вниз без потери порядка нот.','Я назвал ступени и проверил пальцы: 2–4 / 1–2–4 / 1–3–4.'],why:'Клики показывают понимание схемы. Чистоту звука и движение пальцев проверяете вы или преподаватель.'},
+    {id:'a-final',kind:'examA',title:'Проверка 2A без подсказок',range:[7,10],text:'Проверьте позицию, номера ступеней и перенос одинаковой высоты. Затем сыграйте без рисунка.',instruction:'Здесь нет подсказок. При затруднении можно вернуться к объяснению и повторить проверку.'}
+  ];
+  const B=[
+    {id:'b-select',kind:'select',title:'Выберите 1–3–5',points:[POSITION[0],POSITION[2],POSITION[4]],base:[],context:POSITION,range:[7,10],strings:[6,5,4],text:'Из знакомой гаммы возьмём C–E–G: первую, третью и пятую ступени.',instruction:'Выберите нижнюю C на 6/8, E и G в позиции. Верхнюю C пока не добавляйте.',why:'Это пока выбор звуков гаммы: E и G находятся на одной струне. Для одновременного исполнения перенесём их на разные струны.'},
+    transfer('b-move-c','Перенесите C к порожку',[6,8],[5,3]),
+    transfer('b-move-e','Перенесите E',[5,7],[4,2]),
+    transfer('b-move-g1','Перенесите G: первый шаг',[5,10],[4,5]),
+    transfer('b-move-g2','Перенесите G: второй шаг',[4,5],[3,0],{text:'G с 5/10 уже перенесён на 4/5. Ещё один перенос на пять ладов приводит к открытой третьей струне.'}),
+    {id:'b-triad',kind:'learn',title:'Три звука — C major',points:LOW,range:[0,4],chord:true,text:'Получилось C–E–G на трёх соседних струнах. У аккорда C — основной тон, E — терция, G — квинта.',instruction:'Сыграйте эти струны вместе. Остальные струны заглушите.',why:'От C до E — 4 полутона, от C до G — 7. Интервальная модель мажорного трезвучия: 0–4–7.'},
+    {id:'b-predict',kind:'choice',title:'Что изменит один полутон?',points:LOW,range:[0,4],text:'♭ — знак бемоль: звук на полутон ниже ноты без этого знака. E♭ на лад ниже E.',instruction:'Если оставить C и G, а E понизить до E♭, что произойдёт с терцией?',answers:['Станет меньше на полутон','Станет больше на полутон','Не изменится'],correct:0,why:'E — большая терция от C, E♭ — малая. Сейчас предскажите результат; на следующем шаге услышите его.'},
+    {id:'b-third',kind:'lowerThird',title:'Услышьте C major → C minor',range:[0,4],text:'Передвиньте E с 4/2 на 4/1. C и G останутся на местах. Изменяется качество трезвучия.',instruction:'Нажмите на четвёртой струне на лад ниже E, затем сравните два аккорда.',why:'C–E♭–G имеет модель 0–3–7. E♭ — малая терция аккорда Cm; она не входит в гамму C major.'},
+    {id:'b-arpeggio',kind:'learn',title:'Аккорд и арпеджио',points:LOW,range:[0,4],chord:true,text:'Одни и те же C–E–G можно сыграть вместе или по очереди. Последовательное исполнение звуков аккорда — арпеджио.',instruction:'Сравните «Вместе» и «Арпеджио». Затем сыграйте оба варианта на гитаре.'},
+    {id:'b-open',kind:'learn',title:'В открытом C те же звуки',points:OPEN_C,range:[0,4],chord:true,text:'Открытый C содержит C–E–G–C–E: некоторые звуки повторяются. Состав по-прежнему C, E и G.',instruction:'Нажмите на точки и найдите повторы C и E. Сыграйте открытый C; шестую струну заглушите.',why:'Повторы меняют расположение голосов и плотность звучания. Нижним может быть другой звук, а состав оставаться C major; подробно разберём это позже.'},
+    {id:'b-lab',kind:'chord',root:0,quality:'maj',range:[0,4],title:'Соберите C major сами',text:'Урок задаёт основной тон C. На каждой струне можно оставить только один звук или заглушить её.',instruction:'Соберите C–E–G. Повторы разрешены; посторонних звуков быть не должно.'},
+    {id:'b-ear',kind:'earQuality',title:'Major или minor на слух',text:'В каждой паре возможен C major или C minor. Слушайте терцию, не подсматривая на гриф.',instruction:'Послушайте пример до конца, затем выберите качество аккорда.'},
+    {id:'b-landing',kind:'earLanding',title:'На чём закончилась фраза?',text:'Под фразой звучит C major. Аккордовые звуки — C, E, G. Другие ноты гаммы тоже можно использовать в мелодии.',instruction:'Определите: последний звук входит в C–E–G или это другой звук C major? Это проверка состава, а не оценка «красиво / некрасиво».'},
+    {id:'b-compose',kind:'compose',points:POSITION,range:[7,10],title:'Своя фраза поверх C major',text:'Создайте два такта из нот C major. Под ними будет звучать аккорд C: протяжно или с повтором каждый такт.',instruction:'Заполните 8 долей. Завершите звучащую часть на C, E или G. Послушайте, пропойте и сыграйте на гитаре.'},
+    {id:'b-g',kind:'chord',root:7,quality:'maj',range:[0,7],title:'Постройте G major по правилу',text:'Теперь урок задаёт корень G. Отложите от него 4 и 7 полутонов: G–B–D.',instruction:'Соберите G major. На каждой струне — один звук; повторения G, B и D допустимы.',why:'Корень поменялся, но отношения сохранились: 0–4–7. Учить новую гамму для этого задания не требуется.'},
+    {id:'b-final',kind:'examB',title:'Проверка 2B без подсказок',text:'Соберите C major без готовых точек, проверьте роль терции и отличие арпеджио. Затем отметьте игру на гитаре.',instruction:'В финале проверяются знания и отдельно ваша самопроверка исполнения.'}
+  ];
+  return {OPEN,OFFSETS,NAMES,point,POSITION,LINE,LOW,OPEN_C,A,B,parts:{a:A,b:B}};
+})();
+if(typeof module!=='undefined'&&module.exports)module.exports=CourseBlockTwoContent;
+</script>
+<script>/* Block 2: explicit pitch transfers, original practice and teacher-set chord roots. */
+const CourseBlockTwo=(()=>{
+  const C=typeof module!=='undefined'&&module.exports?require('./course-block-two-content.js'):CourseBlockTwoContent;
+  const KEY='fretlab-block2-v1',DAY=86400000;
+  const pc=n=>((n%12)+12)%12;
+  const pitch=n=>['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B'][pc(n)];
+  const equals=(a,b)=>a.length===b.length&&new Set(a).size===a.length&&a.every(x=>b.includes(x));
+  function chordResult(points,root,quality='maj',namer=null){
+    const expected=[0,quality==='min'?3:4,7].map(x=>pc(x+root));
+    const notes=[...new Set(points.map(p=>pc(p.midi)))].sort((a,b)=>a-b);
+    const missing=expected.filter(n=>!notes.includes(n)),extra=notes.filter(n=>!expected.includes(n));
+    const playable=new Set(points.map(p=>p.str)).size===points.length;
+    const valid=playable&&!missing.length&&!extra.length;
+    let name='';
+    if(valid&&namer){const rootNote={noteName:pitch(root),semitone:root};name=namer(rootNote,notes.filter(n=>n!==root).map(n=>({semitone:n,noteName:pitch(n)})));}
+    return {valid,missing,extra,name,notes,text:valid?`Это ${pitch(root)} ${quality==='min'?'minor':'major'}. Состав: ${expected.map(pitch).join('–')}.`:!playable?'На каждой струне оставьте один звук.':extra.length?`Есть лишний звук: ${extra.map(pitch).join(', ')}.`:`Не хватает ${missing.map(pitch).join(', ')}.`};
+  }
+  function phraseCheck(events){
+    if(!Array.isArray(events)||events.length>32||events.some(e=>!e||![.5,1,2].includes(e.beats)||!(e.midi===null||C.POSITION.some(p=>p.midi===e.midi))))return 'Используйте ноты C major и длительности ½, 1 или 2 доли.';
+    const total=events.reduce((n,e)=>n+e.beats,0),notes=events.filter(e=>e.midi!==null);
+    if(total!==8)return `Заполните два такта: сейчас ${total} из 8 долей.`;
+    if(notes.length<2)return 'Добавьте хотя бы два звучащих события.';
+    if(![0,4,7].includes(pc(notes.at(-1).midi)))return 'Завершите звучащую часть на C, E или G. Пауза после неё допустима.';
+    return '';
+  }
+  function clean(raw){
+    const state={version:1,part:'a',index:{a:0,b:0},sessions:{},done:{},completedAt:{},reviewedAt:{},reviewResults:{}};
+    if(raw?.version!==1)return state;
+    if(raw.part==='b')state.part='b';
+    for(const part of ['a','b']){
+      const n=raw.index?.[part];if(Number.isInteger(n))state.index[part]=Math.max(0,Math.min(C.parts[part].length-1,n));
+      for(const kind of ['completedAt','reviewedAt'])if(Number.isFinite(raw[kind]?.[part])&&raw[kind][part]>0)state[kind][part]=raw[kind][part];
+      const review=raw.reviewResults?.[part];
+      if(review&&Number.isFinite(review.at)&&review.at>0)state.reviewResults[part]={at:review.at,attempts:Number.isInteger(review.attempts)&&review.attempts>=0?review.attempts:0,practiceConfirmed:review.practiceConfirmed===true};
+      for(const step of C.parts[part]){
+        if(raw.done?.[step.id]===true)state.done[step.id]=true;
+        const s=raw.sessions?.[step.id];if(!s||typeof s!=='object')continue;
+        const safe={};
+        for(const name of ['round','phase','attempts','firstCorrect','lastAnswer'])if(Number.isInteger(s[name])&&s[name]>=0&&s[name]<=128)safe[name]=s[name];
+        for(const name of ['ok','heard','located','assisted','earTried','earCorrect'])safe[name]=s[name]===true;
+        if(Array.isArray(s.selected))safe.selected=[...new Set(s.selected.filter(k=>typeof k==='string'&&/^[1-6]\/(?:[0-9]|1[0-6])$/.test(k)))].slice(0,40);
+        if(Array.isArray(s.checks))safe.checks=s.checks.slice(0,4).map(x=>x===true);
+        if(Array.isArray(s.events)&&!s.events.some(e=>!e||![.5,1,2].includes(e.beats)||!(e.midi===null||C.POSITION.some(p=>p.midi===e.midi)))&&s.events.length<=32&&s.events.reduce((n,e)=>n+e.beats,0)<=8)safe.events=s.events.map(e=>({midi:e.midi,beats:e.beats}));
+        if([.5,1,2].includes(s.duration))safe.duration=s.duration;
+        state.sessions[step.id]=safe;
+      }
+    }
+    return state;
+  }
+  function reviewDue(state,part,now=Date.now()){
+    return !!state.completedAt[part]&&!state.reviewedAt[part]&&now-state.completedAt[part]>=3*DAY;
+  }
+  function boot(){
+    const el=id=>document.getElementById(id),node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
+    let state=clean(null),storageOK=true,review=null,labels='notes',tempo=80,backing='repeat',focusKey=null;
+    try{state=clean(JSON.parse(localStorage.getItem(KEY)||'null'));}catch{storageOK=false;}
+    const transport=CourseRhythmPlayer.createTransport();let clicks=[];
+    const step=()=>C.parts[state.part][state.index[state.part]];
+    function session(){const d=step();return state.sessions[d.id]||(state.sessions[d.id]={selected:(d.base||[]).map(p=>p.key),checks:[],events:[],round:0,phase:0,attempts:0,firstCorrect:0});}
+    const selected=s=>(s.selected||[]).map(k=>{const [str,fret]=k.split('/').map(Number);return C.point(str,fret);});
+    function save(){try{localStorage.setItem(KEY,JSON.stringify(state));storageOK=true;}catch{storageOK=false;}el('b2Storage').textContent=storageOK?'Шаг, ответы и фраза сохраняются в этом браузере. Игру на гитаре вы оцениваете отдельно.':'Сохранение в браузере недоступно. Можно заниматься; после закрытия страницы результаты потеряются.';}
+    function feedback(text,good=false){const e=el('b2Feedback');e.textContent=text;e.hidden=!text;e.classList.toggle('answer-success',good);}
+    function button(parent,text,fn,{primary=false,disabled=false}={}){const b=node('button',text);b.type='button';b.className='play-btn'+(primary?' primary-btn':'');b.disabled=disabled;b.onclick=fn;parent.appendChild(b);return b;}
+    const body=()=>el('b2TaskBody');
+    function controls(){const row=node('div');row.className='sandbox-controls';body().appendChild(row);return row;}
+    function stop(){transport.stop();clicks.forEach(v=>{try{v?.stop();}catch{}});clicks=[];if(el('b2AudioStatus'))el('b2AudioStatus').textContent='';el('b2Stop').hidden=true;body().querySelectorAll('.is-playing').forEach(e=>e.classList.remove('is-playing'));}
+    function at(p){return {boardId:'b2Board',index:(p.str-1)*(FRET_COUNT+1)+p.fret};}
+    function note(p){stop();clicks.push(playMidi(p.midi,undefined,.85,.18,at(p)));}
+    function play(events,{chord=null,countIn=false,positions=[],onend=null}={}){
+      stop();window.courseBlockOne?.stop();stopSequence();el('b2Stop').hidden=false;
+      transport.play(events,{tempo,countIn,metronome:countIn,positions,
+        accompaniment:chord?{notes:chord,mode:backing}:null,
+        onframe:f=>{
+          el('b2AudioStatus').textContent=f.countIn!==undefined?`Отсчёт: ${f.countIn+1}`:f.position!==undefined?`Такт ${Math.floor(f.position/4)+1} · доля ${f.beat+1}`:'';
+          body().querySelectorAll('[data-phrase-event]').forEach(e=>e.classList.toggle('is-playing',Number(e.dataset.phraseEvent)===f.index));
+        },onend:finished=>{el('b2Stop').hidden=true;el('b2AudioStatus').textContent='';body().querySelectorAll('.is-playing').forEach(e=>e.classList.remove('is-playing'));if(finished)onend?.();}
+      });
+    }
+    function listen(points,{together=false,onend=null,countIn=false}={}){
+      if(together)play([{midi:null,beats:2}],{chord:points.map(p=>p.midi),onend});
+      else play(points.map(p=>({midi:p.midi,beats:1})),{positions:points.map(at),onend,countIn});
+    }
+    function heard(s){s.heard=true;save();updateNext();}
+    function board(points,{range=[0,16],strings=null,onClick=null,show='notes',target=null,fingers=false,interactive=true}={}){
+      const wrapper=node('div');wrapper.className='board-outer b2-board-outer';const b=node('div');b.id='b2Board';b.className='board';b.setAttribute('aria-label','Учебный гриф: первая струна сверху');wrapper.appendChild(b);body().appendChild(wrapper);v2RenderBoard(new Map(),b.id);
+      const [low,high]=range;b.style.gridTemplateColumns=`38px repeat(${high-low+1},minmax(36px,1fr))`;b.style.minWidth=`${38+(high-low+1)*38}px`;
+      b.querySelectorAll('.fret-label').forEach((e,i)=>e.hidden=i<low||i>high);
+      b.querySelectorAll('.cell').forEach((cell,i)=>{
+        const p=C.point(Math.floor(i/(FRET_COUNT+1))+1,i%(FRET_COUNT+1));cell.hidden=p.fret<low||p.fret>high;if(cell.hidden)return;
+        const active=!strings||strings.includes(p.str);if(!active)cell.classList.add('lesson-muted');
+        const marked=points.find(n=>n.key===p.key),hit=node('button');hit.type='button';hit.className='sandbox-hit';hit.setAttribute('aria-label',`Струна ${p.str}, лад ${p.fret}`);hit.setAttribute('aria-pressed',String(!!marked));
+        const start=focusKey||`${strings?.[0]||6}/${low}`;hit.tabIndex=p.key===start?0:-1;
+        hit.onfocus=()=>{focusKey=p.key;b.querySelectorAll('.sandbox-hit').forEach(x=>x.tabIndex=x===hit?0:-1);};
+        hit.onkeydown=e=>{const moves={ArrowLeft:[0,-1],ArrowRight:[0,1],ArrowUp:[-1,0],ArrowDown:[1,0]};if(!moves[e.key])return;e.preventDefault();const [ds,df]=moves[e.key],str=Math.max(1,Math.min(6,p.str+ds)),fret=Math.max(low,Math.min(high,p.fret+df));b.querySelector(`button[aria-label="Струна ${str}, лад ${fret}"]`)?.focus({preventScroll:true});};
+        if(marked){const dot=node('span');dot.className='note'+(pc(p.midi)===(step().root||0)?' root':' chord-tone');dot.textContent=show==='degrees'?String(marked.degree||C.POSITION.find(x=>pc(x.midi)===pc(p.midi))?.degree||'·'):show==='intervals'?({0:'1',3:'♭3',4:'3',7:'5'}[pc(p.midi-(step().root||0))]||'·'):show==='hidden'?'?':pitch(p.midi);hit.appendChild(dot);
+          if(fingers){const finger=node('small',String(p.fret-6));finger.className='b2-finger';hit.appendChild(finger);}
+        }
+        if(target===p.key)hit.classList.add('b2-target');
+        hit.disabled=!interactive||!active;
+        hit.onclick=()=>{focusKey=p.key;if(onClick)onClick(p);else note(p);};cell.appendChild(hit);
+      });
+      if(!b.querySelector('[tabindex="0"]')){const first=b.querySelector('.sandbox-hit:not(:disabled)');if(first)first.tabIndex=0;}
+      const legend=node('p',`Первая струна — тонкая E сверху; шестая — толстая E снизу. 0 — открытая струна. Золотая точка — ${pitch(step().root||0)}.`);legend.className='board-legend';body().appendChild(legend);
+      return b;
+    }
+    function redraw(){const x=scrollX,y=scrollY,focused=focusKey;render();if(focused)el('b2Board')?.querySelector(`button[aria-label="Струна ${focused.split('/')[0]}, лад ${focused.split('/')[1]}"]`)?.focus({preventScroll:true});scrollTo(x,y);}
+    function checks(s,texts){s.checks||=[];texts.forEach((text,i)=>{const label=node('label');label.className='lesson-practice';const input=node('input');input.type='checkbox';input.checked=!!s.checks[i];input.onchange=()=>{s.checks[i]=input.checked;save();updateNext();};label.append(input,node('span',text));body().appendChild(label);});}
+    function question(s,answers,correct,{onCorrect=null,disabled=false}={}){
+      const row=controls();answers.forEach((text,i)=>{const b=button(row,text,()=>{
+        stop();s.attempts=(s.attempts||0)+1;s.lastAnswer=i;
+        if(i===correct){s.ok=true;feedback('Верно.',true);if(onCorrect){onCorrect();save();return;}}
+        else {s.ok=false;feedback('Пока неверно. Обдумайте условие и попробуйте снова.');}
+        save();updateNext();
+      },{disabled});if(s.lastAnswer===i)b.classList.add(s.ok?'correct-choice':'wrong-choice');});
+    }
+    function selectTask(d,s,{points=d.points,onPass=null}={}){
+      s.selected||=(d.base||[]).map(p=>p.key);
+      board(selected(s),{range:d.range,strings:d.strings,onClick:p=>{if((d.base||[]).some(n=>n.key===p.key)){note(p);return;}s.selected=s.selected.includes(p.key)?s.selected.filter(k=>k!==p.key):[...s.selected,p.key];s.ok=false;redraw();note(p);}});
+      button(controls(),'Проверить',()=>{
+        s.attempts=(s.attempts||0)+1;s.ok=equals(s.selected,points.map(p=>p.key));save();
+        feedback(s.ok?'Верно: все точки на своих местах.':'Проверьте число и расположение звуков. Лишнюю точку можно убрать.',s.ok);if(s.ok)onPass?.();updateNext();
+      },{primary:true});
+      if(s.ok)feedback('Позиция восстановлена.',true);
+    }
+    function transferTask(d,s,{onPass=null}={}){
+      const source=node('p',`Откуда: ${pitch(d.from.midi)}${Math.floor(d.from.midi/12)-1} · ${d.from.key} → струна ${d.target.str}.`);source.className='b2-transfer';body().appendChild(source);
+      const marks=s.ok?[d.from,d.target]:[d.from];
+      board(marks,{range:[Math.max(0,Math.min(d.from.fret,d.target.fret)-1),Math.min(16,Math.max(d.from.fret,d.target.fret)+1)],onClick:p=>{
+        if(p.key===d.from.key){note(p);return;}
+        s.attempts=(s.attempts||0)+1;s.ok=p.key===d.target.key;save();redraw();note(p);
+        feedback(s.ok?`Одинаковая высота: ${d.from.key} = ${d.target.key}.`:`Найдите тот же звук именно на ${d.target.str}-й струне.`,s.ok);if(s.ok)onPass?.();updateNext();
+      }});
+      button(controls(),'▶ Сравнить высоты',()=>listen(s.ok?[d.from,d.target]:[d.from]));
+    }
+    function degreeTask(d,s,{points=d.points,order=d.order,onPass=null}={}){
+      s.round=Math.min(s.round||0,order.length);if(s.round===order.length){s.ok=true;feedback('Все ступени названы.',true);onPass?.();return;}
+      const p=points[order[s.round]];body().appendChild(node('p',`Вопрос ${s.round+1} из ${order.length}: ${pitch(p.midi)} на ${p.key}. Какая это ступень C major?`));
+      board(points,{range:d.range,target:p.key,show:'notes'});
+      question(s,['1','2','3','4','5','6','7'],p.degree-1,{onCorrect:()=>{s.round++;s.ok=s.round===order.length;s.lastAnswer=undefined;save();redraw();if(s.ok)onPass?.();}});
+    }
+    function chordTask(d,s,{onPass=null,exam=false}={}){
+      s.selected||=[];const points=selected(s),root=d.root||0;
+      if(!['notes','intervals'].includes(labels))labels='notes';
+      function edit(next){s.history=(s.history||[]).slice(-15);s.history.push([...s.selected]);s.selected=next;s.ok=false;redraw();}
+      const row=controls();for(const [value,text] of [['notes','Ноты'],['intervals','Интервалы аккорда']]){const b=button(row,text,()=>{labels=value;redraw();});b.setAttribute('aria-pressed',String(labels===value));}
+      let stringOptions=null;
+      if(!exam){const states=node('div');states.className='b2-string-states';body().appendChild(states);
+        for(let str=6;str>=1;str--){const slot=node('div');slot.appendChild(node('strong',`Струна ${str}`));const chosen=points.find(p=>p.str===str);slot.appendChild(node('span',chosen?`${chosen.fret===0?'Открытая':'Лад '+chosen.fret} · ${pitch(chosen.midi)}`:'× заглушена'));
+          button(slot,'○ Открытая',()=>edit(s.selected.filter(k=>!k.startsWith(str+'/')).concat(`${str}/0`)));button(slot,'× Заглушить',()=>edit(s.selected.filter(k=>!k.startsWith(str+'/'))));states.appendChild(slot);
+        }
+        stringOptions=node('details');stringOptions.className='audio-options';stringOptions.appendChild(node('summary','Открытые / заглушённые струны'));stringOptions.appendChild(states);
+      }
+      board(points,{range:d.range||[0,7],show:labels,onClick:p=>{const exists=s.selected.includes(p.key),next=s.selected.filter(k=>!k.startsWith(p.str+'/'));if(!exists)next.push(p.key);edit(next);note(p);}});
+      if(stringOptions)body().appendChild(stringOptions);
+      const detail=node('p',points.length?'Звучит: '+points.slice().sort((a,b)=>b.str-a.str).map(p=>pitch(p.midi)).join('–'):'Все струны заглушены. Выберите звуки.');body().appendChild(detail);
+      const actions=controls();
+      button(actions,'▶ Вместе',()=>listen(points,{together:true}),{disabled:!points.length});button(actions,'▶ Арпеджио',()=>listen(points.slice().sort((a,b)=>a.midi-b.midi)),{disabled:!points.length});
+      button(actions,'Отменить',()=>{s.selected=s.history.pop();s.ok=false;redraw();},{disabled:!s.history?.length});
+      button(actions,'Сброс',()=>edit([]));
+      button(actions,'Проверить аккорд',()=>{const r=chordResult(selected(s),root,d.quality||'maj',nameChord);s.ok=r.valid;s.attempts=(s.attempts||0)+1;save();feedback(exam&&!r.valid?'Проверьте состав аккорда и попробуйте ещё раз.':r.text,r.valid);if(r.valid)onPass?.();updateNext();},{primary:true});
+    }
+    function earTask(d,s,{onPass=null,exam=false}={}){
+      const landing=d.kind==='earLanding',total=exam?1:4;s.round=Math.min(s.round||0,total);
+      if(s.round===total){s.ok=true;feedback(`Слуховая практика завершена. С первой попытки: ${s.firstCorrect||0} из ${total}.`,true);onPass?.();return;}
+      const qualities=[false,true,true,false],ends=[52,50,55,57],minor=exam||qualities[s.round],end=ends[s.round];
+      body().appendChild(node('p',`Пример ${s.round+1} из ${total}. Гриф скрыт.`));
+      const row=controls();
+      button(row,'▶ Послушать пример',()=>{
+        s.heard=false;save();body().querySelectorAll('[data-ear-answer]').forEach(b=>b.disabled=true);
+        const events=landing?[{midi:48,beats:1},{midi:50,beats:1},{midi:55,beats:1},{midi:end,beats:1}]:[{midi:null,beats:2}];
+        play(events,{chord:landing?[48,52,55]:[48,minor?51:52,55],onend:()=>{heard(s);body().querySelectorAll('[data-ear-answer]').forEach(b=>b.disabled=false);}});
+      });
+      const answers=landing?['На звуке аккорда','На другом звуке гаммы']:['Мажор','Минор'],correct=landing?([0,4,7].includes(pc(end))?0:1):(minor?1:0);
+      answers.forEach((text,i)=>{const b=button(row,text,()=>{
+        if(!s.heard)return;stop();const ok=i===correct;s.attempts=(s.attempts||0)+1;
+        if(ok){if(!s.earTried)s.firstCorrect=(s.firstCorrect||0)+1;s.earCorrect=true;feedback('Верно.',true);next.hidden=false;}
+        else {s.earTried=true;feedback('Пока неверно. Послушайте ещё раз и сравните.');}save();
+      },{disabled:!s.heard});b.dataset.earAnswer=String(i);});
+      const next=button(controls(),s.round===total-1?'Завершить слуховую практику':'Следующий пример',()=>{if(!s.earCorrect)return;s.round++;s.heard=false;s.earTried=false;s.earCorrect=false;save();redraw();},{primary:true});next.hidden=!s.earCorrect;
+    }
+    function composer(d,s){
+      s.events||=[];s.duration||=1;s.checks||=[];const total=s.events.reduce((n,e)=>n+e.beats,0);
+      body().appendChild(node('p',`Заполнено ${total} из 8 долей · 2 такта 4/4`));
+      const row=controls();for(const [value,text] of [[.5,'Восьмая · ½ доли'],[1,'Четверть · 1 доля'],[2,'Половинная · 2 доли']]){const b=button(row,text,()=>{s.duration=value;redraw();});b.setAttribute('aria-pressed',String(value===s.duration));}
+      function append(midi){if(total+s.duration>8){feedback('Два такта заполнены. Уберите последнее событие или выберите меньшую длительность.');return;}s.events.push({midi,beats:s.duration});s.ok=false;s.checks=[];redraw();}
+      button(row,'Добавить паузу',()=>append(null));
+      board(C.POSITION,{range:[7,10],strings:[6,5,4],onClick:p=>{if(!C.POSITION.some(n=>n.key===p.key)){feedback('Выберите одну из нот позиции C major.');return;}append(p.midi);note(p);}});
+      const timeline=node('ol');timeline.className='b2-phrase';timeline.setAttribute('aria-label','События фразы');
+      s.events.forEach((e,i)=>{const item=node('li',`${e.midi===null?'Пауза':pitch(e.midi)} · ${e.beats===.5?'½':e.beats} доли`);item.style.gridColumn=`span ${e.beats*2}`;item.dataset.phraseEvent=String(i);timeline.appendChild(item);});body().appendChild(timeline);
+      const actions=controls();button(actions,'Убрать последнее',()=>{s.events.pop();s.checks=[];redraw();},{disabled:!s.events.length});button(actions,'Очистить фразу',()=>{s.events=[];s.checks=[];redraw();},{disabled:!s.events.length});
+      const accompaniment=node('label','Сопровождение '),select=node('select');[['repeat','Повторять C каждый такт'],['sustain','Тянуть C под всей фразой']].forEach(([v,t])=>{const o=node('option',t);o.value=v;select.appendChild(o);});select.value=backing;select.onchange=()=>{backing=select.value;stop();};accompaniment.appendChild(select);actions.appendChild(accompaniment);
+      button(actions,'▶ Фраза + C major',()=>play(s.events,{chord:[48,52,55],countIn:true,positions:s.events.map(e=>{const p=C.POSITION.find(p=>p.midi===e.midi);return p?at(p):null;})}),{disabled:!s.events.length});
+      checks(s,['Я пропел и сыграл фразу поверх C major.','Я сохранил пульс и осознанно завершил фразу на C, E или G.']);
+      button(controls(),'Проверить фразу',()=>{const issue=phraseCheck(s.events);s.ok=!issue&&s.checks.every(Boolean)&&s.checks.length===2;feedback(issue||(!s.ok?'Сыграйте фразу на гитаре и отметьте самопроверку.':'Фраза готова: два такта и окончание на звуке аккорда.'),s.ok);save();updateNext();},{primary:true});
+    }
+    function exam(d,s){
+      const a=d.kind==='examA',phase=s.phase||0;
+      const progress=node('p',`Часть проверки ${phase+1} из ${a?4:5}`);body().appendChild(progress);
+      function pass(){s.phase=phase+1;s.ok=false;s.selected=[];s.round=0;s.checks=[];s.lastAnswer=undefined;s.heard=false;save();redraw();}
+      const advance=()=>{const b=button(controls(),'К следующей части проверки',pass,{primary:true});return b;};
+      if(phase===0){
+        el('b2Instruction').textContent=a?'Восстановите восемь точек позиции C major.':'Соберите C major на трёх или более струнах без посторонних звуков.';
+        if(a)selectTask({...d,points:C.POSITION,strings:[6,5,4]},s,{onPass:()=>advance()});
+        else chordTask({root:0,range:[0,4]},s,{exam:true,onPass:()=>advance()});
+      }else if(a&&phase===1){
+        degreeTask({...d,points:C.POSITION,order:[5,1,6,3]},s,{onPass:()=>{if(!body().querySelector('.b2-exam-advance')){const b=advance();b.classList.add('b2-exam-advance');}}});
+      }else if(a&&phase===2){
+        el('b2Instruction').textContent='Найдите звук с третьей струны, седьмого лада на второй струне.';
+        transferTask({from:C.point(3,7),target:C.point(2,3)},s,{onPass:()=>advance()});
+      }else if(!a&&phase===1){
+        el('b2Instruction').textContent='В C–E–G понизили E на полутон. Что получилось?';question(s,['C minor: C–E♭–G','C major: состав не изменился','Другая октава C major'],0,{onCorrect:pass});
+      }else if(!a&&phase===2){
+        el('b2Instruction').textContent='Что такое арпеджио C major?';question(s,['Любые ноты гаммы C major','Последовательное исполнение звуков C–E–G','Только одновременное C–E–G'],1,{onCorrect:pass});
+      }else if(!a&&phase===3){earTask({kind:'earQuality'},s,{exam:true,onPass:()=>{const b=advance();b.classList.add('b2-exam-advance');}});
+      }else{
+        el('b2Instruction').textContent='Уберите подсказки и проверьте себя на настоящем инструменте.';
+        checks(s,a?['Я сыграл позицию C major вверх и вниз по памяти.','Я назвал ступени и перенёс одинаковую высоту на соседнюю струну.']:['Я сыграл C major и C minor, объяснив роль терции.','Я сыграл C–E–G вместе и как арпеджио.','Я сыграл свою фразу под C major, сохранив пульс.']);
+      }
+    }
+    function ready(d=step(),s=session()){
+      if(d.kind==='examA'||d.kind==='examB')return (s.phase||0)>=(d.kind==='examA'?3:4)&&s.checks?.length===(d.kind==='examA'?2:3)&&s.checks.every(Boolean);
+      if(d.kind==='practice')return s.checks?.length===d.checks.length&&s.checks.every(Boolean);
+      if(d.kind==='learn')return !!s.heard;
+      if(d.kind==='compose')return !!s.ok&&!phraseCheck(s.events)&&s.checks?.length===2&&s.checks.every(Boolean);
+      return s.ok===true;
+    }
+    function updateNext(){el('b2Next').disabled=!ready();el('b2NextHelp').textContent=ready()?'':step().kind==='learn'?'Послушайте пример перед продолжением.':'Выполните задание, затем переходите дальше.';}
+    function render(){
+      stop();const d=step(),s=session();save();const index=state.index[state.part],list=C.parts[state.part];
+      el('b2Crumb').textContent=`Блок 2${state.part.toUpperCase()} · ${review?'Повторная проверка':`Шаг ${index+1} из ${list.length}`}`;
+      el('b2Title').textContent=d.title;el('b2Text').textContent=d.text;el('b2Instruction').textContent=d.instruction;el('b2Why').hidden=!d.why;el('b2WhyText').textContent=d.why||'';el('b2Why').open=false;
+      el('b2StepProgress').max=list.length;el('b2StepProgress').value=index+1;el('b2Back').disabled=index===0||!!review;el('b2Next').textContent=index===list.length-1?review?'Завершить повторение':`Завершить блок 2${state.part.toUpperCase()}`:'Дальше →';
+      el('b2Hint').hidden=['examA','examB','earQuality','earLanding','practice','learn'].includes(d.kind);
+      body().replaceChildren();feedback('');
+      if(d.kind==='select')selectTask(d,s);
+      else if(d.kind==='transfer')transferTask(d,s);
+      else if(d.kind==='degrees')degreeTask(d,s);
+      else if(d.kind==='choice'){
+        if(d.points)board(d.points,{range:d.range});
+        if(d.listenRequired)button(controls(),'▶ Послушать две C',()=>listen(d.points,{onend:()=>{heard(s);redraw();}}));
+        question(s,d.answers,d.correct,{disabled:d.listenRequired&&!s.heard});
+      }else if(d.kind==='learn'||d.kind==='practice'){
+        if(!['notes','degrees'].includes(labels))labels='notes';
+        if(d.degreeToggle){const row=controls();for(const [v,t] of [['notes','Ноты'],['degrees','Ступени']]){const b=button(row,t,()=>{labels=v;redraw();});b.setAttribute('aria-pressed',String(labels===v));}}
+        board(d.points,{range:d.range,show:d.degreeToggle?labels:'notes',fingers:d.fingers});
+        if(d.fingers)body().appendChild(node('p','Пальцы: 2–4 / 1–2–4 / 1–3–4. Указательный — на 7-м ладу.'));
+        const row=controls();button(row,d.chord?'▶ Вместе':'▶ Вверх и вниз',()=>listen(d.chord?d.points:[...d.points,...d.points.slice(0,-1).reverse()],{together:!!d.chord,onend:()=>heard(s)}));
+        if(d.chord)button(row,'▶ Арпеджио',()=>listen(d.points,{onend:()=>heard(s)}));
+        if(d.kind==='practice')checks(s,d.checks);
+        if(d.id==='a-practice'){
+          const extra=node('details');extra.className='lesson-purpose';extra.appendChild(node('summary','Дополнительно: сдвиг на два лада'));extra.appendChild(node('p','Если сдвинуть все точки позиции на два лада вверх, какая гамма получится? Сначала ответьте, затем послушайте.'));
+          const result=node('p');result.setAttribute('role','status');
+          for(const text of ['C major','D major','C minor'])button(extra,text,()=>{const ok=text==='D major';result.textContent=ok?'Верно: D major. То есть ре мажор: тоника поднялась с C до D, а расстояния между звуками сохранились.':'Проверьте: что случилось с тоникой C, когда её подняли на два лада?';compare.disabled=!ok;});
+          const compare=button(extra,'▶ Сравнить до и после',()=>listen([...C.POSITION,...C.POSITION.map(p=>({...p,fret:p.fret+2,midi:p.midi+2,key:`${p.str}/${p.fret+2}`}))]),{disabled:true});extra.appendChild(result);body().appendChild(extra);
+        }
+      }else if(d.kind==='pack'){
+        s.round=Math.min(s.round||0,C.POSITION.length);const target=C.POSITION[s.round];
+        if(!target){s.ok=true;board(C.POSITION,{range:d.range,show:'degrees'});feedback('Те же восемь высот собраны в позиции.',true);}
+        else {const source=C.LINE[s.round];body().appendChild(node('p',`${s.round+1}/8 · ${source.name}${Math.floor(source.midi/12)-1}: ${source.key} → струна ${target.str}, лады 7–10.`));board(C.POSITION.slice(0,s.round),{range:d.range,strings:[6,5,4],show:'degrees',onClick:p=>{s.attempts=(s.attempts||0)+1;if(p.key===target.key){s.round++;s.ok=s.round===8;save();redraw();note(p);}else{note(p);feedback('Высота должна остаться той же. Проверьте струну и перенос на пять ладов.');save();}}});}
+      }else if(d.kind==='repair'){
+        const marks=s.ok?d.points:d.points.map(p=>p.key===d.target.key?d.bad:p);
+        el('b2Instruction').textContent=s.located?'Теперь выберите правильное место для G на той же струне.':d.instruction;
+        board(marks,{range:d.range,strings:[6,5,4],onClick:p=>{s.attempts=(s.attempts||0)+1;if(!s.located){s.located=p.key===d.bad.key;redraw();feedback(s.located?'Ошибка найдена. Теперь исправьте её.':'Проверьте порядок нот и расстояния.');}else{s.ok=p.key===d.target.key;redraw();feedback(s.ok?'Верно: на пятой струне, десятом ладу — G.':'Пока неверно. Найдите G на пятой струне.',s.ok);}note(p);save();updateNext();}});
+      }else if(d.kind==='lowerThird'){
+        const minor=[C.LOW[0],C.point(4,1),C.LOW[2]];board(s.ok?minor:C.LOW,{range:d.range,onClick:p=>{s.ok=p.key==='4/1';redraw();if(s.ok)listen(minor,{together:true});else note(p);feedback(s.ok?'Получилось C minor: C–E♭–G.':'Понизьте E с 4/2 ровно на один лад.',s.ok);save();updateNext();}});
+        const row=controls();button(row,'▶ C major',()=>listen(C.LOW,{together:true}));button(row,'▶ C minor',()=>listen(minor,{together:true}),{disabled:!s.ok});
+      }else if(d.kind==='chord')chordTask(d,s);
+      else if(d.kind==='earQuality'||d.kind==='earLanding')earTask(d,s);
+      else if(d.kind==='compose')composer(d,s);
+      else if(d.kind==='examA'||d.kind==='examB')exam(d,s);
+      updateNext();save();
+    }
+    function reminders(){
+      for(const container of document.querySelectorAll('[data-b2-reviews]')){
+        container.replaceChildren();container.hidden=true;
+        for(const part of ['a','b'])if(reviewDue(state,part)){
+          container.hidden=false;container.appendChild(node('p',`Блок 2${part.toUpperCase()}: проверьте, что осталось. Пройдите короткую проверку без подсказок.`));
+          button(container,'Проверить 2'+part.toUpperCase(),()=>{review=part;const list=C.parts[part];delete state.sessions[list.at(-1).id];open(part,list.length-1,true);},{primary:true});
+        }
+      }
+    }
+    function overview(){
+      for(const part of ['a','b']){
+        const list=C.parts[part],done=list.filter(d=>state.done[d.id]).length;el('b2Status'+part).textContent=`Выполнено ${done} из ${list.length} шагов${state.completedAt[part]?' · Блок пройден':''}`;
+        const resume=el('b2Resume'+part);resume.textContent=state.completedAt[part]?'Повторить блок':done||state.index[part]?'Продолжить со своего шага':'Начать блок 2'+part.toUpperCase();resume.onclick=()=>open(part);
+        const links=el('b2Steps'+part);links.replaceChildren();list.forEach((d,i)=>{const b=button(links,`${state.done[d.id]?'✓ ':''}${i+1}. ${d.title}`,()=>open(part,i));b.className='play-btn b2-step-link';});
+      }
+      reminders();
+    }
+    function open(part='a',index=null,keepReview=false){
+      if(!C.parts[part])return;stop();if(!keepReview)review=null;state.part=part;if(Number.isInteger(index))state.index[part]=Math.max(0,Math.min(index,C.parts[part].length-1));
+      el('tab-block2').click();el('b2Overview').hidden=true;el('b2Work').hidden=false;focusKey=null;render();el('b2Title').focus({preventScroll:true});el('b2Work').scrollIntoView({block:'start'});
+    }
+    el('b2Next').onclick=()=>{
+      if(!ready())return;stop();const part=state.part,list=C.parts[part],d=step();
+      if(review){const at=Date.now();state.reviewedAt[part]=at;state.reviewResults[part]={at,attempts:session().attempts||0,practiceConfirmed:true};review=null;save();el('b2Work').hidden=true;el('b2Overview').hidden=false;overview();return;}
+      state.done[d.id]=true;
+      if(state.index[part]<list.length-1){state.index[part]++;focusKey=null;render();el('b2Title').focus({preventScroll:true});el('b2Work').scrollIntoView({block:'start'});}
+      else {if(list.every(d=>state.done[d.id])&&!state.completedAt[part])state.completedAt[part]=Date.now();save();el('b2Work').hidden=true;el('b2Overview').hidden=false;overview();el('b2Status'+part).focus({preventScroll:true});}
+      save();overview();
+    };
+    el('b2Back').onclick=()=>{if(state.index[state.part]===0)return;state.index[state.part]--;focusKey=null;render();};
+    el('b2Route').onclick=()=>{stop();review=null;el('b2Work').hidden=true;el('b2Overview').hidden=false;overview();};
+    el('b2Retry').onclick=()=>{delete state.sessions[step().id];render();};
+    el('b2Hint').onclick=()=>{const d=step(),s=session();s.assisted=true;save();const p=d.kind==='pack'?C.POSITION[s.round||0]:d.target;feedback(p?`Проверьте перенос: нужна струна ${p.str}, лад ${p.fret}.`:(d.kind==='chord'?`Нужны ${[0,d.quality==='min'?3:4,7].map(n=>pitch((d.root||0)+n)).join('–')}.`:d.kind==='select'?`Нужны ${d.points.length} точек: ${d.points.map(p=>p.key).join(', ')}.`:d.why||'Сравните последовательность со знакомой гаммой.'));};
+    el('b2Stop').onclick=stop;
+    el('b2Tempo').onchange=e=>{tempo=Math.max(40,Math.min(120,Number(e.target.value)||80));e.target.value=tempo;stop();};
+    document.querySelectorAll('[role="tab"]').forEach(tab=>tab.addEventListener('click',()=>{stop();if(tab.id==='tab-block2'){el('b2Overview').hidden=false;el('b2Work').hidden=true;overview();}}));
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();else reminders();});window.addEventListener('pagehide',stop);window.addEventListener('focus',reminders);
+    save();overview();
+    if(new URLSearchParams(location.search).get('block')==='2')el('tab-block2').click();
+    return {open,stop,getState:()=>structuredClone(state)};
+  }
+  return {KEY,DAY,equals,chordResult,phraseCheck,clean,reviewDue,boot};
+})();
+if(typeof module!=='undefined'&&module.exports)module.exports=CourseBlockTwo;
+else window.courseBlockTwo=CourseBlockTwo.boot();
+</script>
 <script>/* Original course orientation. No microphone use or automatic audibility claims. */
 (() => {
   const dialog=document.createElement('dialog');dialog.className='course-help-dialog';dialog.setAttribute('aria-labelledby','courseHelpTitle');document.body.appendChild(dialog);
@@ -3973,7 +4487,7 @@ else window.courseBlockOne=CourseBlockOne.boot();
   dialog.addEventListener('close',stop);dialog.addEventListener('cancel',stop);
   const action=(parent,text,fn)=>{const b=node('button',text);b.type='button';b.className='play-btn';b.onclick=fn;parent.appendChild(b);return b;};
   function open(kind){
-    stop();window.courseBlockOne?.stop();if(typeof stopSequence==='function')stopSequence();
+    stop();window.courseBlockOne?.stop();window.courseBlockTwo?.stop();if(typeof stopSequence==='function')stopSequence();
     dialog.replaceChildren();const title=node('h2',kind==='sound'?'Слышите звук?':kind==='terms'?'Термины и ориентиры':'Перед игрой');title.id='courseHelpTitle';dialog.appendChild(title);
     if(kind==='sound'){
       dialog.appendChild(node('p','Нажмите «Проиграть звук», затем сообщите, слышите ли вы ноту. Приложение не может проверить громкость динамика или беззвучный режим.'));
