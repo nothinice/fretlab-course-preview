@@ -467,7 +467,7 @@
     <p>Соберите аппликатуру на грифе — определитель покажет возможные аккорды. Нажатие на новый лад той же струны заменяет прежнюю ноту.</p>
     <div class="sandbox-controls">
       <label>Действие <select id="sandboxAction"><option value="chord">Аккорд</option><option value="mark">Свободные ноты</option><option value="listen">Слушать ноты</option><option value="measure">Интервал</option></select></label>
-      <label>Названия <select id="sandboxSpelling"><option value="sharp">С диезами ♯</option><option value="flat">С бемолями ♭</option></select></label>
+      <label>Названия <select id="sandboxSpelling"><option value="auto">Авто</option><option value="sharp">С диезами ♯</option><option value="flat">С бемолями ♭</option></select></label>
       <div id="chordControls" class="sandbox-controls">
         <label>Основной тон <select id="chordRoot"><option value="auto">Авто</option></select></label>
         <label>На грифе <select id="chordDisplay"><option value="notes">Ноты</option><option value="intervals">Интервалы</option></select></label>
@@ -477,18 +477,19 @@
     </div>
     <p class="hint" id="sandboxHelp">Отмечайте любые ноты на всех шести струнах. С клавиатуры: Tab — вход на гриф, стрелки — выбор лада и струны, Enter — нота.</p>
     <div id="chordStrings" aria-label="Открытые и заглушённые струны"></div>
+    <div id="chordQuickResult" hidden><span>Аккорд</span><strong id="chordQuickName" aria-live="polite" aria-atomic="true">Выберите ноты</strong></div>
     <div class="board-outer"><div class="board" id="sandboxBoard" aria-label="Интерактивный гриф, первая струна сверху"></div></div>
     <div class="sandbox-readout" id="sandboxReadout" role="status" aria-live="polite"></div>
     <section id="chordPanel" aria-labelledby="chordStatus">
       <p class="chord-eyebrow">Определитель аккордов</p>
-      <h2 id="chordStatus" aria-live="polite">Выберите ноты аккорда</h2>
+      <h2 id="chordStatus">Выберите ноты аккорда</h2>
       <div id="chordResults" role="group" aria-label="Возможные названия аккорда"></div>
       <p id="chordFormula"></p>
       <p id="chordBass"></p>
       <p id="chordDetails"></p>
       <p id="chordWarnings" role="status" aria-live="polite"></p>
       <p class="hint" id="chordStorage"></p>
-      <details><summary>Почему названий может быть несколько?</summary><p>Один набор звуков может выполнять разные гармонические роли. Выберите предполагаемое имя или задайте основной тон: интервалы на грифе пересчитаются от него. Бас — самая низкая звучащая нота; он может отличаться от основного тона.</p></details>
+      <details id="chordOtherInterpretations" hidden><summary>Другие трактовки</summary><p>Эти варианты предполагают пропущенные звуки: они указаны в названии. Выберите имя или задайте основной тон, чтобы пересчитать интервалы на грифе. Бас — самая низкая звучащая нота; он может отличаться от основного тона.</p><div id="chordOtherResults" role="group" aria-label="Другие трактовки с пропущенными звуками"></div></details>
     </section>
     <div class="sandbox-controls">
       <button type="button" class="play-btn" id="sandboxSequence">▶ По очереди</button>
@@ -3842,6 +3843,35 @@ label.lesson-practice{font-size:16px;text-transform:none;letter-spacing:normal;c
   max-width: 100%;
   overscroll-behavior-inline: contain;
 }
+#panel-sandbox #chordQuickResult {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  min-width: 0;
+  min-height: 48px;
+  margin: 0 0 10px;
+  padding: 10px 12px;
+  border-bottom: 2px solid var(--teal);
+  border-radius: 5px 5px 0 0;
+  background: var(--panel);
+  color: var(--ink);
+}
+#panel-sandbox #chordQuickResult > span {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.5;
+}
+#panel-sandbox #chordQuickName {
+  min-width: 0;
+  overflow: hidden;
+  color: var(--ink);
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.3;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 /* Six instruments states form one strip, rather than six separate cards. */
 #panel-sandbox #chordStrings {
@@ -3958,7 +3988,7 @@ label.lesson-practice{font-size:16px;text-transform:none;letter-spacing:normal;c
   letter-spacing: -.025em;
   overflow-wrap: anywhere;
 }
-#panel-sandbox #chordResults {
+#panel-sandbox :is(#chordResults, #chordOtherResults) {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
@@ -3966,7 +3996,8 @@ label.lesson-practice{font-size:16px;text-transform:none;letter-spacing:normal;c
   min-width: 0;
   margin: 12px 0 16px;
 }
-#panel-sandbox #chordResults:empty { display: none; }
+#panel-sandbox :is(#chordResults, #chordOtherResults):empty { display: none; }
+#panel-sandbox #chordOtherResults { margin: 12px 0 0; }
 #panel-sandbox .chord-candidate {
   min-width: 0;
   min-height: 44px;
@@ -4116,6 +4147,17 @@ label.lesson-practice{font-size:16px;text-transform:none;letter-spacing:normal;c
   #panel-sandbox #chordControls label { width: auto; }
   #panel-sandbox :is(#chordRoot, #chordDisplay) { min-width: 0; }
   #panel-sandbox #sandboxHelp { margin: 12px 0 14px; }
+  #panel-sandbox #chordQuickResult {
+    position: sticky;
+    top: 70px;
+    z-index: 10;
+    gap: 12px;
+    margin-bottom: 10px;
+    scroll-margin-top: 70px;
+  }
+  #panel-sandbox :is(.sandbox-hit, .chord-open, .chord-mute, .chord-candidate) {
+    scroll-margin-top: 132px;
+  }
   #panel-sandbox #chordStrings {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     margin: 12px 0 0;
@@ -4151,6 +4193,12 @@ label.lesson-practice{font-size:16px;text-transform:none;letter-spacing:normal;c
   #panel-sandbox .sandbox-controls:has(#sandboxSequence) { order: 4; }
   #panel-sandbox > .v2-wrap > .hint:last-child { order: 5; }
 }
+@media (max-width: 600px) {
+  #panel-sandbox #chordQuickResult {
+    top: 58px;
+    scroll-margin-top: 58px;
+  }
+}
 </style>
 <script>/*
  * Pitch-set candidates for the free fretboard. The lesson's quality tables are
@@ -4162,13 +4210,43 @@ const ChordIdentifier = (() => {
 
   const SHARP_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
   const FLAT_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+  const AUTO_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'F#', 'G', 'Ab', 'A', 'Bb', 'B'];
   const SIMPLE_INTERVALS = ['1', 'b2', '2', 'b3', '3', '4', 'b5', '5', 'b6', '6', 'b7', '7'];
   const mod12 = value => ((value % 12) + 12) % 12;
   const same = (left, right) => left.length === right.length && left.every((value, index) => value === right[index]);
 
-  function noteName(pc, spelling = 'sharp') {
+  function noteName(pc, spelling = 'auto') {
     if (!Number.isInteger(pc)) return '';
-    return (spelling === 'flat' ? FLAT_NAMES : SHARP_NAMES)[mod12(pc)];
+    return (spelling === 'flat' ? FLAT_NAMES : spelling === 'sharp' ? SHARP_NAMES : AUTO_NAMES)[mod12(pc)];
+  }
+
+  const degreeNumber = label => Number(String(label).replace(/^[b#]+/, ''));
+  const intervalOrder = (left, right) => degreeNumber(left.label) - degreeNumber(right.label) || left.semitones - right.semitones;
+  function suffixName(quality) {
+    if (quality === 'maj') return '';
+    const add = quality.indexOf('add');
+    return add < 0 ? quality : quality.slice(0, add) + '(' + quality.slice(add) + ')';
+  }
+
+  function rootSpelling(rootPc, template, spelling, spell) {
+    if (spelling !== 'auto') return spelling;
+    if ([3, 8, 10].includes(rootPc)) return 'flat';
+    if (![1, 6].includes(rootPc)) return 'sharp';
+    // C#/Db and F#/Gb depend on chord quality. Compare the complete formula,
+    // including omitted tones, so changing a voicing does not rename its root.
+    const minor = template.quality.startsWith('m') && !template.quality.startsWith('maj');
+    const preferred = rootPc === 1 && !minor ? 'flat' : 'sharp';
+    if (!spell) return preferred;
+    const formula = template.intervals.map(semitones => template.labels[semitones] || intervalLabel(semitones, template.quality)).join(' ');
+    const cost = option => {
+      try {
+        const tones = spell(rootPc, noteName(rootPc, option)[0], formula);
+        if (!Array.isArray(tones) || !tones.length) return Infinity;
+        return tones.reduce((total, tone) => total + (String(tone.noteName).match(/[#b]/g) || []).length, 0);
+      } catch (_) { return Infinity; }
+    };
+    const sharp = cost('sharp'), flat = cost('flat');
+    return sharp === flat ? preferred : sharp < flat ? 'sharp' : 'flat';
   }
 
   function intervalLabel(semitones, quality = '') {
@@ -4232,11 +4310,14 @@ const ChordIdentifier = (() => {
         const prefix = quality.slice(0, -1);
         extend(base, [2], ninthNames[quality], {2: '9'});
         extend(base, [5], quality + 'add11', {5: '11'});
-        extend(base, [9], quality + 'add13', {9: '13'});
+        // In practical 13th voicings, the 9th and 11th may independently be
+        // absent. Their absence does not change the symbol to "7add13".
+        extend(base, [9], prefix + '13', {9: '13'});
         extend(base, [2, 5], prefix + '11', {2: '9', 5: '11'});
         // A 13th commonly omits the 11th. Both complete pitch sets are exact
         // templates, rather than treating that conventional voicing as an error.
         extend(base, [2, 9], prefix + '13', {2: '9', 9: '13'});
+        extend(base, [5, 9], prefix + '13', {5: '11', 9: '13'});
         extend(base, [2, 5, 9], prefix + '13', {2: '9', 5: '11', 9: '13'});
       }
       if (quality === '7' || quality === 'maj7') {
@@ -4268,7 +4349,7 @@ const ChordIdentifier = (() => {
     const midis = values.filter(value => Number.isInteger(value) && value >= 0 && value <= 127);
     if (midis.length !== values.length) warn('invalid-midi');
     const notes = [...new Set(midis.map(mod12))].sort((a, b) => a - b);
-    const spelling = options.spelling === 'flat' ? 'flat' : 'sharp';
+    const spelling = options.spelling === 'flat' || options.spelling === 'sharp' ? options.spelling : 'auto';
     const bassMidi = midis.length ? midis.reduce((lowest, midi) => Math.min(lowest, midi), 127) : null;
     const bassPc = bassMidi === null ? null : mod12(bassMidi);
     const result = {notes, noteNames: notes.map(pc => noteName(pc, spelling)), bassMidi, bassPc,
@@ -4309,15 +4390,16 @@ const ChordIdentifier = (() => {
               !same(observed, expected.filter(value => value !== 7))) continue;
           missing.push('5');
         }
-        const rootName = noteName(rootPc, spelling);
+        const candidateSpelling = rootSpelling(rootPc, template, spelling, spell);
+        const rootName = noteName(rootPc, candidateSpelling);
         const quality = template.quality;
-        const suffix = quality === 'maj' ? '' : quality;
+        const suffix = suffixName(quality);
         const incomplete = missing.length ? '(' + missing.map(degree => 'no' + degree).join(',') + ')' : '';
         const intervals = observed.map(semitones => {
           const pc = mod12(rootPc + semitones);
           const label = template.labels[semitones] || intervalLabel(semitones, quality);
           return {pc, semitones, label, note: noteName(pc, spelling)};
-        });
+        }).sort(intervalOrder);
         const formula = intervals.map(interval => interval.label).join(' ');
         if (spell) {
           // Reuse the lesson's degree-aware spelling (E# in C# major, Bbb in
@@ -4330,7 +4412,12 @@ const ChordIdentifier = (() => {
             });
           } catch (_) { /* A caller-supplied spelling helper must not break analysis. */ }
         }
-        const bassName = intervals.find(interval => interval.pc === bassPc)?.note || noteName(bassPc, spelling);
+        const theoreticalBass = intervals.find(interval => interval.pc === bassPc)?.note;
+        // Keep degree-aware names inside the chord formula, but make the slash
+        // a practical pitch label: B instead of Cb, C instead of B#, etc.
+        // Ordinary names remain contextual (Cm/Eb, C#m/G#), including in Auto.
+        const simpleBass = theoreticalBass && /^[A-G](?:#|b)?$/.test(theoreticalBass) && !['E#', 'B#', 'Cb', 'Fb'].includes(theoreticalBass);
+        const bassName = simpleBass ? theoreticalBass : noteName(bassPc, spelling);
         const slash = bassPc === rootPc ? '' : '/' + bassName;
         // Prefer familiar readings with their root in the bass. A conventional
         // omitted fifth is less consequential than an absent root, while an
@@ -4340,7 +4427,7 @@ const ChordIdentifier = (() => {
         const score = 100 - Math.max(0, template.intervals.length - 3) * 3 - missingPenalty +
           (bassPc === rootPc ? 8 : 0) - (template.source === 'power' ? 8 : 0) - (altered ? 6 : 0);
         result.candidates.push({rootPc, rootName, symbol: rootName + suffix + incomplete + slash,
-          quality, intervals, formula,
+          quality, intervals, formula, spelling: candidateSpelling, bassName,
           score, bassPc, missing, warnings: missing.length ? ['missing-tones'] : []});
       }
     }
@@ -4352,7 +4439,7 @@ const ChordIdentifier = (() => {
     if (result.candidates.length) {
       result.status = 'identified';
       if (result.candidates.some(candidate => candidate.missing.length)) warn('missing-tones');
-      if (result.candidates.length > 1) warn('ambiguous');
+      if (result.candidates.filter(candidate => !candidate.missing.length).length > 1) warn('ambiguous');
     } else {
       result.status = 'unknown';
       warn('unknown-chord');
@@ -4377,11 +4464,12 @@ if (typeof module !== 'undefined' && module.exports) {
 const CourseSandbox = (() => {
   const names = {
     sharp: ['C','C♯','D','D♯','E','F','F♯','G','G♯','A','A♯','B'],
-    flat: ['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B']
+    flat: ['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B'],
+    auto: ['C','D♭','D','E♭','E','F','F♯','G','A♭','A','B♭','B']
   };
   function pitch(midi, spelling = 'sharp') {
     const octave = Math.floor(midi / 12) - 1;
-    const name = names[spelling][((midi % 12) + 12) % 12];
+    const name = (names[spelling]||names.auto)[((midi % 12) + 12) % 12];
     return {name, octave, label: name + octave, letter: 'CDEFGAB'.indexOf(name[0]) + octave * 7};
   }
   function interval(from, to, spelling = 'sharp') {
@@ -4443,16 +4531,16 @@ const CourseSandbox = (() => {
     const maybe=id=>{try{return document.getElementById(id);}catch{return null;}};
     const marks = new Map();
     const chord=new Map(),history=[];const CHORD_KEY='fretlab-chord-v1';
-    let pair = [], action = el('sandboxAction').value||'mark', spelling = 'sharp', focusIndex=0;
-    let root='auto',display='notes',candidateKey=null,canStore=true,analysis=null,currentCandidate=null,ownVoices=[],playTicket=0;
+    let pair = [], action = el('sandboxAction').value||'mark', spelling = el('sandboxSpelling').value||'sharp', focusIndex=0;
+    let root='auto',display='notes',candidateKey=null,candidateExplicit=false,canStore=true,analysis=null,currentCandidate=null,ownVoices=[],playTicket=0;
     const signature=c=>`${c.rootPc}:${c.quality}:${(c.missing||[]).join(',')}`;
     function chordSnapshot(){return Array.from({length:6},(_,i)=>chord.get(i)?.fret??null);}
     function loadFrets(frets){chord.clear();frets.forEach((fret,stringIdx)=>{if(fret!==null){const midi=OPEN_STRINGS_TOP_TO_BOTTOM[stringIdx].midi+fret;chord.set(stringIdx,{key:`${stringIdx}:${fret}`,stringIdx,fret,midi});}});}
     try{const saved=JSON.parse(localStorage.getItem(CHORD_KEY)||'null');if(saved?.version===1&&Array.isArray(saved.frets)&&saved.frets.length===6&&saved.frets.every(f=>f===null||Number.isInteger(f)&&f>=0&&f<=FRET_COUNT)){
       loadFrets(saved.frets);if(typeof saved.root==='string'&&/^(auto|[0-9]|1[01])$/.test(saved.root))root=saved.root;
-      if(saved.display==='intervals')display='intervals';if(saved.spelling==='flat')spelling='flat';if(typeof saved.candidate==='string'&&saved.candidate.length<80)candidateKey=saved.candidate;
+      if(saved.display==='intervals')display='intervals';if(['auto','sharp','flat'].includes(saved.spelling))spelling=saved.spelling;if(typeof saved.candidate==='string'&&saved.candidate.length<80){candidateKey=saved.candidate;candidateExplicit=saved.candidateExplicit===true;}
     }}catch{canStore=false;}
-    function saveChord(){try{localStorage.setItem(CHORD_KEY,JSON.stringify({version:1,frets:chordSnapshot(),root,display,spelling,candidate:candidateKey}));canStore=true;}catch{canStore=false;}}
+    function saveChord(){try{localStorage.setItem(CHORD_KEY,JSON.stringify({version:1,frets:chordSnapshot(),root,display,spelling,candidate:candidateKey,candidateExplicit}));canStore=true;}catch{canStore=false;}}
     function stop(){playTicket++;for(const voice of ownVoices){try{voice?.stop();}catch{}}ownVoices=[];stopSequence();const button=maybe('sandboxStop');if(button)button.hidden=true;const b=maybe('sandboxBoard');if(b)b.querySelectorAll('.sounding').forEach(c=>c.classList.remove('sounding'));}
     function changeChord(stringIdx,fret,{toggle=false,focus=null}={}){
       stop();const old=chord.get(stringIdx)?.fret??null,next=toggle&&old===fret?null:fret;
@@ -4462,25 +4550,48 @@ const CourseSandbox = (() => {
     }
     const readout = el('sandboxReadout');
     function selected() { return action==='chord'?[...chord.values()].sort((a,b)=>a.midi-b.midi||b.stringIdx-a.stringIdx):action === 'measure' ? pair : [...marks.values()]; }
-    function contextualPitch(midi){
-      const interval=currentCandidate?.intervals.find(i=>i.pc===((midi%12)+12)%12),name=interval?.note||pitch(midi,spelling).name;
+    function namedPitch(midi,name){
       const parsed=/^([A-G])([#b♯♭]*)$/.exec(name);let octave=Math.floor(midi/12)-1;
       if(parsed){const natural={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[parsed[1]],offset=[...parsed[2]].reduce((n,a)=>n+(['#','♯'].includes(a)?1:-1),0);octave=(midi-natural-offset)/12-1;}
-      return {name,label:name+octave,interval:interval?.label||['1','♭2','2','♭3','3','4','♭5','5','♭6','6','♭7','7'][((midi-(currentCandidate?.rootPc??(root==='auto'?(analysis?.bassPc||0):Number(root))))%12+12)%12]};
+      return {name,label:name+octave};
+    }
+    function contextualPitch(midi){
+      const interval=currentCandidate?.intervals.find(i=>i.pc===((midi%12)+12)%12),name=interval?.note||pitch(midi,spelling).name;
+      return {...namedPitch(midi,name),interval:interval?.label||['1','♭2','2','♭3','3','4','♭5','5','♭6','6','♭7','7'][((midi-(currentCandidate?.rootPc??(root==='auto'?(analysis?.bassPc??0):Number(root))))%12+12)%12]};
+    }
+    function twoNoteInterval(){
+      if(currentCandidate||analysis?.notes.length!==2)return null;
+      const distinct=[];
+      for(const note of selected())if(!distinct.some(n=>n.midi%12===note.midi%12))distinct.push(note);
+      if(distinct.length!==2)return null;
+      const [a,b]=distinct,result=interval(a.midi,b.midi,spelling);
+      return {title:result.title,names:distinct.map(n=>pitch(n.midi,spelling).name).join('–')};
     }
     function renderAnalysis(){
       const panel=maybe('chordPanel');if(!panel)return;
       const active=action==='chord';panel.hidden=!active;maybe('chordControls').hidden=!active;maybe('chordStrings').hidden=!active;
+      if(maybe('chordQuickResult'))el('chordQuickResult').hidden=!active;
       maybe('sandboxUndo').hidden=!active;maybe('sandboxUndo').disabled=!history.length;
       if(!active)return;
-      const results=el('chordResults');results.replaceChildren();
+      const results=el('chordResults'),otherResults=maybe('chordOtherResults'),other=maybe('chordOtherInterpretations');results.replaceChildren();otherResults?.replaceChildren();
+      const candidates=analysis?.candidates||[],complete=candidates.filter(c=>!c.missing?.length);
+      const primary=complete.length?complete:candidates,secondary=complete.length?candidates.filter(c=>c.missing?.length):[];
+      if(other){other.hidden=!secondary.length;if(currentCandidate?.missing?.length&&secondary.length)other.open=true;}
       const warnings={'ambiguous':'Возможны разные гармонические трактовки. Выберите имя, чтобы увидеть интервалы от его основного тона.','root-not-played':'Выбранный основной тон не звучит. Это предположение о неполном аккорде.','missing-tones':'Часть звуков отсутствует; пропуски явно указаны в названии.','unknown-chord':'Для этого сочетания нет надёжного имени в поддерживаемых формулах. Проверьте состав или задайте основной тон.','invalid-midi':'Некорректная высота звука.','invalid-root':'Некорректный основной тон.'};
-      el('chordStatus').textContent=currentCandidate?.symbol||(analysis?.status==='single'?'Пока один звук':chord.size?'Имя не определено':'Выберите ноты аккорда');
-      for(const c of analysis?.candidates||[]){const b=document.createElement('button');b.type='button';b.className='play-btn chord-candidate';b.textContent=c.symbol;b.dataset.candidate=signature(c);b.setAttribute('aria-pressed',String(signature(c)===candidateKey));b.onclick=()=>{stop();candidateKey=signature(c);render();results.querySelector(`[data-candidate="${candidateKey}"]`)?.focus({preventScroll:true});};results.appendChild(b);}
+      const two=twoNoteInterval();
+      const title=currentCandidate?.symbol||(two?'Два звука: '+two.title:analysis?.status==='single'?'Пока один звук':chord.size?'Имя не определено':'Выберите ноты аккорда');
+      el('chordStatus').textContent=title;if(maybe('chordQuickName')){el('chordQuickName').textContent=title;el('chordQuickName').title=title;}
+      function addCandidates(container,list){
+        if(!container)return;
+        for(const c of list){const b=document.createElement('button');b.type='button';b.className='play-btn chord-candidate';b.textContent=c.symbol;b.dataset.candidate=signature(c);b.setAttribute('aria-pressed',String(signature(c)===candidateKey));b.onclick=()=>{stop();candidateKey=signature(c);candidateExplicit=true;render();panel.querySelector(`[data-candidate="${candidateKey}"]`)?.focus({preventScroll:true});};container.appendChild(b);}
+      }
+      addCandidates(results,primary);addCandidates(otherResults,secondary);
       el('chordFormula').textContent=currentCandidate?`От ${currentCandidate.rootName}: ${currentCandidate.formula.replace(/b/g,'♭').replace(/#/g,'♯').split(/\s+/).join(' · ')}`:root!=='auto'?`Интервалы от ${pitch(Number(root),spelling).name}: ${selected().map(n=>contextualPitch(n.midi).interval).join(' · ')}`:'';
-      const bass=selected()[0];el('chordBass').textContent=bass?`Бас: ${contextualPitch(bass.midi).label}${currentCandidate?' · Основной тон: '+currentCandidate.rootName:''}`:'Бас появится после выбора первой ноты.';
-      el('chordDetails').textContent=currentCandidate?`Состав: ${currentCandidate.intervals.map(i=>i.note).join(' · ')}${currentCandidate.missing?.length?' · Не звучат: '+currentCandidate.missing.join(', '):''}`:selected().length?`Выбранные ноты: ${[...new Set(selected().map(n=>pitch(n.midi,spelling).name))].join(' · ')}`:'Лад 0 — открытая струна. Невыбранные струны заглушены.';
-      el('chordWarnings').textContent=[...new Set([...(analysis?.warnings||[]).filter(w=>w!=='missing-tones'||currentCandidate?.missing?.length),...(currentCandidate?.warnings||[])])].map(w=>warnings[w]||'').filter(Boolean).join(' ');
+      const bass=selected()[0],bassName=bass?currentCandidate?.bassName||pitch(bass.midi,spelling).name:null;
+      el('chordBass').textContent=bass?`Бас: ${namedPitch(bass.midi,bassName).label}${currentCandidate?' · Основной тон: '+currentCandidate.rootName:''}`:'Бас появится после выбора первой ноты.';
+      el('chordDetails').textContent=currentCandidate?`Состав: ${currentCandidate.intervals.map(i=>i.note).join(' · ')}${currentCandidate.missing?.length?' · Не звучат: '+currentCandidate.missing.join(', '):''}`:two?`${two.names}. Добавьте ещё один звук, чтобы проверить состав аккорда.`:selected().length?`Выбранные ноты: ${[...new Set(selected().map(n=>pitch(n.midi,spelling).name))].join(' · ')}`:'Лад 0 — открытая струна. Невыбранные струны заглушены.';
+      const visibleWarnings=(analysis?.warnings||[]).filter(w=>w==='ambiguous'?complete.length>1:w==='missing-tones'?currentCandidate?.missing?.length:w==='unknown-chord'?!two:true);
+      el('chordWarnings').textContent=[...new Set([...visibleWarnings,...(currentCandidate?.warnings||[])])].map(w=>warnings[w]||'').filter(Boolean).join(' ');
       el('chordStorage').textContent=canStore?'Аппликатура сохраняется в этом браузере.':'Сохранение недоступно: аппликатура останется только до закрытия страницы.';
       const strings=el('chordStrings');strings.replaceChildren();
       for(let i=5;i>=0;i--){const n=chord.get(i),group=document.createElement('div');group.className='chord-string-control';group.dataset.state=!n?'muted':n.fret===0?'open':'fretted';
@@ -4492,7 +4603,10 @@ const CourseSandbox = (() => {
     function render() {
       if(action==='chord'&&typeof ChordIdentifier!=='undefined'){
         const identify=nameChord.identify||ChordIdentifier.analyze;analysis=identify(selected().map(n=>n.midi),{rootPc:root==='auto'?null:Number(root),spelling,triads:TRIAD_QUALITY,tetrads:TETRAD_QUALITY,buildScale});
-        currentCandidate=analysis.candidates.find(c=>signature(c)===candidateKey)||analysis.candidates[0]||null;candidateKey=currentCandidate?signature(currentCandidate):null;
+        const chosen=candidateExplicit?analysis.candidates.find(c=>signature(c)===candidateKey):null;
+        currentCandidate=chosen||analysis.candidates.find(c=>!c.missing?.length)||analysis.candidates[0]||null;
+        if(!chosen)candidateExplicit=false;
+        candidateKey=currentCandidate?signature(currentCandidate):null;
       }else{analysis=null;currentCandidate=null;}
       v2RenderBoard(new Map(), 'sandboxBoard');
       const board = el('sandboxBoard');
@@ -4571,7 +4685,7 @@ const CourseSandbox = (() => {
       el('sandboxHelp').textContent = action==='chord'?'По одному звуку на струну. Лад 0 открывает струну, повторный клик заглушает. Стрелки выбирают лад и струну, Enter ставит ноту.':action === 'measure' ? 'Выберите две ноты в любом месте грифа. Отмеченные в свободном режиме ноты сохранятся при возврате.' : action === 'listen' ? 'Каждый клик проигрывает ноту; отмеченные ноты сохраняются.' : 'Отмечайте любые ноты на всех шести струнах.';
       render();
     });
-    function roots(){const control=maybe('chordRoot');if(!control)return;control.replaceChildren();const auto=document.createElement('option');auto.value='auto';auto.textContent='Авто';control.appendChild(auto);for(let i=0;i<12;i++){const option=document.createElement('option');option.value=String(i);option.textContent=pitch(i,spelling).name;control.appendChild(option);}control.value=root;}
+    function roots(){const control=maybe('chordRoot');if(!control)return;control.replaceChildren();const auto=document.createElement('option');auto.value='auto';auto.textContent='Авто';control.appendChild(auto);for(let i=0;i<12;i++){const option=document.createElement('option');option.value=String(i);option.textContent=spelling==='auto'&&i===1?'C♯ / D♭':spelling==='auto'&&i===6?'F♯ / G♭':pitch(i,spelling).name;control.appendChild(option);}control.value=root;}
     el('sandboxSpelling').value=spelling;
     el('sandboxSpelling').addEventListener('change', e => {stop();spelling = e.target.value;roots();render();});
     el('sandboxClear').addEventListener('click', () => {stop();if(action==='chord'){if(chord.size){history.push(chordSnapshot());chord.clear();}}else{marks.clear();pair=[];}render();});
@@ -4584,7 +4698,7 @@ const CourseSandbox = (() => {
     el('sandboxTogether').addEventListener('click',()=>playback(true));
     maybe('sandboxUndo')?.addEventListener('click',()=>{if(!history.length)return;stop();loadFrets(history.pop());render();});
     maybe('sandboxStop')?.addEventListener('click',stop);
-    maybe('chordRoot')?.addEventListener('change',e=>{stop();root=e.target.value;candidateKey=null;render();});
+    maybe('chordRoot')?.addEventListener('change',e=>{stop();root=e.target.value;candidateKey=null;candidateExplicit=false;render();});
     maybe('chordDisplay')?.addEventListener('change',e=>{display=e.target.value;render();});
     if(maybe('chordDisplay'))el('chordDisplay').value=display;
     roots();
