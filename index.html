@@ -464,18 +464,36 @@
 <section id="panel-sandbox" role="tabpanel" aria-labelledby="tab-sandbox">
   <div class="v2-wrap">
     <h1>Свободный гриф</h1>
-    <p>Нажмите на любой лад: нота появится и прозвучит. Повторное нажатие убирает её.</p>
+    <p>Соберите аппликатуру на грифе — определитель покажет возможные аккорды. Нажатие на новый лад той же струны заменяет прежнюю ноту.</p>
     <div class="sandbox-controls">
-      <label>Действие <select id="sandboxAction"><option value="mark">Ставить и убирать ноты</option><option value="listen">Только слушать</option><option value="measure">Измерить интервал</option></select></label>
+      <label>Действие <select id="sandboxAction"><option value="chord">Аккорд</option><option value="mark">Свободные ноты</option><option value="listen">Слушать ноты</option><option value="measure">Интервал</option></select></label>
       <label>Названия <select id="sandboxSpelling"><option value="sharp">С диезами ♯</option><option value="flat">С бемолями ♭</option></select></label>
+      <div id="chordControls" class="sandbox-controls">
+        <label>Основной тон <select id="chordRoot"><option value="auto">Авто</option></select></label>
+        <label>На грифе <select id="chordDisplay"><option value="notes">Ноты</option><option value="intervals">Интервалы</option></select></label>
+      </div>
       <button type="button" class="play-btn text-btn" id="sandboxClear">Очистить гриф</button>
+      <button type="button" class="play-btn text-btn" id="sandboxUndo" disabled>Отменить</button>
     </div>
     <p class="hint" id="sandboxHelp">Отмечайте любые ноты на всех шести струнах. С клавиатуры: Tab — вход на гриф, стрелки — выбор лада и струны, Enter — нота.</p>
+    <div id="chordStrings" aria-label="Открытые и заглушённые струны"></div>
     <div class="board-outer"><div class="board" id="sandboxBoard" aria-label="Интерактивный гриф, первая струна сверху"></div></div>
     <div class="sandbox-readout" id="sandboxReadout" role="status" aria-live="polite"></div>
+    <section id="chordPanel" aria-labelledby="chordStatus">
+      <p class="chord-eyebrow">Определитель аккордов</p>
+      <h2 id="chordStatus" aria-live="polite">Выберите ноты аккорда</h2>
+      <div id="chordResults" role="group" aria-label="Возможные названия аккорда"></div>
+      <p id="chordFormula"></p>
+      <p id="chordBass"></p>
+      <p id="chordDetails"></p>
+      <p id="chordWarnings" role="status" aria-live="polite"></p>
+      <p class="hint" id="chordStorage"></p>
+      <details><summary>Почему названий может быть несколько?</summary><p>Один набор звуков может выполнять разные гармонические роли. Выберите предполагаемое имя или задайте основной тон: интервалы на грифе пересчитаются от него. Бас — самая низкая звучащая нота; он может отличаться от основного тона.</p></details>
+    </section>
     <div class="sandbox-controls">
       <button type="button" class="play-btn" id="sandboxSequence">▶ По очереди</button>
       <button type="button" class="play-btn" id="sandboxTogether">▶ Вместе</button>
+      <button type="button" class="play-btn text-btn" id="sandboxStop" hidden>■ Стоп</button>
     </div>
     <p class="hint">Первая струна — тонкая E сверху. Лад 0 — открытая струна. В режиме интервала золотая нота — начало, бирюзовая — конец. Название интервала зависит и от букв нот, и от числа полутонов.</p>
   </div>
@@ -3732,6 +3750,629 @@ label.lesson-practice{font-size:16px;text-transform:none;letter-spacing:normal;c
   #panel-course .play-btn { transition: none; }
 }
 </style>
+<style>/* Chord identification shares the existing instrument, palette and controls.
+   No selectors in this layer reach another course panel or the fretboard notes. */
+#panel-sandbox {
+  --chord-soft: color-mix(in srgb, var(--teal) 7%, var(--bg));
+  --chord-rule: color-mix(in srgb, var(--ink) 22%, var(--bg));
+}
+#panel-sandbox > .v2-wrap {
+  max-width: 1260px;
+  min-width: 0;
+  padding: 28px;
+}
+#panel-sandbox h1 {
+  margin: 0 0 10px;
+  font-size: 32px;
+  line-height: 1.2;
+}
+#panel-sandbox h1 + p {
+  max-width: 78ch;
+  margin: 0 0 20px;
+  font-size: 15px;
+  line-height: 1.65;
+}
+#panel-sandbox :is(button:not(.sandbox-hit), summary, select):focus-visible {
+  outline: 3px solid var(--teal);
+  outline-offset: 3px;
+}
+#panel-sandbox .sandbox-controls {
+  gap: 10px;
+  margin: 14px 0;
+}
+#panel-sandbox .sandbox-controls label {
+  min-width: 0;
+  margin-bottom: 0;
+  font-size: 11px;
+  line-height: 1.5;
+}
+#panel-sandbox .sandbox-controls select {
+  min-height: 44px;
+  min-width: 0;
+  width: 100%;
+  padding: 10px 30px 10px 10px;
+  font-size: 14px;
+  line-height: 1.4;
+  text-overflow: ellipsis;
+}
+#panel-sandbox .play-btn {
+  min-height: 44px;
+  max-width: 100%;
+  padding: 10px 14px;
+  border-color: var(--chord-rule);
+  border-radius: 7px;
+  font-size: 13px;
+  line-height: 1.45;
+  white-space: normal;
+}
+#panel-sandbox .play-btn.text-btn {
+  color: var(--teal);
+  border-color: transparent;
+}
+#panel-sandbox #sandboxTogether:not(:disabled) {
+  background: var(--brass);
+  border-color: var(--brass);
+  color: #211408;
+}
+#panel-sandbox .play-btn:disabled {
+  opacity: 1;
+  background: transparent;
+  border: 1px dashed var(--chord-rule);
+  color: var(--muted);
+  cursor: not-allowed;
+}
+#panel-sandbox #chordControls {
+  display: flex;
+  align-items: end;
+  flex-wrap: wrap;
+  gap: 10px;
+  min-width: 0;
+  margin: 0;
+}
+#panel-sandbox #chordRoot { min-width: 146px; }
+#panel-sandbox #chordDisplay { min-width: 150px; }
+#panel-sandbox #sandboxHelp {
+  max-width: 100ch;
+  margin: 16px 0;
+  color: var(--muted);
+  font-size: 12px;
+  line-height: 1.65;
+}
+#panel-sandbox .board-outer {
+  max-width: 100%;
+  overscroll-behavior-inline: contain;
+}
+
+/* Six instruments states form one strip, rather than six separate cards. */
+#panel-sandbox #chordStrings {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 0;
+  min-width: 0;
+  margin: 0 0 12px;
+  padding: 5px 0;
+  border-top: 1px solid var(--chord-rule);
+  border-bottom: 1px solid var(--chord-rule);
+}
+#panel-sandbox .chord-string-control {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 36px 36px;
+  gap: 1px 4px;
+  align-items: center;
+  min-width: 0;
+  padding: 6px 8px;
+  border: 0;
+  border-right: 1px solid var(--border);
+  border-radius: 0;
+  background: transparent;
+}
+#panel-sandbox .chord-string-control:last-child { border-right: 0; }
+#panel-sandbox .chord-string-control > :is(.chord-string-label, label) {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: 0;
+  margin: 0;
+  color: var(--ink);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.35;
+  letter-spacing: 0;
+  text-transform: none;
+}
+#panel-sandbox .chord-string-state {
+  grid-column: 1;
+  grid-row: 2;
+  min-width: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+#panel-sandbox .chord-string-control :is(.chord-open, .chord-mute) {
+  grid-row: 1 / 3;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  min-width: 0;
+  height: 40px;
+  min-height: 40px;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--chord-rule);
+  border-radius: 5px;
+  background: var(--panel);
+  color: var(--muted);
+  font: 500 21px/1 'IBM Plex Sans', sans-serif;
+  text-align: center;
+  cursor: pointer;
+}
+#panel-sandbox .chord-string-control .chord-open { grid-column: 2; }
+#panel-sandbox .chord-string-control .chord-mute { grid-column: 3; }
+#panel-sandbox .chord-string-control .chord-open[aria-pressed="true"] {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: var(--panel);
+  box-shadow: inset 0 -3px color-mix(in srgb, var(--ink) 40%, var(--teal));
+  font-weight: 700;
+}
+#panel-sandbox .chord-string-control .chord-mute[aria-pressed="true"] {
+  border: 2px dashed var(--ink);
+  background: transparent;
+  color: var(--ink);
+  font-weight: 700;
+}
+#panel-sandbox .chord-string-control[data-state="fretted"] .chord-string-state {
+  color: var(--teal);
+  font-weight: 600;
+}
+
+/* The selected name leads; formula, bass and ambiguity remain separate facts. */
+#panel-sandbox #chordPanel {
+  min-width: 0;
+  margin: 18px 0 0;
+  padding: 20px 22px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--panel);
+}
+#panel-sandbox #chordPanel > .chord-eyebrow {
+  margin: 0 0 7px;
+  color: var(--muted);
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+  letter-spacing: .04em;
+}
+#panel-sandbox #chordStatus {
+  margin: 0;
+  color: var(--ink);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.5;
+}
+#panel-sandbox #chordPanel:has(.chord-candidate) #chordStatus {
+  color: var(--ink);
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -.025em;
+  overflow-wrap: anywhere;
+}
+#panel-sandbox #chordResults {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  min-width: 0;
+  margin: 12px 0 16px;
+}
+#panel-sandbox #chordResults:empty { display: none; }
+#panel-sandbox .chord-candidate {
+  min-width: 0;
+  min-height: 44px;
+  max-width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--chord-rule);
+  border-radius: 7px;
+  background: transparent;
+  color: var(--ink);
+  font: 500 15px/1.35 'IBM Plex Sans', sans-serif;
+  text-align: left;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+#panel-sandbox .chord-candidate[aria-pressed="true"] {
+  min-height: 44px;
+  padding: 9px 13px;
+  border: 2px solid var(--teal);
+  background: var(--chord-soft);
+  color: var(--teal);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: -.025em;
+}
+#panel-sandbox :is(#chordFormula, #chordBass, #chordDetails, #chordWarnings) {
+  max-width: 96ch;
+  margin: 10px 0 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+#panel-sandbox #chordFormula {
+  color: var(--ink);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 14px;
+  line-height: 1.8;
+}
+#panel-sandbox #chordBass,
+#panel-sandbox #chordDetails { color: var(--muted); }
+#panel-sandbox #chordWarnings:not(:empty) {
+  margin-top: 14px;
+  padding: 10px 13px;
+  border-left: 3px solid var(--brass);
+  border-radius: 0 5px 5px 0;
+  background: var(--warn-bg);
+  color: var(--ink);
+  font-size: 13px;
+}
+#panel-sandbox :is(#chordFormula, #chordBass, #chordDetails, #chordWarnings):empty {
+  display: none;
+}
+#panel-sandbox #chordPanel > details {
+  margin-top: 14px;
+  border-top: 1px solid var(--border);
+  font-size: 13px;
+  line-height: 1.65;
+}
+#panel-sandbox #chordPanel > details > summary {
+  min-height: 44px;
+  padding: 12px 0 0;
+  color: var(--teal);
+  cursor: pointer;
+}
+#panel-sandbox #chordPanel > details > p { margin: 8px 0 0; }
+#panel-sandbox #chordStorage {
+  margin: 12px 0 0;
+  font-size: 12px;
+  line-height: 1.6;
+}
+#panel-sandbox #chordStorage:empty { display: none; }
+#panel-sandbox #sandboxReadout {
+  margin: 16px 0;
+  font-size: 14px;
+  line-height: 1.65;
+}
+#panel-sandbox:has(#chordPanel:not([hidden])) #sandboxReadout {
+  min-height: 0;
+  margin: 11px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--muted);
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 12px;
+  line-height: 1.65;
+}
+#panel-sandbox > .v2-wrap > .hint:last-child {
+  max-width: 105ch;
+  margin: 16px 0 0;
+  font-size: 12px;
+  line-height: 1.65;
+}
+@media (hover: hover) {
+  #panel-sandbox :is(.play-btn, .chord-candidate, .chord-open, .chord-mute):not(:disabled):hover {
+    opacity: 1;
+    border-color: var(--teal);
+    background: var(--chord-soft);
+    color: var(--teal);
+  }
+}
+@media (max-width: 1080px) and (min-width: 701px) {
+  #panel-sandbox #chordStrings { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  #panel-sandbox .chord-string-control:nth-child(3) { border-right: 0; }
+  #panel-sandbox .chord-string-control:nth-child(n+4) { border-top: 1px solid var(--border); }
+}
+@media (min-width: 960px) {
+  #panel-sandbox #chordPanel:has(.chord-candidate) {
+    display: grid;
+    grid-template-columns: minmax(220px, .65fr) minmax(0, 1.35fr);
+    column-gap: 30px;
+  }
+  #panel-sandbox #chordPanel:has(.chord-candidate) > .chord-eyebrow { grid-column: 1; grid-row: 1; }
+  #panel-sandbox #chordPanel:has(.chord-candidate) > #chordStatus { grid-column: 1; grid-row: 2; }
+  #panel-sandbox #chordPanel:has(.chord-candidate) > #chordResults {
+    grid-column: 1;
+    grid-row: 3 / 7;
+    align-content: start;
+    align-items: start;
+    margin: 14px 0 0;
+  }
+  #panel-sandbox #chordPanel:has(.chord-candidate) > #chordFormula { grid-column: 2; grid-row: 1 / 3; align-self: start; margin: 0; }
+  #panel-sandbox #chordPanel:has(.chord-candidate) > #chordBass { grid-column: 2; grid-row: 3; margin-top: 0; }
+  #panel-sandbox #chordPanel:has(.chord-candidate) > #chordDetails { grid-column: 2; grid-row: 4; }
+  #panel-sandbox #chordPanel:has(.chord-candidate) > #chordWarnings { grid-column: 2; grid-row: 5; }
+  #panel-sandbox #chordPanel:has(.chord-candidate) > #chordStorage { grid-column: 2; grid-row: 6; }
+  #panel-sandbox #chordPanel:has(.chord-candidate) > details { grid-column: 1 / -1; grid-row: 7; }
+}
+@media (max-width: 700px) {
+  #panel-sandbox > .v2-wrap { padding: 22px 16px; }
+  #panel-sandbox h1 { font-size: 29px; }
+  #panel-sandbox h1 + p { margin-bottom: 14px; font-size: 14px; }
+  #panel-sandbox .sandbox-controls:has(#sandboxAction) {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px;
+    align-items: end;
+    margin: 0 0 10px;
+  }
+  #panel-sandbox .sandbox-controls:has(#sandboxAction) > label { width: auto; }
+  #panel-sandbox #chordControls {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-column: 1 / -1;
+    gap: 10px;
+    margin: 0;
+  }
+  #panel-sandbox #chordControls label { width: auto; }
+  #panel-sandbox :is(#chordRoot, #chordDisplay) { min-width: 0; }
+  #panel-sandbox #sandboxHelp { margin: 12px 0 14px; }
+  #panel-sandbox #chordStrings {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    margin: 12px 0 0;
+    padding: 0;
+  }
+  #panel-sandbox .chord-string-control {
+    grid-template-columns: minmax(0, 1fr) 40px 40px;
+    gap: 1px 4px;
+    padding: 8px 6px;
+  }
+  #panel-sandbox .chord-string-control:nth-child(even) { border-right: 0; }
+  #panel-sandbox .chord-string-control:nth-child(n+3) { border-top: 1px solid var(--border); }
+  #panel-sandbox .chord-string-control :is(.chord-open, .chord-mute) {
+    width: 40px;
+    height: 44px;
+    min-height: 44px;
+  }
+  #panel-sandbox .chord-string-state { font-size: 11px; }
+  #panel-sandbox #chordPanel { margin-top: 16px; padding: 17px 16px; }
+  #panel-sandbox #chordStatus { font-size: 17px; }
+  #panel-sandbox .chord-candidate { padding: 10px 12px; font-size: 14px; }
+  #panel-sandbox #chordPanel:has(.chord-candidate) #chordStatus { font-size: 30px; }
+  #panel-sandbox .chord-candidate[aria-pressed="true"] { font-size: 16px; }
+  #panel-sandbox #chordFormula { font-size: 13px; }
+  #panel-sandbox > .v2-wrap:has(> #chordStrings:not([hidden])) {
+    display: flex;
+    flex-direction: column;
+  }
+  #panel-sandbox > .v2-wrap:has(> #chordStrings:not([hidden])) > .board-outer { order: 1; }
+  #panel-sandbox #chordStrings { order: 2; }
+  #panel-sandbox #chordPanel,
+  #panel-sandbox #sandboxReadout { order: 3; }
+  #panel-sandbox .sandbox-controls:has(#sandboxSequence) { order: 4; }
+  #panel-sandbox > .v2-wrap > .hint:last-child { order: 5; }
+}
+</style>
+<script>/*
+ * Pitch-set candidates for the free fretboard. The lesson's quality tables are
+ * the authority for triads and seventh/sixth chords; this module only adds
+ * voicing, extension, spelling and ranking rules around those shared tables.
+ */
+const ChordIdentifier = (() => {
+  'use strict';
+
+  const SHARP_NAMES = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  const FLAT_NAMES = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+  const SIMPLE_INTERVALS = ['1', 'b2', '2', 'b3', '3', '4', 'b5', '5', 'b6', '6', 'b7', '7'];
+  const mod12 = value => ((value % 12) + 12) % 12;
+  const same = (left, right) => left.length === right.length && left.every((value, index) => value === right[index]);
+
+  function noteName(pc, spelling = 'sharp') {
+    if (!Number.isInteger(pc)) return '';
+    return (spelling === 'flat' ? FLAT_NAMES : SHARP_NAMES)[mod12(pc)];
+  }
+
+  function intervalLabel(semitones, quality = '') {
+    if (!Number.isInteger(semitones)) return '';
+    const interval = mod12(semitones);
+    const name = typeof quality === 'object' && quality ? quality.quality || '' : String(quality);
+    if (interval === 9 && name === 'dim7') return 'bb7';
+    if (interval === 8 && (name === 'aug' || name.includes('#5'))) return '#5';
+    if (interval === 6 && name.includes('#11')) return '#11';
+    if (interval === 1 && name.includes('b9')) return 'b9';
+    if (interval === 3 && name.includes('#9')) return '#9';
+    if (interval === 8 && name.includes('b13')) return 'b13';
+    if (interval === 2 && /(?:add9|\/9|9|11|13)/.test(name) && name !== '7sus2') return '9';
+    if (interval === 5 && /(?:add11|11|13)/.test(name) && !name.includes('sus4')) return '11';
+    if (interval === 9 && /13/.test(name)) return '13';
+    return SIMPLE_INTERVALS[interval];
+  }
+
+  function sharedTables(options) {
+    return {
+      triads: options.triads || (typeof TRIAD_QUALITY !== 'undefined' ? TRIAD_QUALITY : null),
+      tetrads: options.tetrads || (typeof TETRAD_QUALITY !== 'undefined' ? TETRAD_QUALITY : null)
+    };
+  }
+
+  function buildTemplates(tables) {
+    const templates = [];
+    const seen = new Set();
+    function add(intervals, quality, source, labels = {}) {
+      const sorted = [...new Set(intervals)].sort((a, b) => a - b);
+      const key = sorted.join(',') + ':' + quality;
+      if (seen.has(key)) return;
+      seen.add(key);
+      templates.push({intervals: sorted, quality, source, labels});
+    }
+    for (const [table, size] of [[tables.triads, 2], [tables.tetrads, 3]]) {
+      if (!table || typeof table !== 'object') continue;
+      for (const [key, quality] of Object.entries(table)) {
+        const intervals = key.split(',').map(Number);
+        if (intervals.length !== size || typeof quality !== 'string' || !quality.trim() ||
+            intervals.some(value => !Number.isInteger(value) || value < 1 || value > 11) ||
+            new Set(intervals).size !== size) continue;
+        add([0, ...intervals], quality, 'shared');
+      }
+    }
+
+    const bases = templates.slice();
+    const extend = (base, extra, quality, labels = {}) => add([...base.intervals, ...extra], quality, 'extension', labels);
+    for (const base of bases) {
+      const quality = base.quality;
+      if (quality === 'maj' || quality === 'm') {
+        const prefix = quality === 'm' ? 'm' : '';
+        extend(base, [2], prefix + 'add9', {2: '9'});
+        extend(base, [5], prefix + 'add11', {5: '11'});
+      }
+      if (quality === 'maj') extend(base, [6], 'add#11', {6: '#11'});
+      if (quality === '6' || quality === 'm6') extend(base, [2], quality + '/9', {2: '9'});
+
+      const ninthNames = {7: '9', maj7: 'maj9', m7: 'm9', mMaj7: 'mMaj9'};
+      if (ninthNames[quality]) {
+        const prefix = quality.slice(0, -1);
+        extend(base, [2], ninthNames[quality], {2: '9'});
+        extend(base, [5], quality + 'add11', {5: '11'});
+        extend(base, [9], quality + 'add13', {9: '13'});
+        extend(base, [2, 5], prefix + '11', {2: '9', 5: '11'});
+        // A 13th commonly omits the 11th. Both complete pitch sets are exact
+        // templates, rather than treating that conventional voicing as an error.
+        extend(base, [2, 9], prefix + '13', {2: '9', 9: '13'});
+        extend(base, [2, 5, 9], prefix + '13', {2: '9', 5: '11', 9: '13'});
+      }
+      if (quality === '7' || quality === 'maj7') {
+        extend(base, [6], quality + '#11', {6: '#11'});
+        extend(base, [2, 6], quality === '7' ? '9#11' : 'maj9#11', {2: '9', 6: '#11'});
+      }
+      if (quality === '7') {
+        extend(base, [1], '7b9', {1: 'b9'});
+        extend(base, [3], '7#9', {3: '#9'});
+        extend(base, [8], '7b13', {8: 'b13'});
+      }
+      const alteredNinths = {'7b5': '9b5', '7#5': '9#5', maj7b5: 'maj9b5', 'maj7#5': 'maj9#5', m7b5: 'm9b5'};
+      if (alteredNinths[quality]) extend(base, [2], alteredNinths[quality], {2: '9'});
+      if (quality === '7sus4') {
+        extend(base, [2], '9sus4', {2: '9'});
+        extend(base, [2, 9], '13sus4', {2: '9', 9: '13'});
+      }
+    }
+    add([0, 7], '5', 'power');
+    return templates;
+  }
+
+  function analyze(input, rawOptions = {}) {
+    const options = rawOptions && typeof rawOptions === 'object' ? rawOptions : {};
+    const warnings = [];
+    const warn = code => { if (!warnings.includes(code)) warnings.push(code); };
+    const values = Array.isArray(input) ? input : [];
+    if (!Array.isArray(input)) warn('invalid-midi');
+    const midis = values.filter(value => Number.isInteger(value) && value >= 0 && value <= 127);
+    if (midis.length !== values.length) warn('invalid-midi');
+    const notes = [...new Set(midis.map(mod12))].sort((a, b) => a - b);
+    const spelling = options.spelling === 'flat' ? 'flat' : 'sharp';
+    const bassMidi = midis.length ? midis.reduce((lowest, midi) => Math.min(lowest, midi), 127) : null;
+    const bassPc = bassMidi === null ? null : mod12(bassMidi);
+    const result = {notes, noteNames: notes.map(pc => noteName(pc, spelling)), bassMidi, bassPc,
+      candidates: [], warnings, status: notes.length ? 'single' : 'empty'};
+    const manualRoot = options.rootPc !== null && options.rootPc !== undefined;
+    if (manualRoot && (!Number.isInteger(options.rootPc) || options.rootPc < 0 || options.rootPc > 11)) {
+      warn('invalid-root');
+      result.status = notes.length < 2 ? result.status : 'unknown';
+      return result;
+    }
+    if (manualRoot && notes.length && !notes.includes(options.rootPc)) warn('root-not-played');
+    if (notes.length < 2) return result;
+    const tables = sharedTables(options);
+    const spell = typeof options.buildScale === 'function' ? options.buildScale :
+      (typeof buildScale === 'function' ? buildScale : null);
+    if (!tables.triads || !tables.tetrads) warn('missing-chord-tables');
+    const roots = manualRoot ? [options.rootPc] : notes;
+    const templates = buildTemplates(tables);
+    for (const rootPc of roots) {
+      const observed = notes.map(pc => mod12(pc - rootPc)).sort((a, b) => a - b);
+      for (const template of templates) {
+        const hasRoot = observed.includes(0);
+        const missing = [];
+        let expected = template.intervals;
+        if (!hasRoot) {
+          // Rootless readings require a chosen root and at least three actual
+          // tones. They always remain explicit incomplete candidates.
+          if (!manualRoot || notes.length < 3 || expected.length < 4) continue;
+          expected = expected.filter(value => value !== 0);
+          missing.push('1');
+        }
+        if (!same(observed, expected)) {
+          // A third determines major/minor; a fifth does not. Never infer a
+          // third from C-G, and never turn an arbitrary cluster into a chord.
+          const hasThird = expected.includes(3) || expected.includes(4);
+          const enoughNotes = notes.length >= 3 || (manualRoot && notes.length === 2);
+          if (!hasRoot || !hasThird || !enoughNotes || !expected.includes(7) ||
+              !same(observed, expected.filter(value => value !== 7))) continue;
+          missing.push('5');
+        }
+        const rootName = noteName(rootPc, spelling);
+        const quality = template.quality;
+        const suffix = quality === 'maj' ? '' : quality;
+        const incomplete = missing.length ? '(' + missing.map(degree => 'no' + degree).join(',') + ')' : '';
+        const intervals = observed.map(semitones => {
+          const pc = mod12(rootPc + semitones);
+          const label = template.labels[semitones] || intervalLabel(semitones, quality);
+          return {pc, semitones, label, note: noteName(pc, spelling)};
+        });
+        const formula = intervals.map(interval => interval.label).join(' ');
+        if (spell) {
+          // Reuse the lesson's degree-aware spelling (E# in C# major, Bbb in
+          // Cdim7). Standalone callers without it retain their pitch names.
+          try {
+            const spelled = spell(rootPc, rootName[0], formula);
+            if (Array.isArray(spelled)) intervals.forEach(interval => {
+              const tone = spelled.find(note => note.pc === interval.pc && note.degreeLabel === interval.label);
+              if (tone && typeof tone.noteName === 'string') interval.note = tone.noteName;
+            });
+          } catch (_) { /* A caller-supplied spelling helper must not break analysis. */ }
+        }
+        const bassName = intervals.find(interval => interval.pc === bassPc)?.note || noteName(bassPc, spelling);
+        const slash = bassPc === rootPc ? '' : '/' + bassName;
+        // Prefer familiar readings with their root in the bass. A conventional
+        // omitted fifth is less consequential than an absent root, while an
+        // altered exact match must not automatically outrank a simple shell.
+        const altered = /(?:b5|#5|#11|b9|#9|b13)/.test(quality) && !['m7b5', 'm9b5'].includes(quality);
+        const missingPenalty = missing.reduce((penalty, degree) => penalty + (degree === '1' ? 18 : 8), 0);
+        const score = 100 - Math.max(0, template.intervals.length - 3) * 3 - missingPenalty +
+          (bassPc === rootPc ? 8 : 0) - (template.source === 'power' ? 8 : 0) - (altered ? 6 : 0);
+        result.candidates.push({rootPc, rootName, symbol: rootName + suffix + incomplete + slash,
+          quality, intervals, formula,
+          score, bassPc, missing, warnings: missing.length ? ['missing-tones'] : []});
+      }
+    }
+    result.candidates.sort((left, right) => right.score - left.score ||
+      left.missing.length - right.missing.length || left.rootPc - right.rootPc || left.symbol.localeCompare(right.symbol));
+    // Distinct full/omitted-11 templates can produce the same incomplete name.
+    result.candidates = result.candidates.filter((candidate, index, list) =>
+      list.findIndex(other => other.rootPc === candidate.rootPc && other.symbol === candidate.symbol) === index);
+    if (result.candidates.length) {
+      result.status = 'identified';
+      if (result.candidates.some(candidate => candidate.missing.length)) warn('missing-tones');
+      if (result.candidates.length > 1) warn('ambiguous');
+    } else {
+      result.status = 'unknown';
+      warn('unknown-chord');
+    }
+    return result;
+  }
+
+  return {analyze, intervalLabel, noteName};
+})();
+
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = ChordIdentifier;
+} else if (typeof nameChord === 'function') {
+  // Extend the lesson's public naming entry point while retaining its existing
+  // two-argument harmonization behavior and the same underlying theory data.
+  nameChord.identify = (midis, options = {}) => ChordIdentifier.analyze(midis, {
+    ...options, triads: TRIAD_QUALITY, tetrads: TETRAD_QUALITY, buildScale
+  });
+}
+</script>
 <script>/* Course sandbox adapter. The existing renderer and audio engine remain shared. */
 const CourseSandbox = (() => {
   const names = {
@@ -3799,11 +4440,60 @@ const CourseSandbox = (() => {
   }
   function boot() {
     const el = id => document.getElementById(id);
+    const maybe=id=>{try{return document.getElementById(id);}catch{return null;}};
     const marks = new Map();
-    let pair = [], action = 'mark', spelling = 'sharp', focusIndex=0;
+    const chord=new Map(),history=[];const CHORD_KEY='fretlab-chord-v1';
+    let pair = [], action = el('sandboxAction').value||'mark', spelling = 'sharp', focusIndex=0;
+    let root='auto',display='notes',candidateKey=null,canStore=true,analysis=null,currentCandidate=null,ownVoices=[],playTicket=0;
+    const signature=c=>`${c.rootPc}:${c.quality}:${(c.missing||[]).join(',')}`;
+    function chordSnapshot(){return Array.from({length:6},(_,i)=>chord.get(i)?.fret??null);}
+    function loadFrets(frets){chord.clear();frets.forEach((fret,stringIdx)=>{if(fret!==null){const midi=OPEN_STRINGS_TOP_TO_BOTTOM[stringIdx].midi+fret;chord.set(stringIdx,{key:`${stringIdx}:${fret}`,stringIdx,fret,midi});}});}
+    try{const saved=JSON.parse(localStorage.getItem(CHORD_KEY)||'null');if(saved?.version===1&&Array.isArray(saved.frets)&&saved.frets.length===6&&saved.frets.every(f=>f===null||Number.isInteger(f)&&f>=0&&f<=FRET_COUNT)){
+      loadFrets(saved.frets);if(typeof saved.root==='string'&&/^(auto|[0-9]|1[01])$/.test(saved.root))root=saved.root;
+      if(saved.display==='intervals')display='intervals';if(saved.spelling==='flat')spelling='flat';if(typeof saved.candidate==='string'&&saved.candidate.length<80)candidateKey=saved.candidate;
+    }}catch{canStore=false;}
+    function saveChord(){try{localStorage.setItem(CHORD_KEY,JSON.stringify({version:1,frets:chordSnapshot(),root,display,spelling,candidate:candidateKey}));canStore=true;}catch{canStore=false;}}
+    function stop(){playTicket++;for(const voice of ownVoices){try{voice?.stop();}catch{}}ownVoices=[];stopSequence();const button=maybe('sandboxStop');if(button)button.hidden=true;const b=maybe('sandboxBoard');if(b)b.querySelectorAll('.sounding').forEach(c=>c.classList.remove('sounding'));}
+    function changeChord(stringIdx,fret,{toggle=false,focus=null}={}){
+      stop();const old=chord.get(stringIdx)?.fret??null,next=toggle&&old===fret?null:fret;
+      if(old===next)return;history.push(chordSnapshot());if(history.length>32)history.shift();
+      if(next===null)chord.delete(stringIdx);else chord.set(stringIdx,{key:`${stringIdx}:${next}`,stringIdx,fret:next,midi:OPEN_STRINGS_TOP_TO_BOTTOM[stringIdx].midi+next});
+      render();if(focus)maybe('chordStrings')?.querySelector(`button[aria-label="${focus}"]`)?.focus({preventScroll:true});
+    }
     const readout = el('sandboxReadout');
-    function selected() { return action === 'measure' ? pair : [...marks.values()]; }
+    function selected() { return action==='chord'?[...chord.values()].sort((a,b)=>a.midi-b.midi||b.stringIdx-a.stringIdx):action === 'measure' ? pair : [...marks.values()]; }
+    function contextualPitch(midi){
+      const interval=currentCandidate?.intervals.find(i=>i.pc===((midi%12)+12)%12),name=interval?.note||pitch(midi,spelling).name;
+      const parsed=/^([A-G])([#b♯♭]*)$/.exec(name);let octave=Math.floor(midi/12)-1;
+      if(parsed){const natural={C:0,D:2,E:4,F:5,G:7,A:9,B:11}[parsed[1]],offset=[...parsed[2]].reduce((n,a)=>n+(['#','♯'].includes(a)?1:-1),0);octave=(midi-natural-offset)/12-1;}
+      return {name,label:name+octave,interval:interval?.label||['1','♭2','2','♭3','3','4','♭5','5','♭6','6','♭7','7'][((midi-(currentCandidate?.rootPc??(root==='auto'?(analysis?.bassPc||0):Number(root))))%12+12)%12]};
+    }
+    function renderAnalysis(){
+      const panel=maybe('chordPanel');if(!panel)return;
+      const active=action==='chord';panel.hidden=!active;maybe('chordControls').hidden=!active;maybe('chordStrings').hidden=!active;
+      maybe('sandboxUndo').hidden=!active;maybe('sandboxUndo').disabled=!history.length;
+      if(!active)return;
+      const results=el('chordResults');results.replaceChildren();
+      const warnings={'ambiguous':'Возможны разные гармонические трактовки. Выберите имя, чтобы увидеть интервалы от его основного тона.','root-not-played':'Выбранный основной тон не звучит. Это предположение о неполном аккорде.','missing-tones':'Часть звуков отсутствует; пропуски явно указаны в названии.','unknown-chord':'Для этого сочетания нет надёжного имени в поддерживаемых формулах. Проверьте состав или задайте основной тон.','invalid-midi':'Некорректная высота звука.','invalid-root':'Некорректный основной тон.'};
+      el('chordStatus').textContent=currentCandidate?.symbol||(analysis?.status==='single'?'Пока один звук':chord.size?'Имя не определено':'Выберите ноты аккорда');
+      for(const c of analysis?.candidates||[]){const b=document.createElement('button');b.type='button';b.className='play-btn chord-candidate';b.textContent=c.symbol;b.dataset.candidate=signature(c);b.setAttribute('aria-pressed',String(signature(c)===candidateKey));b.onclick=()=>{stop();candidateKey=signature(c);render();results.querySelector(`[data-candidate="${candidateKey}"]`)?.focus({preventScroll:true});};results.appendChild(b);}
+      el('chordFormula').textContent=currentCandidate?`От ${currentCandidate.rootName}: ${currentCandidate.formula.replace(/b/g,'♭').replace(/#/g,'♯').split(/\s+/).join(' · ')}`:root!=='auto'?`Интервалы от ${pitch(Number(root),spelling).name}: ${selected().map(n=>contextualPitch(n.midi).interval).join(' · ')}`:'';
+      const bass=selected()[0];el('chordBass').textContent=bass?`Бас: ${contextualPitch(bass.midi).label}${currentCandidate?' · Основной тон: '+currentCandidate.rootName:''}`:'Бас появится после выбора первой ноты.';
+      el('chordDetails').textContent=currentCandidate?`Состав: ${currentCandidate.intervals.map(i=>i.note).join(' · ')}${currentCandidate.missing?.length?' · Не звучат: '+currentCandidate.missing.join(', '):''}`:selected().length?`Выбранные ноты: ${[...new Set(selected().map(n=>pitch(n.midi,spelling).name))].join(' · ')}`:'Лад 0 — открытая струна. Невыбранные струны заглушены.';
+      el('chordWarnings').textContent=[...new Set([...(analysis?.warnings||[]).filter(w=>w!=='missing-tones'||currentCandidate?.missing?.length),...(currentCandidate?.warnings||[])])].map(w=>warnings[w]||'').filter(Boolean).join(' ');
+      el('chordStorage').textContent=canStore?'Аппликатура сохраняется в этом браузере.':'Сохранение недоступно: аппликатура останется только до закрытия страницы.';
+      const strings=el('chordStrings');strings.replaceChildren();
+      for(let i=5;i>=0;i--){const n=chord.get(i),group=document.createElement('div');group.className='chord-string-control';group.dataset.state=!n?'muted':n.fret===0?'open':'fretted';
+        const title=document.createElement('strong');title.className='chord-string-label';title.textContent=`${i+1} · ${OPEN_STRINGS_TOP_TO_BOTTOM[i].label}`;group.appendChild(title);
+        const state=document.createElement('span');state.className='chord-string-state';state.textContent=!n?'× заглушена':n.fret===0?'○ открытая':`Лад ${n.fret} · ${contextualPitch(n.midi).label}`;group.appendChild(state);
+        for(const [text,label,fret] of [['○',`Открыть струну ${i+1}`,0],['×',`Заглушить струну ${i+1}`,null]]){const b=document.createElement('button');b.type='button';b.className='play-btn '+(fret===0?'chord-open':'chord-mute');b.textContent=text;b.setAttribute('aria-label',label);b.setAttribute('aria-pressed',String(fret===0?n?.fret===0:!n));b.onclick=()=>changeChord(i,fret,{focus:label});group.appendChild(b);}strings.appendChild(group);
+      }
+    }
     function render() {
+      if(action==='chord'&&typeof ChordIdentifier!=='undefined'){
+        const identify=nameChord.identify||ChordIdentifier.analyze;analysis=identify(selected().map(n=>n.midi),{rootPc:root==='auto'?null:Number(root),spelling,triads:TRIAD_QUALITY,tetrads:TETRAD_QUALITY,buildScale});
+        currentCandidate=analysis.candidates.find(c=>signature(c)===candidateKey)||analysis.candidates[0]||null;candidateKey=currentCandidate?signature(currentCandidate):null;
+      }else{analysis=null;currentCandidate=null;}
       v2RenderBoard(new Map(), 'sandboxBoard');
       const board = el('sandboxBoard');
       const cells = board.querySelectorAll('.cell');
@@ -3827,16 +4517,23 @@ const CourseSandbox = (() => {
           board.querySelectorAll('.sandbox-hit').forEach((b,i)=>b.tabIndex=i===focusIndex?0:-1);
           board.querySelectorAll('.sandbox-hit')[focusIndex].focus();
         });
-        button.setAttribute('aria-label', `${pitch(midi, spelling).label}, струна ${stringIdx + 1}, лад ${fret}`);
+        button.setAttribute('aria-label', `${action==='chord'?contextualPitch(midi).label:pitch(midi, spelling).label}, струна ${stringIdx + 1}, лад ${fret}`);
+        button.dataset.string=String(stringIdx+1);button.dataset.fret=String(fret);
         if (action !== 'listen') button.setAttribute('aria-pressed', position >= 0 ? 'true' : 'false');
         if (position >= 0) {
           const dot = document.createElement('span');
-          dot.className = 'note' + (action === 'measure' ? (position === 0 ? ' root' : ' chord-tone') : '');
-          dot.textContent = pitch(midi, spelling).name;
+          dot.className = 'note' + (action === 'measure' ? (position === 0 ? ' root' : ' chord-tone') : action==='chord'?(midi%12===currentCandidate?.rootPc?' root':' chord-tone'):'');
+          dot.textContent = action==='chord'?(display==='intervals'?contextualPitch(midi).interval.replace(/b/g,'♭').replace(/#/g,'♯'):contextualPitch(midi).name):pitch(midi, spelling).name;
           button.appendChild(dot);
         }
         button.addEventListener('click', () => {
           focusIndex=index;
+          stop();
+          if(action==='chord'){
+            changeChord(stringIdx,fret,{toggle:true});
+            if(chord.get(stringIdx)?.fret===fret)ownVoices.push(playMidi(midi,undefined,.8,.18,{boardId:'sandboxBoard',index}));
+            el('sandboxBoard').querySelectorAll('.sandbox-hit')[index].focus({preventScroll:true});return;
+          }
           if (action === 'listen') {
             playMidi(midi,undefined,undefined,.22,{boardId:'sandboxBoard',index});
             readout.textContent = `${pitch(midi, spelling).label} · струна ${stringIdx + 1}, лад ${fret}`;
@@ -3856,31 +4553,52 @@ const CourseSandbox = (() => {
       const notes = selected();
       el('sandboxSequence').disabled = notes.length === 0;
       el('sandboxTogether').disabled = notes.length === 0;
+      el('sandboxSequence').textContent=action==='chord'?'▶ Арпеджио':'▶ По очереди';
+      if(action==='chord'){
+        readout.textContent='Аппликатура от 6-й струны к 1-й: '+chordSnapshot().reverse().map(f=>f===null?'×':String(f)).join(' · ')+'.';
+        saveChord();
+      }else
       if (action === 'measure' && pair.length === 2) {
         const result = interval(pair[0].midi, pair[1].midi, spelling);
         readout.textContent = `${pitch(pair[0].midi, spelling).label} → ${pitch(pair[1].midi, spelling).label}: ${result.title}, ${result.semitones} полутонов, ${result.direction}.`;
       } else if (action === 'measure') readout.textContent = pair.length ? 'Начало выбрано. Нажмите на вторую ноту.' : 'Выберите начало и конец интервала. После двух нот следующий клик начинает новую пару.';
       else readout.textContent = notes.length ? `Отмечено: ${notes.map(n => pitch(n.midi, spelling).label).join(' · ')}. Воспроизведение — в порядке выбора.` : 'Гриф пуст. Выберите первую ноту.';
+      renderAnalysis();
     }
     el('sandboxAction').addEventListener('change', e => {
+      stop();
       action = e.target.value;
-      el('sandboxHelp').textContent = action === 'measure' ? 'Выберите две ноты в любом месте грифа. Отмеченные в свободном режиме ноты сохранятся при возврате.' : action === 'listen' ? 'Каждый клик проигрывает ноту; отмеченные ноты сохраняются.' : 'Отмечайте любые ноты на всех шести струнах.';
+      el('sandboxHelp').textContent = action==='chord'?'По одному звуку на струну. Лад 0 открывает струну, повторный клик заглушает. Стрелки выбирают лад и струну, Enter ставит ноту.':action === 'measure' ? 'Выберите две ноты в любом месте грифа. Отмеченные в свободном режиме ноты сохранятся при возврате.' : action === 'listen' ? 'Каждый клик проигрывает ноту; отмеченные ноты сохраняются.' : 'Отмечайте любые ноты на всех шести струнах.';
       render();
     });
-    el('sandboxSpelling').addEventListener('change', e => {spelling = e.target.value; render();});
-    el('sandboxClear').addEventListener('click', () => {marks.clear(); pair = []; render();});
-    el('sandboxSequence').addEventListener('click', () => playSequence(selected().map(n => n.midi),{positions:selected().map(n=>({boardId:'sandboxBoard',index:n.stringIdx*(FRET_COUNT+1)+n.fret}))}));
-    el('sandboxTogether').addEventListener('click', () => {
-      const when = getAudioCtx().currentTime + 0.03;
-      const unique = [...new Set(selected().map(n => n.midi))];
-      unique.forEach(midi => playMidi(midi, when, 0.9, 0.22 / Math.max(1, unique.length),{boardId:'sandboxBoard',index:(()=>{const n=selected().find(n=>n.midi===midi);return n.stringIdx*(FRET_COUNT+1)+n.fret;})()} ));
-    });
+    function roots(){const control=maybe('chordRoot');if(!control)return;control.replaceChildren();const auto=document.createElement('option');auto.value='auto';auto.textContent='Авто';control.appendChild(auto);for(let i=0;i<12;i++){const option=document.createElement('option');option.value=String(i);option.textContent=pitch(i,spelling).name;control.appendChild(option);}control.value=root;}
+    el('sandboxSpelling').value=spelling;
+    el('sandboxSpelling').addEventListener('change', e => {stop();spelling = e.target.value;roots();render();});
+    el('sandboxClear').addEventListener('click', () => {stop();if(action==='chord'){if(chord.size){history.push(chordSnapshot());chord.clear();}}else{marks.clear();pair=[];}render();});
+    function playback(together){stop();const notes=selected();if(!notes.length)return;const version=playTicket,when=getAudioCtx().currentTime+.05;
+      notes.forEach((n,i)=>ownVoices.push(playMidi(n.midi,when+(together?0:i*.38),together?1.3:.75,together?.22/notes.length:.2,{boardId:'sandboxBoard',index:n.stringIdx*(FRET_COUNT+1)+n.fret})));
+      const b=maybe('sandboxStop');if(b)b.hidden=false;
+      ownVoices.at(-1)?.addEventListener?.('ended',()=>{if(version!==playTicket)return;ownVoices=[];if(b)b.hidden=true;});
+    }
+    el('sandboxSequence').addEventListener('click',()=>playback(false));
+    el('sandboxTogether').addEventListener('click',()=>playback(true));
+    maybe('sandboxUndo')?.addEventListener('click',()=>{if(!history.length)return;stop();loadFrets(history.pop());render();});
+    maybe('sandboxStop')?.addEventListener('click',stop);
+    maybe('chordRoot')?.addEventListener('change',e=>{stop();root=e.target.value;candidateKey=null;render();});
+    maybe('chordDisplay')?.addEventListener('change',e=>{display=e.target.value;render();});
+    if(maybe('chordDisplay'))el('chordDisplay').value=display;
+    roots();
+    if(typeof document.addEventListener==='function')document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});
+    if(typeof window!=='undefined'&&window.addEventListener){window.addEventListener('pagehide',stop);document.querySelectorAll('[role="tab"]').forEach(tab=>tab.addEventListener('click',()=>{if(tab.id!=='tab-sandbox')stop();}));}
     render();
+    if(action==='chord')el('sandboxHelp').textContent='По одному звуку на струну. Лад 0 — открытая струна; повторный клик убирает ноту. Нажмите название аккорда, чтобы сменить трактовку.';
+    if(typeof location!=='undefined'&&new URLSearchParams(location.search).get('tool')==='chords')el('tab-sandbox').click();
+    return {stop,getChordState:()=>({frets:chordSnapshot(),root,display,candidate:candidateKey,analysis}),render};
   }
   return {pitch, interval, boot, trackVoice, drawDistances};
 })();
 if (typeof module !== 'undefined' && module.exports) module.exports = CourseSandbox;
-else CourseSandbox.boot();
+else window.courseSandbox=CourseSandbox.boot();
 </script>
 <script>/* Original learning tasks; musical formulas are standard, implementation is ours. */
 const CourseLessonContent = (() => {
@@ -5886,7 +6604,7 @@ else window.courseComplete=CourseComplete.boot();
   dialog.addEventListener('close',stop);dialog.addEventListener('cancel',stop);
   const action=(parent,text,fn)=>{const b=node('button',text);b.type='button';b.className='play-btn';b.onclick=fn;parent.appendChild(b);return b;};
   function open(kind){
-    stop();window.courseBlockOne?.stop();window.courseBlockTwo?.stop();window.courseComplete?.stop();if(typeof stopSequence==='function')stopSequence();
+    stop();window.courseBlockOne?.stop();window.courseBlockTwo?.stop();window.courseComplete?.stop();window.courseSandbox?.stop();if(typeof stopSequence==='function')stopSequence();
     dialog.replaceChildren();const title=node('h2',kind==='sound'?'Слышите звук?':kind==='terms'?'Термины и ориентиры':'Перед игрой');title.id='courseHelpTitle';dialog.appendChild(title);
     if(kind==='sound'){
       dialog.appendChild(node('p','Нажмите «Проиграть звук», затем сообщите, слышите ли вы ноту. Приложение не может проверить громкость динамика или беззвучный режим.'));
