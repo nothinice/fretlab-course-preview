@@ -309,9 +309,15 @@
       <p id="courseSummary" tabindex="-1" role="status"></p>
       <p id="courseHomeNotice" class="sandbox-readout" role="status" hidden></p>
       <p><button type="button" class="play-btn primary-btn" id="courseResume">Продолжить курс</button></p>
+      <section class="course-practice-entry" aria-labelledby="practiceEntryTitle">
+        <p class="course-eyebrow">Практика с гитарой · после знакомства со ступенями и трезвучием</p>
+        <h2 id="practiceEntryTitle">От рисунка на грифе — к звучащей фразе</h2>
+        <p>Четыре учебные миниатюры: табы с ритмом, повтор тактов, подбор на слух и свои окончания. Начните с C → F; рабочий темп и результаты сохранятся.</p>
+        <div class="sandbox-controls"><button type="button" class="play-btn primary-btn" id="coursePracticeLaunch" data-practice-open="cf">Играть C → F</button><button type="button" class="play-btn" data-practice-open="melody">Мелодия в C</button><button type="button" class="play-btn" data-practice-open="cadence">G7 → C</button><button type="button" class="play-btn" data-practice-open="am">A minor</button></div>
+      </section>
       <details class="block-plan"><summary>Перед началом: что понадобится</summary><p>Гитара в стандартном строе и возможность извлекать отдельные звуки. На занятие закладывайте 30–60 минут; часть времени обязательно играйте на инструменте. Ориентиры по занятиям — рекомендация, а не срок освоения.</p><div class="sandbox-controls"><button type="button" class="play-btn" data-course-help="setup">Подготовить гитару</button><button type="button" class="play-btn" data-course-help="sound">Проверить звук</button><button type="button" class="play-btn" data-course-help="terms">Термины</button></div></details>
       <div id="courseModuleCards" class="course-module-grid"></div>
-      <p class="hint">Сначала двигайтесь по основному маршруту. Блок расположений и Drop 2 — дополнительный. После прохождения возвращайтесь к самостоятельным заданиям через 3–7 дней.</p>
+      <p class="hint">Основной маршрут: основы → аккорды → минор → мотив и ритм → своя музыка. Обзор семи ладов и Drop 2 — следующий уровень. После прохождения возвращайтесь к самостоятельным заданиям через 3–7 дней.</p>
     </div>
     <section id="courseWork" hidden aria-labelledby="courseStepTitle">
       <p class="course-breadcrumb"><button type="button" class="play-btn text-btn" id="courseRoute">← Весь курс</button><span id="courseBreadcrumb"></span><button type="button" class="play-btn text-btn" data-course-help="terms">Термины</button></p>
@@ -328,6 +334,7 @@
         </div>
       </div>
     </section>
+    <section id="coursePracticeWork" hidden aria-label="Практика с гитарой"></section>
     <p id="courseStorage" class="hint"></p>
     <p class="hint">Экранные ответы проверяет приложение. Игру, пение, чистоту звука и музыкальный результат вы оцениваете сами или с преподавателем.</p>
   </div>
@@ -4200,6 +4207,87 @@ label.lesson-practice{font-size:16px;text-transform:none;letter-spacing:normal;c
   }
 }
 </style>
+<style>/* The practice room keeps instrument, score and transport in one reading order. */
+#coursePracticeWork { max-width: 1120px; margin: 0 auto; padding: 0 0 36px; scroll-margin-top: 90px; }
+#courseHome .course-practice-entry { margin: 25px 0; padding: 20px 22px; border: 1px solid var(--border); border-left: 4px solid var(--teal); border-radius: 9px; background: var(--panel); }
+#courseHome .course-practice-entry h2 { margin: 8px 0 12px; font-size: 23px; line-height: 1.3; }
+#courseHome .course-practice-entry p { max-width: 78ch; line-height: 1.65; }
+#courseHome .course-practice-entry .sandbox-controls { flex-wrap: wrap; margin: 16px 0 0; }
+#courseHome .course-practice-entry .play-btn { min-height: 44px; white-space: normal; }
+#coursePracticeWork h1 { margin: 12px 0; font-size: clamp(27px, 4vw, 37px); line-height: 1.2; }
+#coursePracticeWork h2 { margin: 0 0 12px; font-size: 23px; line-height: 1.35; }
+#coursePracticeWork p { line-height: 1.65; }
+#coursePracticeWork .practice-purpose { max-width: 78ch; margin: 10px 0 18px; font-size: 16px; }
+#coursePracticeWork label { display: flex; flex-direction: column; gap: 6px; margin: 0; color: var(--muted); font-size: 12px; }
+#coursePracticeWork :is(select,input[type="number"],textarea) { box-sizing: border-box; width: 100%; min-height: 44px; padding: 10px 12px; border: 1px solid var(--border); border-radius: 7px; background: var(--panel); color: var(--ink); font: inherit; font-size: 14px; }
+#coursePracticeWork textarea { min-height: 76px; resize: vertical; }
+#coursePracticeWork .play-btn { min-height: 44px; padding: 10px 15px; font-size: 14px; white-space: normal; }
+#coursePracticeWork .play-btn:disabled { opacity: 1; border-style: dashed; color: var(--muted); background: transparent; cursor: not-allowed; }
+#coursePracticeWork :is(button,select,input,textarea,summary):focus-visible { outline: 3px solid var(--teal); outline-offset: 3px; }
+#coursePracticeWork .practice-row { display: flex; flex-wrap: wrap; align-items: end; gap: 10px; margin: 12px 0; }
+#coursePracticeWork .practice-heading > label { max-width: 500px; margin: 18px 0; }
+#coursePracticeWork :is(.practice-plan,.practice-journal,.practice-tips) { margin: 18px 0; padding: 0 16px 12px; border: 1px solid var(--border); border-radius: 9px; background: var(--panel); }
+#coursePracticeWork summary { min-height: 44px; padding: 12px 0; color: var(--teal); cursor: pointer; line-height: 1.5; }
+#coursePracticeWork :is(ol,ul) { padding-left: 22px; line-height: 1.7; }
+#coursePracticeWork li + li { margin-top: 9px; }
+#coursePracticeWork .practice-return-note { padding: 10px 14px; border-left: 3px solid var(--brass); font-size: 14px; }
+#coursePracticeWork .practice-stages { display: flex; flex-wrap: wrap; gap: 6px; margin: 22px 0; padding-bottom: 14px; border-bottom: 1px solid var(--border); }
+#coursePracticeWork [aria-pressed="true"] { background: var(--teal); border-color: var(--teal); color: var(--panel); }
+#coursePracticeWork .practice-workspace { min-width: 0; }
+#coursePracticeWork .practice-transport { position: sticky; top: 70px; z-index: 12; padding: 10px 16px; margin: 18px 0; background: var(--panel); border: 1px solid var(--border); border-bottom: 3px solid var(--teal); border-radius: 9px; box-shadow: 0 3px 10px #0000000b; }
+#coursePracticeWork .practice-transport .practice-row { margin: 0; }
+#coursePracticeWork .practice-transport > .practice-row { align-items: end; }
+#coursePracticeWork .practice-transport label:has(#practiceTempo) { width: 106px; }
+#coursePracticeWork .practice-now { margin: 8px 0 0; font-family: 'IBM Plex Mono', monospace; font-size: 12px; font-variant-numeric: tabular-nums; }
+#coursePracticeWork .practice-player-settings { margin-top: 4px; }
+#coursePracticeWork .practice-player-settings summary { padding: 8px 0; min-height: 36px; font-size: 13px; }
+#coursePracticeWork .practice-player-settings .practice-row { margin: 10px 0; }
+#coursePracticeWork .practice-player-settings .practice-row > label:has(select) { width: 110px; }
+#coursePracticeWork .practice-check { display: flex; flex-direction: row; align-items: center; gap: 9px; min-height: 44px; padding: 5px 0; color: var(--ink); font-size: 14px; text-transform: none; letter-spacing: normal; }
+#coursePracticeWork .practice-check input { flex: 0 0 20px; width: 20px; height: 20px; accent-color: var(--teal); }
+#coursePracticeWork .practice-score-options { justify-content: space-between; }
+#coursePracticeWork .practice-score-options label:has(select) { min-width: 175px; }
+#coursePracticeWork .practice-score { margin: 16px 0 22px; color: var(--ink); }
+#coursePracticeWork .practice-tab { color: var(--ink); }
+#coursePracticeWork .practice-tab-bar { color: var(--ink); background: var(--panel); border-radius: 6px; }
+#coursePracticeWork .practice-tab-event.is-playing { color: var(--teal); }
+#coursePracticeWork .practice-tab-event:focus-visible { outline: 3px solid var(--teal); }
+#coursePracticeWork .practice-hidden-note { padding: 24px; border: 1px dashed var(--border); border-radius: 8px; }
+#coursePracticeWork :is(.practice-board-hint,.hint) { color: var(--muted); font-size: 12px; }
+#coursePracticeWork .practice-board-hint { margin: 8px 0 18px; }
+#coursePracticeWork .board-outer { max-width: 100%; margin: 14px 0 8px; }
+#coursePracticeWork .sandbox-hit { scroll-margin-top: 235px; }
+#coursePracticeWork .practice-note-buttons .play-btn { font-family: 'IBM Plex Mono', monospace; min-width: 54px; }
+#coursePracticeWork #practiceEarAnswer { margin: 20px 0; }
+#coursePracticeWork .practice-selection { padding: 10px 14px; border-left: 3px solid var(--brass); }
+#coursePracticeWork .practice-verified { padding: 12px 14px; color: var(--teal); border: 1px solid var(--teal); border-radius: 7px; }
+#coursePracticeWork .practice-journal > label { margin: 12px 0; }
+#coursePracticeWork .practice-export { padding-top: 8px; border-top: 1px solid var(--border); }
+@media (max-width: 700px) {
+  #coursePracticeWork .practice-purpose { font-size: 15px; }
+  #coursePracticeWork .practice-stages { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
+  #coursePracticeWork .practice-stages .play-btn { padding: 9px 6px; font-size: 12px; }
+  #coursePracticeWork .practice-transport { padding: 9px 10px; }
+  #coursePracticeWork .practice-transport > .practice-row { display: grid; grid-template-columns: 1fr 1fr 90px; gap: 8px; }
+  #coursePracticeWork .practice-transport label:has(#practiceTempo) { width: auto; }
+  #coursePracticeWork .practice-transport .play-btn { padding: 9px 6px; }
+  #coursePracticeWork .practice-now { font-size: 11px; }
+  #coursePracticeWork .practice-score-options { gap: 6px; }
+  #coursePracticeWork .practice-score-options .practice-check { font-size: 13px; }
+  #coursePracticeWork .practice-score-options label:has(select) { min-width: 0; }
+  #coursePracticeWork .practice-note-buttons { gap: 6px; }
+  #coursePracticeWork .practice-note-buttons .play-btn { min-width: 46px; padding: 10px; }
+}
+@media (max-width: 600px) { #coursePracticeWork { scroll-margin-top: 74px; } #coursePracticeWork .practice-transport { top: 58px; } #courseHome .course-practice-entry { padding: 16px; } }
+@media (prefers-reduced-motion: reduce) { #coursePracticeWork * { scroll-behavior: auto !important; transition: none !important; } }
+@media print {
+  body.practice-print > :not(#panel-course), body.practice-print #panel-course > .v2-wrap > :not(#coursePracticeWork), body.practice-print #coursePracticeWork > :not(.practice-heading):not(.practice-workspace), body.practice-print #coursePracticeWork .practice-heading > :not(h1):not(.practice-purpose), body.practice-print #coursePracticeWork .practice-workspace > :not(h2):not(.practice-purpose):not(.practice-score) { display: none !important; }
+  body.practice-print #panel-course,body.practice-print #coursePracticeWork { display: block !important; margin: 0; padding: 0; max-width: none; }
+  body.practice-print #coursePracticeWork .practice-tab { break-inside: auto; }
+  body.practice-print #coursePracticeWork .practice-tab-bar { break-inside: avoid; }
+  body.practice-print #coursePracticeWork { color: #111; --ink:#111; --muted:#444; --panel:#fff; --teal:#111; }
+}
+</style>
 <script>/*
  * Pitch-set candidates for the free fretboard. The lesson's quality tables are
  * the authority for triads and seventh/sixth chords; this module only adds
@@ -5146,6 +5234,447 @@ const CourseRhythmPlayer=(()=>{
 })();
 if(typeof module!=='undefined'&&module.exports)module.exports=CourseRhythmPlayer;
 </script>
+<script>/* Rhythmic TAB and bounded look-ahead practice transport. No pitch-to-fret guessing. */
+const CoursePracticePlayer=(()=>{
+  'use strict';
+  const OPEN={1:64,2:59,3:55,4:50,5:45,6:40};
+  const NAMES=['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'];
+  const DEGREES=['1','♭2','2','♭3','3','4','♭5','5','♭6','6','♭7','7'];
+  const mod=n=>(n%12+12)%12;
+  function validateEvents(events){
+    if(!Array.isArray(events)||!events.length||events.length>256)return 'Нужна фраза от 1 до 256 событий.';
+    if(events.some(e=>!e||![.5,1,2,4].includes(e.beats)||!(e.midi===null||Number.isInteger(e.midi)&&e.midi>=0&&e.midi<=127)))return 'Проверьте ноты и длительности фразы.';
+    if(events.reduce((sum,e)=>sum+e.beats,0)>128)return 'Фраза должна быть не длиннее 32 тактов.';
+    if(events.some(e=>e.midi!==null&&(e.str!==undefined||e.fret!==undefined)&&(!Number.isInteger(e.str)||!OPEN[e.str]||!Number.isInteger(e.fret)||e.fret<0||e.fret>16||OPEN[e.str]+e.fret!==e.midi)))return 'Струна и лад должны соответствовать высоте ноты.';
+    return '';
+  }
+  function sliceRange(events,{progression=[],fromBar=1,toBar}={}){
+    const issue=validateEvents(events);if(issue)throw Error(issue);
+    const total=events.reduce((sum,e)=>sum+e.beats,0),bars=Math.ceil(total/4);
+    if(toBar===undefined)toBar=bars;
+    if(!Number.isInteger(fromBar)||!Number.isInteger(toBar)||fromBar<1||toBar<fromBar||toBar>bars)throw Error('Выберите существующие такты от начала до конца фрагмента.');
+    if(!Array.isArray(progression)||progression.length>128)throw Error('Проверьте сопровождение.');
+    let previousEnd=0;
+    for(const c of progression){
+      if(!c||!Number.isFinite(c.atBeat)||c.atBeat<previousEnd||!Number.isFinite(c.beats)||c.beats<=0||c.atBeat+c.beats>total||!Array.isArray(c.notes)||!c.notes.length||c.notes.length>6||c.notes.some(n=>!Number.isInteger(n)||n<0||n>127))throw Error('Проверьте границы и звуки аккордов сопровождения.');
+      previousEnd=c.atBeat+c.beats;
+    }
+    const startBeat=(fromBar-1)*4,endBeat=Math.min(toBar*4,total);let offset=0;
+    const selected=[];
+    events.forEach((e,index)=>{const at=offset;offset+=e.beats;const start=Math.max(at,startBeat),end=Math.min(offset,endBeat);if(end>start)selected.push({...e,index,atBeat:start-startBeat,originalAtBeat:at,beats:end-start,tied:start>at});});
+    const chords=progression.flatMap((c,index)=>{const start=Math.max(c.atBeat,startBeat),end=Math.min(c.atBeat+c.beats,endBeat);return end>start?[{...c,index,label:String(c.label||''),notes:[...new Set(c.notes)],atBeat:start-startBeat,beats:end-start}]:[];});
+    return {events:selected,progression:chords,startBeat,endBeat,length:endBeat-startBeat,total,fromBar,toBar};
+  }
+  function renderTab(container,events,{progression=[],onSelect=null,labels='notes',rootPc=0,degreeByMidi=null,hidden=false}={}){
+    const doc=container.ownerDocument||document,ns='http://www.w3.org/2000/svg';
+    const root=doc.createElement('div');root.className='practice-tab';root.hidden=hidden;root.style.minWidth='0';container.appendChild(root);
+    const symbols=[];let last=-1;
+    const add=(parent,tag,attrs={},value)=>{const el=doc.createElementNS(ns,tag);for(const [key,val] of Object.entries(attrs))el.setAttribute(key,String(val));if(value!==undefined)el.textContent=String(value);parent.appendChild(el);return el;};
+    function message(text){const p=doc.createElement('p');p.className='practice-tab-warning';p.textContent=text;root.appendChild(p);}
+    const issue=events?.length?validateEvents(events):'';
+    if(issue)message(issue);
+    else if(!events?.length)message('Добавьте ноты — здесь появятся ритмические табы.');
+    else{
+      const missing=events.some(e=>e.midi!==null&&(e.str===undefined||e.fret===undefined));
+      if(missing)message('Выберите аппликатуру для нот со знаком «?»: одна высота может находиться на разных струнах.');
+      const total=events.reduce((sum,e)=>sum+e.beats,0),bars=Math.ceil(total/4);let at=0;
+      const timeline=events.map((e,index)=>{const t={...e,index,at};at+=e.beats;return t;});
+      const grid=doc.createElement('div');grid.className='practice-tab-grid';grid.style.cssText='display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,310px),1fr));gap:12px;min-width:0';root.appendChild(grid);
+      for(let bar=0;bar<bars;bar++){
+        const svg=add(grid,'svg',{viewBox:'0 0 332 258',class:'practice-tab-bar',role:'group',fill:'currentColor','aria-label':`Такт ${bar+1}, размер 4/4`,style:'width:100%;min-width:0;display:block;color:var(--ink);background:var(--panel);border:1px solid var(--border);border-radius:8px'});
+        add(svg,'text',{x:12,y:19,'font-size':12,fill:'var(--muted)'},`Такт ${bar+1} · 4/4`);
+        const chords=progression.filter(c=>c.atBeat<bar*4+4&&c.atBeat+c.beats>bar*4);
+        for(const c of chords){const x=40+Math.max(0,c.atBeat-bar*4)*68;add(svg,'text',{x,y:41,'font-size':14,'font-weight':600},c.label||'Аккорд');}
+        for(let str=1;str<=6;str++){
+          const y=76+(str-1)*16;
+          add(svg,'text',{x:9,y:y+4,'font-size':11,fill:'var(--muted)'},['e','B','G','D','A','E'][str-1]);
+          add(svg,'line',{x1:30,x2:319,y1:y,y2:y,stroke:'currentColor','stroke-width':.7,opacity:.45});
+        }
+        for(const x of [30,319])add(svg,'line',{x1:x,x2:x,y1:72,y2:160,stroke:'currentColor','stroke-width':1.2});
+        for(let beat=0;beat<4;beat++){
+          add(svg,'text',{x:40+beat*68,y:232,'font-size':12,fill:'var(--muted)'},String(beat+1));
+          add(svg,'text',{x:74+beat*68,y:232,'font-size':10,fill:'var(--muted)'},'и');
+        }
+        const displayed=timeline.flatMap(e=>{
+          let start=Math.max(e.at,bar*4);const end=Math.min(e.at+e.beats,bar*4+4),segments=[];
+          // A note crossing a bar line can leave 2.5 or 3.5 beats: use tied
+          // conventional durations, never a misleading dotted half note.
+          while(start<end){const beats=[4,3,2,1.5,1,.5].find(n=>n<=end-start);segments.push({e,start,end:start+beats});start+=beats;}
+          return segments;
+        });
+        for(const {e,start,end} of displayed){
+          const x=40+(start-bar*4)*68,beats=end-start,rest=e.midi===null,continued=start>e.at;
+          const description=rest?`Пауза, ${beats} доли`:`${NAMES[mod(e.midi)]}${Math.floor(e.midi/12)-1}, ${e.str?`струна ${e.str}, лад ${e.fret}`:'аппликатура не выбрана'}, ${beats} доли`;
+          const g=add(svg,'g',{'data-tab-event':e.index,class:'practice-tab-event'+(rest?' is-rest':''),role:onSelect?'button':'img','aria-label':`Такт ${bar+1}, доля ${start-bar*4+1}: ${continued?'продолжение, ':''}${description}`,tabindex:onSelect?0:-1});symbols.push({g,index:e.index});
+          const hit=add(g,'rect',{x:x-10,y:48,width:Math.max(28,Math.min(beats*68-4,319-x+8)),height:169,rx:4,fill:'transparent',class:'practice-tab-hit'});
+          if(onSelect){g.style.cursor='pointer';g.addEventListener('click',()=>onSelect(e.index));g.addEventListener('keydown',event=>{if(event.key==='Enter'||event.key===' '){event.preventDefault();onSelect(e.index);}});}
+          if(rest){
+            if(beats===2||beats===3||beats===4){add(g,'line',{x1:x-9,x2:x+9,y1:190,y2:190,stroke:'currentColor','stroke-width':1});add(g,'rect',{x:x-6,y:beats===4?190:185,width:12,height:5,fill:'currentColor'});}
+            else if(beats===.5){add(g,'circle',{cx:x-2,cy:185,r:3,fill:'currentColor'});add(g,'path',{d:`M ${x-2} 185 Q ${x+7} 191 ${x+8} 179 L ${x+1} 205`,stroke:'currentColor','stroke-width':2,fill:'none'});}
+            else add(g,'path',{d:`M ${x-4} 177 l 9 9 -6 8 7 8 q -14 -3 -7 7 q -11 -6 -2 -12 l -4 -8 7 -5 Z`,fill:'currentColor'});
+            if(beats===3||beats===1.5)add(g,'circle',{cx:x+12,cy:190,r:1.6,fill:'currentColor'});
+          }else{
+            const hasPosition=Number.isInteger(e.str)&&Number.isInteger(e.fret),y=hasPosition?76+(e.str-1)*16:112;
+            add(g,'rect',{x:x-9,y:y-9,width:22,height:18,rx:3,fill:'var(--panel)'});
+            add(g,'text',{x:x+2,y:y+5,'text-anchor':'middle','font-size':16,'font-weight':600,fill:hasPosition?'currentColor':'var(--muted)'},hasPosition?e.fret:'?');
+            if(continued||end<e.at+e.beats)add(g,'path',{d:`M${x-7} ${y+12} Q${x+3} ${y+20} ${x+13} ${y+12}`,stroke:'currentColor',fill:'none','stroke-width':1.2});
+            if(e.finger!==undefined)add(g,'text',{x:x+14,y:y-6,'font-size':9,fill:'var(--muted)'},e.finger);
+            const base=beats>=4?4:beats>=2?2:beats>=1?1:.5;
+            add(g,'ellipse',{cx:x,cy:201,rx:5,ry:3.5,transform:`rotate(-20 ${x} 201)`,fill:base>=2?'var(--panel)':'currentColor',stroke:'currentColor','stroke-width':1.2});
+            if(base<4)add(g,'line',{x1:x+4,x2:x+4,y1:200,y2:176,stroke:'currentColor','stroke-width':1.4});
+            if(base===.5)add(g,'path',{d:`M ${x+4} 176 Q ${x+19} 186 ${x+8} 194 Q ${x+17} 184 ${x+4} 183`,fill:'currentColor'});
+            if(beats!==base){add(g,'circle',{cx:x+11,cy:201,r:1.6,fill:'currentColor'});if(beats!==base*1.5)add(g,'text',{x:x+5,y:216,'font-size':9,fill:'var(--muted)'},`${beats} д.`);}
+            if(labels!=='none')add(g,'text',{x,y:250,'text-anchor':'middle','font-size':10,fill:'var(--muted)'},labels==='degrees'?(degreeByMidi?.[e.midi]??DEGREES[mod(e.midi-rootPc)]):NAMES[mod(e.midi)]);
+          }
+          // Explicit hit region remains behind ink; keyboard focus uses the group.
+          hit.setAttribute('pointer-events','all');
+        }
+      }
+      const legend=doc.createElement('p');legend.className='practice-tab-legend';legend.style.cssText='font-size:12px;color:var(--muted);margin:8px 0';legend.textContent='Сверху тонкая струна e. Цифры на линиях — лады; ритм и счёт — под струнами. 0 — открытая струна.'+(events.some(e=>e.finger!==undefined)?' Маленькие цифры рядом — пальцы: 1 указательный, 2 средний, 3 безымянный, 4 мизинец.':'');root.appendChild(legend);
+    }
+    function highlight(index){if(last===index)return;last=index;for(const s of symbols){const active=s.index===index;s.g.classList.toggle('is-playing',active);s.g.querySelector('.practice-tab-hit')?.setAttribute('fill',active?'var(--warn-bg, #f4ddb2)':'transparent');}}
+    function destroy(){symbols.length=0;root.remove();}
+    return {highlight,destroy,element:root};
+  }
+  function createPlayer({onFrame=()=>{},onStop=()=>{},context=()=>getAudioCtx(),note=(...args)=>playMidi(...args),tap=(...args)=>playMetronome(...args),setTimer=(fn,ms)=>setTimeout(fn,ms),clearTimer=id=>clearTimeout(id)}={}){
+    let generation=0,playing=false,timer=null,pendingResume=null,voices=new Set(),lastFrame='';
+    function finish(finished,error){
+      const active=playing;generation++;playing=false;if(timer!==null)clearTimer(timer);timer=null;
+      if(pendingResume){clearTimer(pendingResume.timer);pendingResume.cancel();pendingResume=null;}
+      for(const record of voices){try{record.voice?.stop();}catch(_){}}voices.clear();lastFrame='';
+      if(active)onStop({finished,...(error?{error:String(error.message||error)}:{})});
+    }
+    function stop(){finish(false);}
+    function remember(voice,end){if(!voice)return;const record={voice,end};voices.add(record);voice.addEventListener?.('ended',()=>voices.delete(record));}
+    async function play(events,options={}){
+      stop();
+      const plan=sliceRange(events,options),tempo=Math.max(40,Math.min(120,Number(options.tempo)||60)),beatSeconds=60/tempo;
+      const lead=options.countIn===false?0:4,loop=options.loop===true,items=[];
+      if(options.melody!==false)for(const e of plan.events)if(e.midi!==null)items.push({kind:'melody',at:e.atBeat,duration:e.beats,midi:e.midi,index:e.index});
+      if(options.backing!==false)for(const c of plan.progression)for(const midi of c.notes)items.push({kind:'backing',at:c.atBeat,duration:c.beats,midi});
+      if(options.metronome)for(let at=0;at<plan.length;at++)items.push({kind:'click',at,duration:.1,accent:(plan.startBeat+at)%4===0});
+      items.sort((a,b)=>a.at-b.at);
+      const ticket=generation;playing=true;let ctx;
+      try{
+        ctx=context();
+        if(ctx.state&&ctx.state!=='running'){
+          const operation={timer:null,cancel:null};
+          const cancelled=new Promise(resolve=>{operation.cancel=resolve;});pendingResume=operation;
+          try{
+            await Promise.race([Promise.resolve().then(()=>ticket===generation?ctx.resume():undefined),cancelled,new Promise((_,reject)=>{operation.timer=setTimer(()=>reject(Error('Браузер не запустил звук. Нажмите «Играть» ещё раз.')),3000);})]);
+          }finally{clearTimer(operation.timer);if(pendingResume===operation)pendingResume=null;}
+          if(ticket!==generation)return null;
+          if(ctx.state!=='running')throw Error('Звук недоступен. Проверьте настройки браузера.');
+        }
+        if(ticket!==generation)return null;
+        const start=ctx.currentTime+.08,musicStart=start+lead*beatSeconds,cycleSeconds=plan.length*beatSeconds;
+        let countIndex=0,cycle=0,itemIndex=0;
+        function emit(item,at,duration){
+          if(item.kind==='click'){if(at>=ctx.currentTime-.015)remember(tap(Math.max(at,ctx.currentTime),item.accent,.085),Math.max(at,ctx.currentTime)+.1);return;}
+          const end=at+duration;if(end<=ctx.currentTime)return;
+          const when=Math.max(at,ctx.currentTime),voice=note(item.midi,when,end-when,item.kind==='backing'?.04:.17,item.kind==='melody'?options.positions?.[item.index]||null:null,'held');remember(voice,end);
+        }
+        function tick(){
+          if(ticket!==generation)return;
+          try{
+            const now=ctx.currentTime,horizon=now+.2;
+            for(const v of voices)if(v.end<now-.05||v.voice.stopped)voices.delete(v);
+            while(countIndex<lead&&start+countIndex*beatSeconds<horizon){emit({kind:'click',accent:countIndex===0},start+countIndex*beatSeconds,.1);countIndex++;}
+            const elapsed=(now-musicStart)/beatSeconds;
+            if(!loop&&elapsed>=plan.length){finish(true);return;}
+            // A delayed timer skips stale cycles instead of allocating an unbounded backlog.
+            if(loop&&elapsed>=0&&cycle<Math.floor(elapsed/plan.length)){cycle=Math.floor(elapsed/plan.length);itemIndex=0;}
+            if(items.length){
+              let scheduled=0;
+              while((loop||cycle===0)&&musicStart+cycle*cycleSeconds+items[itemIndex].at*beatSeconds<horizon){
+                const item=items[itemIndex];emit(item,musicStart+cycle*cycleSeconds+item.at*beatSeconds,item.duration*beatSeconds);
+                itemIndex++;if(itemIndex===items.length){itemIndex=0;cycle++;}
+                if(++scheduled>1024)throw Error('Не удалось запланировать воспроизведение.');
+              }
+            }
+            let frame;
+            if(now<start)frame={index:-1,waiting:true,cycle:0};
+            else if(elapsed<0)frame={index:-1,countIn:Math.min(4,Math.floor((now-start)/beatSeconds)+1),cycle:0};
+            else{
+              const currentCycle=Math.floor(elapsed/plan.length),position=elapsed-currentCycle*plan.length;
+              const current=plan.events.find(e=>position>=e.atBeat&&position<e.atBeat+e.beats),chord=plan.progression.find(c=>position>=c.atBeat&&position<c.atBeat+c.beats);
+              const full=plan.startBeat+position;
+              frame={index:current?.midi!==null?current?.index??-1:-1,bar:Math.floor(full/4)+1,beat:Math.floor(full%4)+1,position:full,cycle:currentCycle,chord:chord?.label||''};
+            }
+            const key=JSON.stringify([frame.index,frame.bar,frame.beat,frame.countIn,frame.cycle,frame.chord,frame.waiting]);
+            if(key!==lastFrame){lastFrame=key;onFrame(frame);}
+            if(ticket===generation)timer=setTimer(tick,25);
+          }catch(error){finish(false,error);}
+        }
+        tick();return {...plan,tempo,beatSeconds,lead,start,musicStart};
+      }catch(error){if(ticket!==generation)return null;finish(false,error);throw error;}
+    }
+    const visibility=()=>{if(document.hidden)stop();};
+    if(typeof document!=='undefined')document.addEventListener('visibilitychange',visibility);
+    if(typeof window!=='undefined')window.addEventListener('pagehide',stop);
+    function destroy(){stop();if(typeof document!=='undefined')document.removeEventListener('visibilitychange',visibility);if(typeof window!=='undefined')window.removeEventListener('pagehide',stop);}
+    return {play,stop,isPlaying:()=>playing,destroy};
+  }
+  return {validateEvents,sliceRange,renderTab,createPlayer};
+})();
+if(typeof module!=='undefined'&&module.exports)module.exports=CoursePracticePlayer;
+</script>
+<script>/* Original short studies for playing, hearing and varying a phrase.
+   Coordinates are checked mathematically; instrument comfort still needs teacher review. */
+const CoursePracticeContent = (() => {
+  'use strict';
+  const OPEN = {1:64, 2:59, 3:55, 4:50, 5:45, 6:40};
+  const NAMES = ['C','D♭','D','E♭','E','F','F♯','G','A♭','A','B♭','B'];
+  const cPosition = [[6,8,2],[6,10,4],[5,7,1],[5,8,2],[5,10,4],[4,7,1],[4,9,3],[4,10,4]];
+  const aPosition = [[6,5,1],[6,7,3],[6,8,4],[5,5,1],[5,7,3],[5,8,4],[4,5,1],[4,7,3]];
+  function points(coords) {
+    return coords.map(([str,fret,finger],index) => {
+      const midi = OPEN[str] + fret;
+      return {str,fret,finger,midi,key:`${str}/${fret}`,label:NAMES[midi % 12],degree:index % 7 + 1};
+    });
+  }
+  const C = points(cPosition), A = points(aPosition);
+  function notes(position, values) {
+    return values.map(value => {
+      const [midi,beats] = Array.isArray(value) ? value : [value,1];
+      if (midi === null) return {midi:null,beats};
+      const p = position.find(p => p.midi === midi);
+      if (!p) throw new Error(`Missing practice position: ${midi}`);
+      return {midi,beats,str:p.str,fret:p.fret,finger:p.finger};
+    });
+  }
+  const chords = {C:[48,52,55], F:[53,57,60], G7:[43,47,50,53], Am:[45,48,52]};
+  const progression = labels => labels.map((label,index) => ({atBeat:index * 4,beats:4,notes:[...chords[label]],label}));
+  const round = (position,values,instruction) => {
+    const events=notes(position,values);
+    return {events,startingMidi:events[0].midi,instruction};
+  };
+  const ear = rounds => ({rounds,events:rounds[0].events,startingMidi:rounds[0].startingMidi,instruction:rounds[0].instruction});
+  const variation = (sourceEvents,labels,allowedLastMidi,instruction) => ({
+    sourceEvents:sourceEvents.map(e => ({...e})),progression:progression(labels),allowedLastMidi,
+    preserveCount:sourceEvents.length-1,instruction,
+    rubric:['Сохранены первые семь звуков и их порядок.','Длительности обоих тактов сохранены.','Изменён только последний звук на одну из предложенных аккордовых опор.']
+  });
+  const session = (title,tasks) => ({title,minutes:30,tasks});
+  const drill = (id,title,position,values,labels,explanation) => ({id,title,events:notes(position,values),progression:progression(labels),explanation});
+
+  const melodySource=notes(C,[48,50,52,55,52,50,48,55]);
+  const cfSource=notes(C,[48,50,52,55,53,55,57,60]);
+  const cadenceSource=notes(C,[55,59,57,53,52,55,50,48]);
+  const amSource=notes(A,[45,47,48,52,50,48,47,45]);
+
+  const studies = [
+    {
+      id:'melody',title:'Первая мелодия в C major',subtitle:'Четыре такта: сыграть, услышать, изменить',
+      purpose:'Сыграть законченную мелодию в одной позиции, сохранить пульс в паузе и самостоятельно подобрать короткий ответ.',
+      prerequisite:'После ступеней и позиции в блоке 2A; состав C–E–G — из 2B.',rootPc:0,range:[7,10],points:C,
+      events:notes(C,[48,50,52,55,52,50,48,55,[57,.5],[55,.5],52,[null,1],50,52,50,[48,2]]),
+      progression:progression(['C','C','C','C']),
+      sessions:[
+        session('Занятие 1 · сыграть образец',[
+          '5 минут: вспомните C–E–G и проверьте чистоту каждого звука.',
+          '5 минут: прослушайте четыре такта и найдите повторяющееся движение.',
+          '10 минут: сыграйте сначала такты 1–2, затем 3–4; сохраните счёт во время паузы.',
+          '5 минут: пропойте один короткий рисунок и сыграйте его без табов.',
+          '5 минут: сыграйте весь этюд под сопровождение и отметьте трудное место.'
+        ]),
+        session('Занятие 2 · слух и новое окончание',[
+          '5 минут: восстановите первые два такта по памяти.',
+          '5 минут: прослушайте и пропойте короткие задания раздела «Подобрать».',
+          '10 минут: подберите их на гитаре, затем проверьте найденные ноты на экране.',
+          '5 минут: сохраните первые семь звуков варианта, заменив только последнее G на C или E.',
+          '5 минут: сравните оба окончания на слух и сыграйте свой вариант.'
+        ]),
+        session('Занятие 3 · самостоятельная игра',[
+          '5 минут: сыграйте знакомую мелодию без подсказанной мелодической дорожки.',
+          '5 минут: повторите трудный такт в сохранённом рабочем темпе.',
+          '10 минут: придумайте свой ритм для знакомых нот; оставьте место для паузы.',
+          '5 минут: ответьте собственными двумя тактами во время звучащего C.',
+          '5 минут: запишите один дубль и выберите конкретную задачу для возвращения.'
+        ])
+      ],
+      ear:ear([
+        round(C,[48,50,52],'Начните с C3. Услышьте, пропойте и найдите все три звука в том же порядке.'),
+        round(C,[52,55,52],'Начните с E3. Найдите, куда идёт мелодия и возвращается ли к началу.'),
+        round(C,[55,52,50,48],'Начните с G3. Подберите короткое окончание из четырёх звуков.')
+      ]),
+      variation:variation(melodySource,['C','C'],[48,52],'Сохраните первые семь нот и ровные четверти. Замените последнее G на C или E и сравните характер окончания.'),
+      drills:[
+        drill('pulse','Четыре доли и пауза',C,[48,48,[null,1],48,52,52,[null,1],48],['C','C'],'Продолжайте считать 1–2–3–4, когда гитара молчит. Пауза занимает одну долю.'),
+        drill('thirds','Пары по терциям',C,[48,52,50,53,52,55,53,57],['C','C'],'C–E, D–F, E–G, F–A: рисунок двигается по ступеням C major. Терции отличаются числом полутонов.')
+      ],
+      checks:['Я сыграл четыре такта целиком после отсчёта.','Я сохранил пульс на паузе и вернулся вовремя.','Я подобрал короткий рисунок и сыграл новое окончание без готовых точек.'],
+      tips:['В позиции 7–10 указательный палец соответствует 7-му ладу; на 8-м, 9-м и 10-м — пальцы 2, 3 и 4.','Сначала выбирайте темп, в котором успеваете услышать каждый звук. Ускорение не является условием прохождения.']
+    },
+    {
+      id:'cf',title:'Мотив переходит из C в F',subtitle:'Восьмитактовый этюд и пять способов связать аккорды',
+      purpose:'Сохранить узнаваемый мотив при смене C → F, услышать новую опору и сыграть собственный ответ под сопровождение.',
+      prerequisite:'После C–E–G и арпеджио в блоке 2B; рядом с переходами блока 3.',rootPc:0,range:[7,10],points:C,
+      events:notes(C,[
+        48,50,52,55, 53,55,57,60,
+        60,59,55,52, [53,2],[null,1],57,
+        [48,.5],[50,.5],52,55,[null,1], [53,.5],[55,.5],57,[60,2],
+        55,52,50,52, 50,[48,2],[null,1]
+      ]),
+      progression:progression(['C','F','C','F','C','F','C','C']),
+      sessions:[
+        session('Занятие 1 · мотив и смена аккорда',[
+          '5 минут: найдите C–E–G и F–A–C в знакомой позиции; назовите общий C.',
+          '5 минут: прослушайте первые два такта, пропойте их и найдите повтор рисунка.',
+          '10 минут: повторяйте такты 1–2, отдельно соединяя G в конце C с F в начале следующего такта.',
+          '5 минут: сыграйте такты 3–4; считайте и во время паузы.',
+          '5 минут: пройдите все восемь тактов медленно и сохраните трудное место.'
+        ]),
+        session('Занятие 2 · секвенция, слух и вариация',[
+          '5 минут: сыграйте общий звук, ближайшую опору и подход из списка упражнений.',
+          '5 минут: пропойте C–D–E–G и его ответ F–G–A–C.',
+          '10 минут: подберите три коротких рисунка на слух; ответ открывайте после попытки.',
+          '5 минут: измените только последнее C второго такта на F или A.',
+          '5 минут: сыграйте и сравните исходное и изменённое окончания над F.'
+        ]),
+        session('Занятие 3 · свой ответ в реальном времени',[
+          '5 минут: вспомните этюд без табов, затем проверьте трудный фрагмент.',
+          '5 минут: сыграйте диатоническую секвенцию и закончите на A над F.',
+          '10 минут: оставьте только сопровождение C → F; повторяйте мотив и меняйте его ритм.',
+          '5 минут: в каждом новом F выберите F, A или C как опору и сыграйте свободный ответ.',
+          '5 минут: запишите два прохода, сравните пульс и окончания; сохраните следующую задачу.'
+        ])
+      ],
+      ear:ear([
+        round(C,[52,53,57],'Начните с E3. Подберите движение к новой опоре: три звука.'),
+        round(C,[55,57,60],'Начните с G3. Пропойте и найдите три звука восходящего ответа.'),
+        round(C,[60,57,55,53],'Начните с C4. Найдите четыре звука нисходящего окончания.')
+      ]),
+      variation:variation(cfSource,['C','F'],[53,57],'Оставьте первые семь нот и все четверти. Последнее C над F замените на F или A. Сначала предскажите звучание, затем сыграйте.'),
+      drills:[
+        drill('common','Общий C соединяет два аккорда',C,[[48,4],[48,4]],['C','F'],'Высота остаётся C3. Над C это основной тон, над F — квинта. Сначала услышьте смену сопровождения на одном звуке.'),
+        drill('nearest','Ближайшая опора: E → F',C,[[52,4],[53,4]],['C','F'],'От терции C к основному тону F один полутон. Сыграйте смену точно на первую долю нового аккорда.'),
+        drill('approach','Подойдите к F по гамме',C,[[48,2],50,52,[53,2],57,53],['C','F'],'C–D–E приводит к F на первой доле нового такта. D служит проходящим звуком; не нужно превращать всю линию в арпеджио.'),
+        drill('motif','Сохраните мотив при смене гармонии',C,[48,50,52,55,53,55,57,60],['C','F'],'C–D–E–G повторяется квартой выше как F–G–A–C. Для выбранного мотива перенос на пять полутонов остаётся внутри C major.'),
+        drill('diatonic','Секвенция по ступеням с выходом в F',C,[[48,.5],[50,.5],[52,.5],[50,.5],[52,.5],[53,.5],[52,.5],[53,.5],[55,.5],[57,2],[null,.5],[null,1]],['C','F'],'Восемь первых восьмых заполняют такт C; последний G третьей группы попадает на начало F, затем A становится терцией F. Группы C–D–E, D–E–F, E–F–G идут ровными восьмыми, не триолями.')
+      ],
+      checks:['Я сыграл восемь тактов и не остановился на смене C → F.','Я слышу, почему E над C и A над F дают разные опоры.','Я сыграл собственный ответ под сопровождение без набранной заранее мелодии.'],
+      tips:['Такт 2 заканчивается C — квинтой F; весь этюд возвращается к C major в тактах 7–8.','Смена аккорда не запрещает проходящие звуки. В упражнениях выбирается конкретная опора, чтобы услышать её действие.','Трёхнотная группа из восьмых может пересечь тактовую черту. Счёт остаётся 1-и-2-и-3-и-4-и.']
+    },
+    {
+      id:'cadence',title:'Услышать возвращение G7 → C',subtitle:'Четыре такта напряжения и разрешения',
+      purpose:'Услышать G7 → C и сыграть два конкретных мелодических разрешения: B → C и F → E.',
+      prerequisite:'После уверенной игры C → F; G7 состоит из G–B–D–F.',rootPc:0,range:[7,10],points:C,
+      events:notes(C,[55,59,57,53,52,55,50,48,59,55,[53,2],52,50,48,[null,1]]),
+      progression:progression(['G7','C','G7','C']),
+      sessions:[
+        session('Занятие 1 · услышать разрешение',[
+          '5 минут: найдите G–B–D–F и C–E–G в позиции.',
+          '5 минут: прослушайте G7 → C, пропойте F → E и B → C.',
+          '10 минут: повторяйте отдельные разрешения, затем первые два такта этюда.',
+          '5 минут: сыграйте такты 3–4 с паузой после последней C.',
+          '5 минут: сыграйте четыре такта целиком и сохраните рабочий темп.'
+        ]),
+        session('Занятие 2 · найти окончание на слух',[
+          '5 минут: повторите переход F → E без остановки пульса.',
+          '5 минут: пропойте короткие задания без гитары.',
+          '10 минут: подберите все три рисунка, затем сравните их с образцом.',
+          '5 минут: в варианте замените последнее C на E или G, сохранив предыдущие ноты.',
+          '5 минут: сравните три окончания над C и назовите выбранный звук.'
+        ]),
+        session('Занятие 3 · придумать своё возвращение',[
+          '5 минут: сыграйте этюд по памяти.',
+          '5 минут: повторите одно трудное место без мелодической дорожки.',
+          '10 минут: оставьте сопровождение G7 → C; попробуйте разные ритмы для B → C и F → E.',
+          '5 минут: придумайте два такта и закончите на одном из звуков C–E–G.',
+          '5 минут: запишите один дубль и отметьте, слышно ли возвращение к C.'
+        ])
+      ],
+      ear:ear([
+        round(C,[59,60,55],'Начните с B3. Подберите три звука и найдите, где мелодия меняет направление.'),
+        round(C,[53,52,48],'Начните с F3. Подберите нисходящее разрешение из трёх звуков.'),
+        round(C,[55,53,52,48],'Начните с G3. Найдите четыре звука окончания.')
+      ]),
+      variation:variation(cadenceSource,['G7','C'],[52,55],'Сохраните первые семь нот. Последнее C замените на E или G: обе ноты входят в C major. Сравните степень завершённости на слух.'),
+      drills:[
+        drill('leading','B → C: полутон вверх',C,[[59,4],[60,4]],['G7','C'],'B — терция G7; на смене аккорда поднимите её на полутон до C. Это отдельная мелодическая линия.'),
+        drill('seventh','F → E: полутон вниз',C,[[53,4],[52,4]],['G7','C'],'F — септима G7; на смене опустите её до терции C. Сравните этот ход с B → C.'),
+        drill('line','Окружите разрешение коротким мотивом',C,[55,59,57,53,52,55,50,48],['G7','C'],'В конце G7 прозвучит F, а новый C начнётся с E. Другие ноты образуют мелодию вокруг этого перехода.')
+      ],
+      checks:['Я сыграл четыре такта без остановки между G7 и C.','Я отдельно пропел и сыграл B → C и F → E.','Я придумал своё окончание и объяснил, какой звук стал опорой над C.'],
+      tips:['Здесь G7 — G–B–D–F, а не Gmaj7: септима F малая.','Оба разрешения — учебные ориентиры. Они не требуют каждый раз заканчивать фразу одним и тем же способом.']
+    },
+    {
+      id:'am',title:'Своя фраза в A minor',subtitle:'Четыре такта вокруг новой тоники',
+      purpose:'Сыграть мелодию вокруг A, выдержать паузу и придумать ответ, различая общий набор нот C major и A minor.',
+      prerequisite:'После блока 4 о натуральном A minor и параллельности.',rootPc:9,range:[5,8],points:A,
+      events:notes(A,[45,47,48,52,50,48,47,45,[52,.5],[53,.5],52,50,[null,1],48,47,[45,2]]),
+      progression:progression(['Am','Am','Am','Am']),
+      sessions:[
+        session('Занятие 1 · услышать A как опору',[
+          '5 минут: найдите A–C–E и сыграйте их под Am.',
+          '5 минут: прослушайте этюд и пропойте его окончания.',
+          '10 минут: сыграйте по два такта, затем соедините четыре.',
+          '5 минут: повторите ритм третьего такта на одной ноте, сохраняя паузу.',
+          '5 минут: сыграйте целиком и сохраните трудный фрагмент.'
+        ]),
+        session('Занятие 2 · слух и вариация',[
+          '5 минут: вспомните мелодию без готовых точек.',
+          '5 минут: пропойте три коротких задания раздела «Подобрать».',
+          '10 минут: найдите их на гитаре и проверьте последовательности на экране.',
+          '5 минут: замените только последнее A варианта на C или E.',
+          '5 минут: сравните окончания и вернитесь к A по своему замыслу.'
+        ]),
+        session('Занятие 3 · музыкальный ответ',[
+          '5 минут: сыграйте этюд под сопровождение без мелодической дорожки.',
+          '5 минут: повторите наиболее трудный такт в удобном темпе.',
+          '10 минут: оставьте короткий мотив, меняйте его ритм и используйте паузы.',
+          '5 минут: сыграйте вопрос и собственный ответ в реальном времени.',
+          '5 минут: запишите один дубль и объясните, что помогло услышать A как тонику.'
+        ])
+      ],
+      ear:ear([
+        round(A,[45,48,52],'Начните с A2. Найдите три звука, не открывая табы ответа.'),
+        round(A,[52,50,48],'Начните с E3. Подберите три звука нисходящего движения.'),
+        round(A,[48,47,45],'Начните с C3. Найдите окончание вокруг A.')
+      ]),
+      variation:variation(amSource,['Am','Am'],[48,52],'Сохраните первые семь нот. Последнее A замените на C или E; сравните окончания над тем же Am.'),
+      drills:[
+        drill('breath','Мотив и место для ответа',A,[45,48,52,[null,1],50,48,[45,2]],['Am','Am'],'Пауза отделяет первую мысль от ответа. Продолжайте счёт и вступайте вовремя.'),
+        drill('sequence','Трёхнотные группы в A minor',A,[[45,.5],[47,.5],[48,.5],[47,.5],[48,.5],[50,.5],[48,.5],[50,.5],[52,.5],[45,2],[null,.5],[null,1]],['Am','Am'],'A–B–C, B–C–D, C–D–E: начало группы сдвигается на ступень. После трёх групп завершите на A; не путайте восьмые с триолями.')
+      ],
+      checks:['Я сыграл четыре такта под Am и сохранил пульс на паузе.','Я подобрал короткую фразу и отличаю её звуки от номеров ладов.','Я сыграл собственный вопрос и ответ и слышу A как опору.'],
+      tips:['В позиции 5–8 указательный палец соответствует 5-му ладу; на 7-м и 8-м — пальцы 3 и 4.','Набор нот совпадает с C major, но сопровождение и окончания этой миниатюры направлены к A.']
+    }
+  ];
+
+  function resolveStudy(study) {
+    return typeof study === 'string' ? studies.find(item => item.id === study) : study;
+  }
+  function validateEar(study,midis,roundIndex=0) {
+    const definition=resolveStudy(study),target=definition?.ear?.rounds?.[roundIndex]?.events;
+    if (!target || !Number.isInteger(roundIndex)) return 'Выберите слуховое задание.';
+    if (!Array.isArray(midis) || midis.some(n => !Number.isInteger(n) || n < 0 || n > 127)) return 'Выберите ноты услышанной фразы.';
+    if (midis.length !== target.length) return `В этом рисунке ${target.length} звука. Проверьте количество выбранных нот.`;
+    return midis.every((midi,index) => midi === target[index].midi) ? '' : 'Пока не совпало. Пропойте движение и сравните по одному звуку; важны порядок и октава.';
+  }
+  function validateVariation(study,events) {
+    const definition=resolveStudy(study),task=definition?.variation;
+    if (!task || !Array.isArray(events)) return 'Выберите упражнение на изменение окончания.';
+    const source=task.sourceEvents;
+    if (events.length !== source.length) return 'Сохраните восемь событий исходного рисунка: меняется только последнее.';
+    for (let i=0;i<events.length;i++) {
+      const event=events[i];
+      if (!event || !Number.isInteger(event.midi) || !Number.isFinite(event.beats) || !definition.points.some(p => p.midi===event.midi)) return 'Используйте звуки показанной позиции.';
+      if (event.str !== undefined || event.fret !== undefined) {
+        if (!Number.isInteger(event.str) || !OPEN[event.str] || !Number.isInteger(event.fret) || event.fret<0 || event.fret>16 || OPEN[event.str]+event.fret!==event.midi) return 'Нота и выбранное место на грифе не совпадают.';
+      }
+      if (event.beats !== source[i].beats) return 'В этом упражнении сохраните ритм: каждое событие длится одну долю.';
+      if (i<task.preserveCount && event.midi !== source[i].midi) return 'Верните первые семь нот: сейчас меняется только последнее окончание.';
+    }
+    const last=events.at(-1).midi;
+    if (last===source.at(-1).midi) return 'Окончание пока не изменилось. Выберите другую предложенную опору.';
+    return task.allowedLastMidi.includes(last) ? '' : 'Последний звук должен быть одной из предложенных опор нового окончания.';
+  }
+  return {studies,validateEar,validateVariation};
+})();
+if (typeof module !== 'undefined' && module.exports) module.exports=CoursePracticeContent;
+</script>
 <script>/* Block 1: original practice tasks. No book scores or recordings are bundled. */
 const CourseBlockOne = (() => {
   const KEY='fretlab-block1-v1';
@@ -5697,6 +6226,11 @@ const CourseBlockTwo=(()=>{
   const pc=n=>((n%12)+12)%12;
   const pitch=n=>['C','D♭','D','E♭','E','F','G♭','G','A♭','A','B♭','B'][pc(n)];
   const equals=(a,b)=>a.length===b.length&&new Set(a).size===a.length&&a.every(x=>b.includes(x));
+  function phrasePosition(e){
+    if(e.midi===null)return {midi:null,beats:e.beats};
+    const p=C.POSITION.find(p=>p.midi===e.midi&&p.str===e.str&&p.fret===e.fret)||C.POSITION.find(p=>p.midi===e.midi);
+    return {midi:e.midi,beats:e.beats,...(p?{str:p.str,fret:p.fret,finger:p.fret-6}:{})};
+  }
   function chordResult(points,root,quality='maj',namer=null){
     const expected=[0,quality==='min'?3:4,7].map(x=>pc(x+root));
     const notes=[...new Set(points.map(p=>pc(p.midi)))].sort((a,b)=>a-b);
@@ -5732,7 +6266,7 @@ const CourseBlockTwo=(()=>{
         for(const name of ['ok','heard','located','assisted','earTried','earCorrect'])safe[name]=s[name]===true;
         if(Array.isArray(s.selected))safe.selected=[...new Set(s.selected.filter(k=>typeof k==='string'&&/^[1-6]\/(?:[0-9]|1[0-6])$/.test(k)))].slice(0,40);
         if(Array.isArray(s.checks))safe.checks=s.checks.slice(0,4).map(x=>x===true);
-        if(Array.isArray(s.events)&&!s.events.some(e=>!e||![.5,1,2].includes(e.beats)||!(e.midi===null||C.POSITION.some(p=>p.midi===e.midi)))&&s.events.length<=32&&s.events.reduce((n,e)=>n+e.beats,0)<=8)safe.events=s.events.map(e=>({midi:e.midi,beats:e.beats}));
+        if(Array.isArray(s.events)&&!s.events.some(e=>!e||![.5,1,2].includes(e.beats)||!(e.midi===null||C.POSITION.some(p=>p.midi===e.midi)))&&s.events.length<=32&&s.events.reduce((n,e)=>n+e.beats,0)<=8)safe.events=s.events.map(phrasePosition);
         if([.5,1,2].includes(s.duration))safe.duration=s.duration;
         state.sessions[step.id]=safe;
       }
@@ -5746,7 +6280,7 @@ const CourseBlockTwo=(()=>{
     const el=id=>document.getElementById(id),node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
     let state=clean(null),storageOK=true,review=null,labels='notes',tempo=80,backing='repeat',focusKey=null;
     try{state=clean(JSON.parse(localStorage.getItem(KEY)||'null'));}catch{storageOK=false;}
-    const transport=CourseRhythmPlayer.createTransport();let clicks=[];
+    const transport=CourseRhythmPlayer.createTransport();let clicks=[],tabView=null;
     const step=()=>C.parts[state.part][state.index[state.part]];
     function session(){const d=step();return state.sessions[d.id]||(state.sessions[d.id]={selected:(d.base||[]).map(p=>p.key),checks:[],events:[],round:0,phase:0,attempts:0,firstCorrect:0});}
     const selected=s=>(s.selected||[]).map(k=>{const [str,fret]=k.split('/').map(Number);return C.point(str,fret);});
@@ -5759,13 +6293,14 @@ const CourseBlockTwo=(()=>{
     function at(p){return {boardId:'b2Board',index:(p.str-1)*(FRET_COUNT+1)+p.fret};}
     function note(p){stop();clicks.push(playMidi(p.midi,undefined,.85,.18,at(p)));}
     function play(events,{chord=null,countIn=false,positions=[],onend=null}={}){
-      stop();window.courseBlockOne?.stop();stopSequence();el('b2Stop').hidden=false;
+      stop();window.courseBlockOne?.stop();window.coursePractice?.stop();stopSequence();el('b2Stop').hidden=false;
       transport.play(events,{tempo,countIn,metronome:countIn,positions,
         accompaniment:chord?{notes:chord,mode:backing}:null,
         onframe:f=>{
           el('b2AudioStatus').textContent=f.countIn!==undefined?`Отсчёт: ${f.countIn+1}`:f.position!==undefined?`Такт ${Math.floor(f.position/4)+1} · доля ${f.beat+1}`:'';
           body().querySelectorAll('[data-phrase-event]').forEach(e=>e.classList.toggle('is-playing',Number(e.dataset.phraseEvent)===f.index));
-        },onend:finished=>{el('b2Stop').hidden=true;el('b2AudioStatus').textContent='';body().querySelectorAll('.is-playing').forEach(e=>e.classList.remove('is-playing'));if(finished)onend?.();}
+          tabView?.highlight(f.index??-1);
+        },onend:finished=>{tabView?.highlight(-1);el('b2Stop').hidden=true;el('b2AudioStatus').textContent='';body().querySelectorAll('.is-playing').forEach(e=>e.classList.remove('is-playing'));if(finished)onend?.();}
       });
     }
     function listen(points,{together=false,onend=null,countIn=false}={}){
@@ -5871,19 +6406,24 @@ const CourseBlockTwo=(()=>{
       const next=button(controls(),s.round===total-1?'Завершить слуховую практику':'Следующий пример',()=>{if(!s.earCorrect)return;s.round++;s.heard=false;s.earTried=false;s.earCorrect=false;save();redraw();},{primary:true});next.hidden=!s.earCorrect;
     }
     function composer(d,s){
-      s.events||=[];s.duration||=1;s.checks||=[];const total=s.events.reduce((n,e)=>n+e.beats,0);
+      s.events=(s.events||[]).map(phrasePosition);s.duration||=1;s.checks||=[];const total=s.events.reduce((n,e)=>n+e.beats,0);
       body().appendChild(node('p',`Заполнено ${total} из 8 долей · 2 такта 4/4`));
       const row=controls();for(const [value,text] of [[.5,'Восьмая · ½ доли'],[1,'Четверть · 1 доля'],[2,'Половинная · 2 доли']]){const b=button(row,text,()=>{s.duration=value;redraw();});b.setAttribute('aria-pressed',String(value===s.duration));}
-      function append(midi){if(total+s.duration>8){feedback('Два такта заполнены. Уберите последнее событие или выберите меньшую длительность.');return;}s.events.push({midi,beats:s.duration});s.ok=false;s.checks=[];redraw();}
+      function append(midi,p={}){if(total+s.duration>8){feedback('Два такта заполнены. Уберите последнее событие или выберите меньшую длительность.');return;}s.events.push(phrasePosition({midi,beats:s.duration,...p}));s.ok=false;s.checks=[];redraw();}
       button(row,'Добавить паузу',()=>append(null));
-      board(C.POSITION,{range:[7,10],strings:[6,5,4],onClick:p=>{if(!C.POSITION.some(n=>n.key===p.key)){feedback('Выберите одну из нот позиции C major.');return;}append(p.midi);note(p);}});
+      board(C.POSITION,{range:[7,10],strings:[6,5,4],onClick:p=>{if(!C.POSITION.some(n=>n.key===p.key)){feedback('Выберите одну из нот позиции C major.');return;}append(p.midi,p);note(p);}});
+      if(typeof CoursePracticePlayer!=='undefined'){
+        const tab=node('div');tab.className='course-compose-tabs';body().appendChild(tab);
+        tabView=CoursePracticePlayer.renderTab(tab,s.events,{progression:[{atBeat:0,beats:8,notes:[48,52,55],label:'C'}]});
+      }
       const timeline=node('ol');timeline.className='b2-phrase';timeline.setAttribute('aria-label','События фразы');
       s.events.forEach((e,i)=>{const item=node('li',`${e.midi===null?'Пауза':pitch(e.midi)} · ${e.beats===.5?'½':e.beats} доли`);item.style.gridColumn=`span ${e.beats*2}`;item.dataset.phraseEvent=String(i);timeline.appendChild(item);});body().appendChild(timeline);
       const actions=controls();button(actions,'Убрать последнее',()=>{s.events.pop();s.checks=[];redraw();},{disabled:!s.events.length});button(actions,'Очистить фразу',()=>{s.events=[];s.checks=[];redraw();},{disabled:!s.events.length});
       const accompaniment=node('label','Сопровождение '),select=node('select');[['repeat','Повторять C каждый такт'],['sustain','Тянуть C под всей фразой']].forEach(([v,t])=>{const o=node('option',t);o.value=v;select.appendChild(o);});select.value=backing;select.onchange=()=>{backing=select.value;stop();};accompaniment.appendChild(select);actions.appendChild(accompaniment);
       button(actions,'▶ Фраза + C major',()=>play(s.events,{chord:[48,52,55],countIn:true,positions:s.events.map(e=>{const p=C.POSITION.find(p=>p.midi===e.midi);return p?at(p):null;})}),{disabled:!s.events.length});
       checks(s,['Я пропел и сыграл фразу поверх C major.','Я сохранил пульс и осознанно завершил фразу на C, E или G.']);
-      button(controls(),'Проверить фразу',()=>{const issue=phraseCheck(s.events);s.ok=!issue&&s.checks.every(Boolean)&&s.checks.length===2;feedback(issue||(!s.ok?'Сыграйте фразу на гитаре и отметьте самопроверку.':'Фраза готова: два такта и окончание на звуке аккорда.'),s.ok);save();updateNext();},{primary:true});
+      button(controls(),'Проверить фразу',()=>{const issue=phraseCheck(s.events);s.ok=!issue&&s.checks.every(Boolean)&&s.checks.length===2;feedback(issue||(!s.ok?'Сыграйте фразу на гитаре и отметьте самопроверку.':'Проверены два такта и окончание на звуке аккорда. Исполнение на гитаре — ваша самопроверка.'),s.ok);save();updateNext();},{primary:true});
+      button(controls(),'Играть миниатюру с табами',()=>window.coursePractice?.open('melody'));
     }
     function exam(d,s){
       const a=d.kind==='examA',phase=s.phase||0;
@@ -5918,7 +6458,7 @@ const CourseBlockTwo=(()=>{
     }
     function updateNext(){el('b2Next').disabled=!ready();el('b2NextHelp').textContent=ready()?'':step().kind==='learn'?'Послушайте пример перед продолжением.':'Выполните задание, затем переходите дальше.';}
     function render(){
-      stop();const d=step(),s=session();save();const index=state.index[state.part],list=C.parts[state.part];
+      stop();tabView?.destroy();tabView=null;const d=step(),s=session();save();const index=state.index[state.part],list=C.parts[state.part];
       el('b2Crumb').textContent=`Блок 2${state.part.toUpperCase()} · ${review?'Повторная проверка':`Шаг ${index+1} из ${list.length}`}`;
       el('b2Title').textContent=d.title;el('b2Text').textContent=d.text;el('b2Instruction').textContent=d.instruction;el('b2Why').hidden=!d.why;el('b2WhyText').textContent=d.why||'';el('b2Why').open=false;
       el('b2StepProgress').max=list.length;el('b2StepProgress').value=index+1;el('b2Back').disabled=index===0||!!review;el('b2Next').textContent=index===list.length-1?review?'Завершить повторение':`Завершить блок 2${state.part.toUpperCase()}`:'Дальше →';
@@ -6154,7 +6694,7 @@ const CourseCompleteFoundation=(()=>{
   const module5={
     id:'5',title:'Диатонические лады на слух и на грифе',subtitle:'Общие ноты → разные центры и характерные интервалы',
     outcome:'Понимать семь ладов как разные отношения к опоре, построить D Dorian и услышать характерные ступени F Lydian и G Mixolydian.',
-    prerequisites:['4'],sessions:'4–6 занятий',optional:false,
+    prerequisites:['4','6'],sessions:'4–6 занятий после основной практики',optional:true,
     sources:[levine('PDF 18–21 — диатонические лады и гармонизация; PDF 33–36 — гармонический контекст и лидийский лад'),popov('PDF 7 — формулы и тоника; собственное модальное расширение FretLab')],
     steps:[
       {id:'5-map',type:'learn',title:'Семь центров в диатонике',rootPc:0,range:[7,10],points:C_POSITION,
@@ -6402,7 +6942,7 @@ const CourseCompleteAdvanced=(()=>{
   const module8={
     id:'8',title:'Собственная музыкальная миниатюра',subtitle:'Итоговый проект основного маршрута',
     outcome:'Самостоятельно собрать четырёхтактовую фразу под C → F, использовать мотив и осознанные окончания; сыграть её по памяти и сохранить результат.',
-    prerequisites:['3','4','5','6'],sessions:'2–4 занятия и повторная проверка',optional:false,
+    prerequisites:['3','4','6'],sessions:'2–4 занятия и повторная проверка',optional:false,
     sources:[
       {title:'William Leavitt — A Modern Method for Guitar Vol. 1',location:'PDF 3, введение без номера страницы',evidence:'text_verified'},
       {title:'Mark Levine — Теория джаза',location:'PDF / printed 33–34, 88–89',evidence:'text_verified'},
@@ -6455,7 +6995,8 @@ if(typeof module!=='undefined'&&module.exports)module.exports=CourseCompleteAdva
 const CourseCompleteContent=(()=>{
   const foundation=typeof module!=='undefined'&&module.exports?require('./course-complete-content-foundation.js'):CourseCompleteFoundation;
   const advanced=typeof module!=='undefined'&&module.exports?require('./course-complete-content-advanced.js'):CourseCompleteAdvanced;
-  const modules=[...foundation,...advanced];
+  const all=[...foundation,...advanced];
+  const modules=['3','4','6','8','5','7'].map(id=>all.find(m=>m.id===id));
   if(new Set(modules.map(m=>m.id)).size!==modules.length)throw Error('Duplicate course module');
   return {modules};
 })();
@@ -6469,6 +7010,12 @@ const CourseComplete=(()=>{
   const point=(str,fret)=>({str,fret,midi:OPEN[str]+fret,key:`${str}/${fret}`});
   const pitch=n=>['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'][pc(n)];
   const coord=p=>`${p.str}/${p.fret}`;
+  function validFingering(e){return e.midi!==null&&Number.isInteger(e.str)&&!!OPEN[e.str]&&Number.isInteger(e.fret)&&e.fret>=0&&e.fret<=16&&OPEN[e.str]+e.fret===e.midi;}
+  function withFingering(d,e){
+    if(e.midi===null)return {midi:null,beats:e.beats};
+    const p=validFingering(e)?e:(d.points||[]).find(p=>p.midi===e.midi&&validFingering(p));
+    return {midi:e.midi,beats:e.beats,...(p?{str:p.str,fret:p.fret,...(Number.isInteger(p.finger)?{finger:p.finger}:{})}:{})};
+  }
   function validateSelection(d,points){
     if(!Array.isArray(points)||points.some(p=>!Number.isInteger(p.str)||!OPEN[p.str]||!Number.isInteger(p.fret)||p.fret<0||p.fret>16||p.midi!==OPEN[p.str]+p.fret))return 'Проверьте положение звуков на грифе.';
     if(d.onePerString&&new Set(points.map(p=>p.str)).size!==points.length)return 'На каждой струне оставьте один звук.';
@@ -6510,7 +7057,9 @@ const CourseComplete=(()=>{
         for(const name of ['heard','checked','assisted','earTried'])safe[name]=s[name]===true;
         for(const name of ['round','answer','attempts','firstCorrect'])if(Number.isInteger(s[name])&&s[name]>=0&&s[name]<=1000)safe[name]=s[name];
         if(Array.isArray(s.selected))safe.selected=[...new Set(s.selected.filter(k=>typeof k==='string'&&/^[1-6]\/(?:[0-9]|1[0-6])$/.test(k)))].slice(0,64);
-        if(Array.isArray(s.events)&&d.type==='compose'&&s.events.length<=128&&s.events.every(e=>e&&[.5,1,2,4].includes(e.beats)&&(e.midi===null||d.allowedMidi.includes(e.midi)))&&s.events.reduce((n,e)=>n+e.beats,0)<=d.bars*4)safe.events=s.events.map(e=>({midi:e.midi,beats:e.beats}));
+        if(Array.isArray(s.events)&&d.type==='compose'&&s.events.length<=128&&s.events.every(e=>e&&[.5,1,2,4].includes(e.beats)&&(e.midi===null||d.allowedMidi.includes(e.midi)))&&s.events.reduce((n,e)=>n+e.beats,0)<=d.bars*4)safe.events=s.events.map(e=>validFingering(e)?withFingering(d,e):({midi:e.midi,beats:e.beats}));
+        if(s.recommendedFingering===true)safe.recommendedFingering=true;
+        if(Number.isFinite(s.tempo)&&s.tempo>=40&&s.tempo<=120)safe.tempo=s.tempo;
         if(d.type==='sequence'&&Array.isArray(s.sequence)&&s.sequence.length<=d.targetMidi.length&&s.sequence.every(n=>d.allowedMidi.includes(n)))safe.sequence=[...s.sequence];
         if(Array.isArray(s.voices)&&s.voices.length===4&&s.voices.every(n=>Number.isInteger(n)&&n>=0&&n<=127))safe.voices=[...s.voices];
         if(Array.isArray(s.checks))safe.checks=s.checks.slice(0,8).map(v=>v===true);
@@ -6525,7 +7074,7 @@ const CourseComplete=(()=>{
     const el=id=>document.getElementById(id),node=(tag,text)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;return n;};
     let state=cleanState(null),canStore=true,tempo=80,review=null,reviewIndex=0,focusKey=null;
     try{state=cleanState(JSON.parse(localStorage.getItem(KEY)||'null'));}catch{canStore=false;}
-    const transport=CourseRhythmPlayer.createTransport();let clicks=[],homeMessage='';
+    const transport=CourseRhythmPlayer.createTransport();let clicks=[],homeMessage='',tabView=null;
     const module=()=>Content.modules.find(m=>m.id===state.module)||Content.modules[0];
     const step=()=>review?module().steps[review[reviewIndex]]:module().steps[state.index[module().id]||0];
     function session(){const d=step();return state.sessions[d.id]||(state.sessions[d.id]={selected:[...(d.base||d.fromPoints?.map(coord)||[])],events:[],voices:d.voices?[...d.voices]:undefined,checks:[],round:0,attempts:0,firstCorrect:0});}
@@ -6538,14 +7087,15 @@ const CourseComplete=(()=>{
     function stop(){transport.stop();clicks.forEach(v=>{try{v?.stop();}catch{}});clicks=[];el('courseStop').hidden=true;el('courseAudioStatus').textContent='';body().querySelectorAll('.is-playing').forEach(n=>n.classList.remove('is-playing'));}
     const at=p=>({boardId:'courseBoard',index:(p.str-1)*(FRET_COUNT+1)+p.fret});
     function play(audio,onend=null){
-      stop();window.courseBlockOne?.stop();window.courseBlockTwo?.stop();stopSequence();el('courseStop').hidden=false;
+      stop();window.courseBlockOne?.stop();window.courseBlockTwo?.stop();window.coursePractice?.stop();stopSequence();el('courseStop').hidden=false;
       const points=step().points||[];
-      transport.play(audio.events,{tempo,countIn:audio.countIn===true,metronome:audio.countIn===true,progression:audio.progression||[],positions:audio.events.map(e=>{const p=points.find(p=>p.midi===e.midi);return p?at(p):null;}),onframe:f=>{
+      transport.play(audio.events,{tempo,countIn:audio.countIn===true,metronome:audio.countIn===true,progression:audio.progression||[],positions:audio.events.map(e=>{const p=validFingering(e)?e:points.find(p=>p.midi===e.midi);return p?at(p):null;}),onframe:f=>{
+        tabView?.highlight(f.index??-1);
         const active=(audio.progression||[]).find(c=>f.position>=c.atBeat&&f.position<c.atBeat+c.beats);
         el('courseAudioStatus').textContent=f.countIn!==undefined?`Отсчёт ${f.countIn+1}`:f.position!==undefined?`Такт ${Math.floor(f.position/4)+1} · доля ${f.beat+1}${active?.label?' · '+active.label:''}`:'';
         body().querySelectorAll('[data-event]').forEach(n=>n.classList.toggle('is-playing',Number(n.dataset.event)===f.index));
         body().querySelectorAll('[data-chord]').forEach(n=>n.classList.toggle('is-playing',Number(n.dataset.chord)===(audio.progression||[]).indexOf(active)));
-      },onend:finished=>{el('courseStop').hidden=true;el('courseAudioStatus').textContent='';body().querySelectorAll('.is-playing').forEach(n=>n.classList.remove('is-playing'));if(finished)onend?.();}});
+      },onend:finished=>{el('courseStop').hidden=true;el('courseAudioStatus').textContent='';tabView?.highlight(-1);body().querySelectorAll('.is-playing').forEach(n=>n.classList.remove('is-playing'));if(finished)onend?.();}});
     }
     function note(p){stop();clicks.push(playMidi(p.midi,undefined,.7,.16,at(p)));}
     function board(points,{range=step().range||[0,12],onClick=null,ghosts=[]}={}){
@@ -6591,7 +7141,8 @@ const CourseComplete=(()=>{
     }
     function progressionView(segments){const diagram=node('div');diagram.className='course-progression';segments.forEach((c,i)=>{const chip=node('span',`${c.label||'Аккорд'} · ${c.beats/4} такт`);chip.dataset.chord=String(i);diagram.appendChild(chip);});body().appendChild(diagram);}
     function render(){
-      stop();const m=module(),d=step(),s=session(),index=review?reviewIndex:state.index[m.id]||0,total=review?review.length:m.steps.length;
+      stop();tabView?.destroy();tabView=null;const m=module(),d=step(),s=session(),index=review?reviewIndex:state.index[m.id]||0,total=review?review.length:m.steps.length;
+      tempo=s.tempo||80;el('courseTempo').value=tempo;
       el('courseStepTitle').textContent=d.title;el('courseBreadcrumb').textContent=`Блок ${m.id} · ${review?'Повторение · ':''}${index+1} / ${total}`;el('courseStepText').textContent=d.text;el('courseStepInstruction').textContent=d.instruction;
       const missing=m.steps.filter(x=>x.id!==d.id&&!state.done[x.id]).length;
       el('courseWhy').hidden=!d.why;el('courseWhy').open=false;el('courseWhyText').textContent=d.why||'';el('courseStepProgress').max=total;el('courseStepProgress').value=index+1;el('courseBack').disabled=!!review||index===0;el('courseNext').textContent=index===total-1?(!review&&missing?'Сохранить практику':'Завершить блок'):'Дальше →';body().replaceChildren();feedback('');
@@ -6648,21 +7199,27 @@ const CourseComplete=(()=>{
         const actions=row();button(actions,'▶ До',()=>play({events:[{midi:null,beats:2}],progression:[{atBeat:0,beats:2,notes:d.voices,label:'Тесное расположение'}]}));button(actions,'▶ После',()=>play({events:[{midi:null,beats:2}],progression:[{atBeat:0,beats:2,notes:s.voices,label:'Ваше расположение'}]}));
         button(actions,'Сброс',()=>{s.voices=[...d.voices];s.checked=false;redraw();});button(actions,'Проверить преобразование',()=>{s.checked=true;s.attempts=(s.attempts||0)+1;const ok=JSON.stringify(s.voices)===JSON.stringify(d.targetVoices);feedback(ok?'Верно: второй сверху голос опущен на октаву.':'Проверьте второй сверху голос и величину переноса. При необходимости сбросьте пример.',ok);update();});
       }else if(d.type==='compose'){
-        s.events||=[];s.duration||=1;const total=s.events.reduce((n,e)=>n+e.beats,0);body().appendChild(node('p',`Заполнено ${total} из ${d.bars*4} долей. Размер 4/4.`));
+        s.events||=[];s.duration||=1;
+        if(s.events.some(e=>e.midi!==null&&!validFingering(e)))s.recommendedFingering=true;
+        s.events=s.events.map(e=>withFingering(d,e));
+        const total=s.events.reduce((n,e)=>n+e.beats,0);body().appendChild(node('p',`Заполнено ${total} из ${d.bars*4} долей. Размер 4/4.`));
+        if(s.recommendedFingering)body().appendChild(node('p','Для ранее сохранённых нот предложена аппликатура изученной позиции. Высоты и ритм сохранены.'));
         const editing=Number.isInteger(s.editIndex)&&!!s.events[s.editIndex];
         const duration=row();for(const value of [.5,1,2]){const b=button(duration,value===.5?'½ доли':`${value} ${value===1?'доля':'доли'}`,()=>{if(editing){if(total-s.events[s.editIndex].beats+value>d.bars*4){feedback('Эта длительность выходит за границу фразы. Сначала освободите место или выберите меньшую.');return;}s.events[s.editIndex].beats=value;s.checked=false;s.checks=[];}s.duration=value;redraw();});b.setAttribute('aria-pressed',String(s.duration===value));}
         const editStatus=node('p',editing?`Редактируется событие ${s.editIndex+1}: нажмите новую ноту или паузу. Остальная фраза сохранится.`:'Нажмите на событие в записи, чтобы заменить его без удаления остальных нот.');editStatus.className='course-edit-status';body().appendChild(editStatus);
-        function append(midi){if(editing){s.events[s.editIndex]={...s.events[s.editIndex],midi};s.editIndex=undefined;}else{if(total+s.duration>d.bars*4){feedback('Такты заполнены. Выберите событие в записи для замены или уберите последнее.');return;}s.events.push({midi,beats:s.duration});}s.checked=false;s.checks=[];redraw();}
+        function append(midi,position=null){if(editing){s.events[s.editIndex]=withFingering(d,{midi,beats:s.events[s.editIndex].beats,...(position||{})});s.editIndex=undefined;}else{if(total+s.duration>d.bars*4){feedback('Такты заполнены. Выберите событие в записи для замены или уберите последнее.');return;}s.events.push(withFingering(d,{midi,beats:s.duration,...(position||{})}));}s.checked=false;s.checks=[];redraw();}
         const notes=row();d.allowedMidi.forEach(n=>button(notes,`${pitch(n)}${Math.floor(n/12)-1}`,()=>append(n)));button(notes,'Пауза',()=>append(null));
-        if(d.points?.length)board(d.points,{onClick:p=>{if(d.allowedMidi.includes(p.midi)){append(p.midi);note(p);}else feedback('Выберите ноту из предложенного материала.');}});
+        if(d.points?.length)board(d.points,{onClick:p=>{if(d.allowedMidi.includes(p.midi)){append(p.midi,p);note(p);}else feedback('Выберите ноту из предложенного материала.');}});
         progressionView(d.progression||[]);
+        if(typeof CoursePracticePlayer!=='undefined'&&s.events.length){const tabs=node('div');tabs.className='course-compose-tabs';body().appendChild(tabs);tabView=CoursePracticePlayer.renderTab(tabs,s.events,{progression:d.progression||[],rootPc:d.rootPc||0,onSelect:i=>{s.editIndex=i;s.duration=s.events[i].beats;redraw();}});}
         const timeline=node('ol');timeline.className='course-phrase';let offset=0;s.events.forEach((e,i)=>{const segment=(d.progression||[]).find(c=>offset>=c.atBeat&&offset<c.atBeat+c.beats),item=node('li'),beat=offset%4+1;const edit=button(item,'',()=>{s.editIndex=i;s.duration=e.beats;redraw();});edit.className='course-edit-note';edit.setAttribute('aria-label',`Изменить событие ${i+1}, такт ${Math.floor(offset/4)+1}, доля ${beat}`);edit.append(node('small',`Такт ${Math.floor(offset/4)+1} · доля ${beat}${segment?' · '+segment.label:''}`),node('strong',`${e.midi===null?'Пауза':pitch(e.midi)}`),node('span',`${e.beats===.5?'½':e.beats} ${e.beats===1?'доля':'доли'}`));item.classList.toggle('is-editing',s.editIndex===i);if(offset%4===0)item.classList.add('bar-start');item.dataset.event=String(i);timeline.appendChild(item);offset+=e.beats;});body().appendChild(timeline);
         if(editing)button(row(),'Продолжить добавление',()=>{s.editIndex=undefined;redraw();});
         const actions=row();button(actions,'Убрать последнее',()=>{s.events.pop();s.editIndex=undefined;s.checked=false;s.checks=[];redraw();},!s.events.length);button(actions,'Очистить фразу',()=>{s.events=[];s.editIndex=undefined;s.checked=false;s.checks=[];redraw();},!s.events.length);
         button(actions,'▶ Фраза с сопровождением',()=>play({events:s.events,progression:(d.progression||[]).filter(c=>c.atBeat<total).map(c=>({...c,beats:Math.min(c.beats,total-c.atBeat)})),countIn:true}),!s.events.length);
         button(actions,'Скачать свою фразу (JSON)',exportProject,!s.events.length);
         checks(['Я пропел и сыграл свою фразу под сопровождение.','Я проверил пульс, паузы и окончание; при затруднении замедлил темп.']);
-        button(row(),'Проверить фразу',()=>{s.checked=true;const issue=validatePhrase(d,s.events);feedback(issue||'Фраза собрана. Подтвердите игру на гитаре после самопроверки.',!issue);update();});
+        button(row(),'Проверить фразу',()=>{s.checked=true;const issue=validatePhrase(d,s.events);feedback(issue||'Фраза собрана. Проверены ритмическая длина, состав и окончания. Развитие мотива и исполнение оцените при прослушивании.',!issue);update();});
+        const practiceId=m.id==='4'?'am':m.id==='3'||m.id==='8'?'cf':'melody';button(row(),'К практике с табами и сопровождением',()=>window.coursePractice?.open(practiceId));
       }
       if(!review&&!['practice','ear','learn'].includes(d.type)){const hint=node('details');hint.className='lesson-purpose';hint.appendChild(node('summary','Подсказка'));hint.appendChild(node('p',d.why||d.instruction));hint.ontoggle=()=>{if(hint.open){s.assisted=true;save();}};body().appendChild(hint);}
       update();
@@ -6676,7 +7233,7 @@ const CourseComplete=(()=>{
       const next=entries.find(m=>!m.optional&&!m.complete)||entries.at(-1),last=Content.modules.find(m=>m.id===state.module),inProgress=last&&!state.records[last.id]?.completedAt&&last.steps.some(d=>state.sessions[d.id]);
       el('courseResume').textContent=inProgress?`Вернуться к работе: блок ${last.id} · ${last.steps[state.index[last.id]||0].title}`:`Следующий основной блок: ${next.id} · ${next.title}`;el('courseResume').onclick=inProgress?()=>open(last.id):next.open;
       el('courseHomeNotice').hidden=!homeMessage;el('courseHomeNotice').textContent=homeMessage;
-      el('courseSummary').textContent=`Пройдено ${entries.filter(m=>!m.optional&&m.complete).length} из ${entries.filter(m=>!m.optional).length} основных блоков. Расположения и Drop 2 — дополнительная ветка.`;
+      el('courseSummary').textContent=`Пройдено ${entries.filter(m=>!m.optional&&m.complete).length} из ${entries.filter(m=>!m.optional).length} основных блоков. Семь ладов и Drop 2 — следующий уровень.`;
       for(const m of entries){const card=node('article');card.className='course-module-card'+(m===next?' route-current':'');const eyebrow=node('p',`Блок ${m.id}${m.optional?' · Дополнительно':''}${m.complete?' · Пройден':''}`);eyebrow.className='course-eyebrow';card.append(eyebrow,node('h2',m.title),node('p',m.outcome));if(m.sessions)card.appendChild(node('p',m.sessions));button(card,m.complete?'Повторить':'Открыть блок',m.open);
         if(m.steps){const details=node('details');details.appendChild(node('summary','Уроки и практика'));const links=node('div');links.className='course-step-list';m.steps.forEach((d,i)=>button(links,`${state.done[d.id]?'✓ ':''}${i+1}. ${d.title}`,()=>open(m.id,i)));details.appendChild(links);card.appendChild(details);}
         if(reviewDue(state.records[m.id])){const r=node('p','Проверьте, что осталось: пора повторить без подсказок.');card.appendChild(r);button(card,'Повторная проверка',()=>startReview(m));}cards.appendChild(card);
@@ -6687,7 +7244,7 @@ const CourseComplete=(()=>{
       if(practice>=0)tasks.push(practice);review=tasks.length?tasks:[m.steps.length-1];reviewIndex=0;for(const i of review)delete state.sessions[m.steps[i].id];open(m.id,null,true);
     }
     function open(id,index=null,keepReview=false){
-      const m=Content.modules.find(m=>m.id===String(id));if(!m)return;stop();if(!keepReview)review=null;state.module=m.id;if(Number.isInteger(index))state.index[m.id]=Math.max(0,Math.min(m.steps.length-1,index));
+      const m=Content.modules.find(m=>m.id===String(id));if(!m)return;stop();window.coursePractice?.stop();if(el('coursePracticeWork'))el('coursePracticeWork').hidden=true;if(!keepReview)review=null;state.module=m.id;if(Number.isInteger(index))state.index[m.id]=Math.max(0,Math.min(m.steps.length-1,index));
       el('tab-course').click();el('courseHome').hidden=true;el('courseWork').hidden=false;focusKey=null;render();el('courseStepTitle').focus({preventScroll:true});el('courseWork').scrollIntoView({block:'start'});
     }
     el('courseNext').onclick=()=>{
@@ -6698,13 +7255,13 @@ const CourseComplete=(()=>{
     };
     el('courseBack').onclick=()=>{if(review||!(state.index[module().id]>0))return;state.index[module().id]--;render();};
     el('courseRoute').onclick=()=>{stop();review=null;el('courseHome').hidden=false;el('courseWork').hidden=true;home();};
-    el('courseRetry').onclick=()=>{delete state.sessions[step().id];render();};el('courseStop').onclick=stop;el('courseTempo').onchange=e=>{tempo=Math.max(40,Math.min(120,Number(e.target.value)||80));e.target.value=tempo;stop();};
-    document.querySelectorAll('[role="tab"]').forEach(tab=>tab.addEventListener('click',()=>{stop();if(tab.id==='tab-course'){el('courseHome').hidden=false;el('courseWork').hidden=true;home();}}));
+    el('courseRetry').onclick=()=>{delete state.sessions[step().id];render();};el('courseStop').onclick=stop;el('courseTempo').onchange=e=>{tempo=Math.max(40,Math.min(120,Number(e.target.value)||80));e.target.value=tempo;session().tempo=tempo;stop();save();};
+    document.querySelectorAll('[role="tab"]').forEach(tab=>tab.addEventListener('click',()=>{stop();window.coursePractice?.stop();if(el('coursePracticeWork'))el('coursePracticeWork').hidden=true;if(tab.id==='tab-course'){el('courseHome').hidden=false;el('courseWork').hidden=true;home();}}));
     document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();else home();});window.addEventListener('pagehide',stop);window.addEventListener('focus',()=>{if(!el('courseHome').hidden)home();});
     save();home();if(new URLSearchParams(location.search).get('course')==='all')el('tab-course').click();
     return {open,stop,getState:()=>structuredClone(state)};
   }
-  return {KEY,DAY,point,validateSelection,validatePhrase,validateSequence,drop2,cleanState,reviewDue,boot};
+  return {KEY,DAY,point,validFingering,withFingering,validateSelection,validatePhrase,validateSequence,drop2,cleanState,reviewDue,boot};
 })();
 if(typeof module!=='undefined'&&module.exports)module.exports=CourseComplete;
 else window.courseComplete=CourseComplete.boot();
@@ -6718,7 +7275,7 @@ else window.courseComplete=CourseComplete.boot();
   dialog.addEventListener('close',stop);dialog.addEventListener('cancel',stop);
   const action=(parent,text,fn)=>{const b=node('button',text);b.type='button';b.className='play-btn';b.onclick=fn;parent.appendChild(b);return b;};
   function open(kind){
-    stop();window.courseBlockOne?.stop();window.courseBlockTwo?.stop();window.courseComplete?.stop();window.courseSandbox?.stop();if(typeof stopSequence==='function')stopSequence();
+    stop();window.courseBlockOne?.stop();window.courseBlockTwo?.stop();window.courseComplete?.stop();window.courseSandbox?.stop();window.coursePractice?.stop();if(typeof stopSequence==='function')stopSequence();
     dialog.replaceChildren();const title=node('h2',kind==='sound'?'Слышите звук?':kind==='terms'?'Термины и ориентиры':'Перед игрой');title.id='courseHelpTitle';dialog.appendChild(title);
     if(kind==='sound'){
       dialog.appendChild(node('p','Нажмите «Проиграть звук», затем сообщите, слышите ли вы ноту. Приложение не может проверить громкость динамика или беззвучный режим.'));
@@ -6761,6 +7318,218 @@ else window.courseComplete=CourseComplete.boot();
   window.courseHelp={open};
   document.querySelectorAll('[data-course-help]').forEach(b=>b.addEventListener('click',()=>open(b.dataset.courseHelp)));
 })();
+</script>
+<script>/* Guided instrument practice. Screen answers and performed music are separate records. */
+const CoursePractice = (() => {
+  const KEY = 'fretlab-practice-v1';
+  const STAGES = [['play','Сыграть'],['transitions','Переходы'],['ear','Подобрать'],['variation','Изменить'],['free','Самостоятельно']];
+  const OPEN = {1:64,2:59,3:55,4:50,5:45,6:40};
+  const pitch = midi => ['C','C♯','D','E♭','E','F','F♯','G','A♭','A','B♭','B'][(midi%12+12)%12];
+  const copy = value => JSON.parse(JSON.stringify(value));
+  const bars = events => Math.max(1,Math.ceil(events.reduce((sum,e)=>sum+e.beats,0)/4));
+  function defaults(study) {
+    return {stage:'play',tempo:60,fromBar:1,toBar:bars(study.events),loop:true,melody:true,backing:true,metronome:false,hide:false,labels:'notes',drill:0,session:0,
+      heard:false,earRound:0,earAnswers:[],earPassed:[],earAssisted:[],earAttempts:[],variation:copy(study.variation.sourceEvents),variationChecked:false,checks:[],note:'',recording:'',attempts:[]};
+  }
+  function cleanState(raw,studies) {
+    const state={version:1,study:'cf',byStudy:{}};
+    if(!studies.some(s=>s.id===state.study))state.study=studies[0].id;
+    if(raw?.version===1&&studies.some(s=>s.id===raw.study))state.study=raw.study;
+    for(const study of studies){
+      const value=defaults(study),old=raw?.version===1?raw.byStudy?.[study.id]:null;
+      if(old&&typeof old==='object'){
+        if(STAGES.some(([id])=>id===old.stage))value.stage=old.stage;
+        if(Number.isFinite(old.tempo))value.tempo=Math.max(40,Math.min(120,Math.round(old.tempo)));
+        for(const key of ['loop','melody','backing','metronome','hide','heard'])if(typeof old[key]==='boolean')value[key]=old[key];
+        if(['notes','degrees','none'].includes(old.labels))value.labels=old.labels;
+        for(const [key,max] of [['drill',study.drills.length-1],['session',study.sessions.length-1],['earRound',study.ear.rounds.length-1]])if(Number.isInteger(old[key]))value[key]=Math.max(0,Math.min(max,old[key]));
+        for(const key of ['fromBar','toBar'])if(Number.isInteger(old[key]))value[key]=Math.max(1,Math.min(bars(study.events),old[key]));
+        if(value.toBar<value.fromBar)value.toBar=value.fromBar;
+        const allowed=study.points.map(p=>p.midi);
+        if(Array.isArray(old.earAnswers))value.earAnswers=old.earAnswers.map(a=>Array.isArray(a)?a.filter(n=>Number.isInteger(n)&&allowed.includes(n)).slice(0,16):[]).slice(0,study.ear.rounds.length);
+        for(const key of ['earPassed','earAssisted'])if(Array.isArray(old[key]))value[key]=old[key].slice(0,study.ear.rounds.length).map(v=>v===true);
+        if(Array.isArray(old.earAttempts))value.earAttempts=old.earAttempts.slice(0,study.ear.rounds.length).map(v=>Number.isInteger(v)?Math.max(0,Math.min(1000,v)):0);
+        if(Array.isArray(old.variation)&&old.variation.length===study.variation.sourceEvents.length&&old.variation.every(e=>e&&Number.isInteger(e.midi)&&allowed.includes(e.midi)&&[.5,1,2,4].includes(e.beats)&&Number.isInteger(e.str)&&Number.isInteger(e.fret)&&e.fret>=0&&e.fret<=16&&OPEN[e.str]+e.fret===e.midi&&study.points.some(p=>p.str===e.str&&p.fret===e.fret)))value.variation=old.variation.map(e=>({midi:e.midi,beats:e.beats,str:e.str,fret:e.fret,finger:study.points.find(p=>p.str===e.str&&p.fret===e.fret).finger}));
+        if(Array.isArray(old.checks))value.checks=old.checks.slice(0,study.checks.length).map(v=>v===true);
+        if(typeof old.note==='string')value.note=old.note.slice(0,1000);
+        if(typeof old.recording==='string')value.recording=old.recording.slice(0,1000);
+        if(Array.isArray(old.attempts))value.attempts=old.attempts.filter(a=>a&&Number.isFinite(a.date)&&a.date>0&&Number.isInteger(a.tempo)&&a.tempo>=40&&a.tempo<=120&&typeof a.note==='string').slice(-12).map(a=>({date:a.date,tempo:a.tempo,note:a.note.slice(0,1000),checks:Array.isArray(a.checks)?a.checks.slice(0,study.checks.length).map(v=>v===true):[]}));
+      }
+      state.byStudy[study.id]=value;
+    }
+    return state;
+  }
+  function boot(){
+    const host=document.getElementById('coursePracticeWork');
+    if(!host)return null;
+    const content=CoursePracticeContent,studies=content.studies;
+    let state=cleanState(null,studies),canStore=true,tab=null,player=null,activeKind=null,earHeard=false,selectedEvent=null,opening=false,previewVoices=[];
+    try{state=cleanState(JSON.parse(localStorage.getItem(KEY)||'null'),studies);}catch{canStore=false;}
+    const el=id=>document.getElementById(id);
+    const study=()=>studies.find(s=>s.id===state.study)||studies[0];
+    const session=()=>state.byStudy[study().id];
+    const node=(tag,text,className)=>{const n=document.createElement(tag);if(text!==undefined)n.textContent=text;if(className)n.className=className;return n;};
+    const button=(parent,text,fn,id)=>{const b=node('button',text,'play-btn');b.type='button';if(id)b.id=id;b.onclick=fn;parent.appendChild(b);return b;};
+    const row=parent=>{const n=node('div',undefined,'practice-row');parent.appendChild(n);return n;};
+    function rememberFocus(container){
+      const active=document.activeElement;if(!container.contains(active))return ()=>{};
+      const id=active.id,stage=active.dataset?.practiceStage,event=active.dataset?.tabEvent,str=active.dataset?.string,fret=active.dataset?.fret,text=active.tagName==='BUTTON'?active.textContent:null;
+      return ()=>{const target=id?el(id):stage?container.querySelector(`[data-practice-stage="${stage}"]`):event!==undefined?container.querySelector(`[data-tab-event="${event}"]`):str?container.querySelector(`[data-string="${str}"][data-fret="${fret}"]`):text?[...container.querySelectorAll('button')].find(b=>b.textContent===text):null;target?.focus({preventScroll:true});};
+    }
+    function save(){
+      try{localStorage.setItem(KEY,JSON.stringify(state));canStore=true;}catch{canStore=false;}
+      if(el('practiceStorage'))el('practiceStorage').textContent=canStore?'Темп, ответы и заметки сохранены в этом браузере.':'Хранилище недоступно. До закрытия страницы можно продолжать заниматься; сохраните работу в файл.';
+    }
+    function message(text,ok=false){const target=el('practiceFeedback');if(target){target.textContent=text;target.hidden=!text;target.classList.toggle('answer-success',ok);}}
+    function stop(){activeKind=null;player?.stop();previewVoices.forEach(v=>{try{v?.stop();}catch{}});previewVoices=[];tab?.highlight(-1);el('practiceBoard')?.querySelectorAll('.sounding').forEach(c=>c.classList.remove('sounding'));if(el('practiceStop'))el('practiceStop').disabled=true;if(el('practicePlay'))el('practicePlay').disabled=false;if(el('practiceNow'))el('practiceNow').textContent='Готово к игре';}
+    function stopOthers(){window.courseBlockOne?.stop();window.courseBlockTwo?.stop();window.courseComplete?.stop();window.courseSandbox?.stop();if(typeof stopSequence==='function')stopSequence();}
+    player=CoursePracticePlayer.createPlayer({onFrame(frame){
+      if(host.hidden)return;
+      if(activeKind!=='ear')tab?.highlight(frame.index);
+      const status=el('practiceNow');if(status)status.textContent=frame.waiting?'Приготовьтесь':frame.countIn!==undefined?`Вступаем после четырёх: ${frame.countIn}`:`${frame.chord||'Мелодия'} · такт ${frame.bar} · доля ${frame.beat}${session().loop&&activeKind!=='ear'?' · круг '+(frame.cycle+1):''}`;
+    },onStop(result){
+      const kind=activeKind;activeKind=null;
+      tab?.highlight(-1);if(el('practiceStop'))el('practiceStop').disabled=true;if(el('practicePlay'))el('practicePlay').disabled=false;
+      if(el('practiceNow'))el('practiceNow').textContent=result.error?'Звук не запущен':'Готово к игре';
+      if(result.error)message(result.error);
+      if(result.finished&&kind==='ear'){earHeard=true;renderEarAnswer();message('Теперь пропойте и найдите услышанные ноты.');}
+      if(result.finished&&kind==='study'){session().heard=true;save();}
+    }});
+    function audio(){const s=study(),v=session();if(v.stage==='transitions')return s.drills[v.drill]||s.drills[0];if(v.stage==='ear')return {...s.ear.rounds[v.earRound],progression:[]};if(v.stage==='variation')return {events:v.variation,progression:s.variation.progression};return s;}
+    function range(){const total=bars(audio().events),v=session();return {fromBar:Math.min(v.fromBar,total),toBar:Math.max(Math.min(v.fromBar,total),Math.min(v.toBar,total))};}
+    async function play(){
+      stop();stopOthers();const a=audio(),v=session(),ear=v.stage==='ear';
+      if(!ear&&!(v.stage!=='free'&&v.melody)&&!v.backing&&!v.metronome){message(v.stage==='free'?'Включите сопровождение или метроном.':'Включите мелодию, сопровождение или метроном.');return;}
+      if(ear){earHeard=false;renderEarAnswer();}
+      activeKind=ear?'ear':'study';el('practicePlay').disabled=true;el('practiceStop').disabled=false;message('');
+      const positions=ear?[]:a.events.map(e=>Number.isInteger(e.str)?{boardId:'practiceBoard',index:(e.str-1)*17+e.fret}:null);
+      try{await player.play(a.events,{tempo:v.tempo,progression:a.progression||[],...(!ear?range():{fromBar:1,toBar:bars(a.events)}),loop:ear?false:v.loop,melody:ear?true:v.stage==='free'?false:v.melody,backing:ear?false:v.backing,metronome:ear?false:v.metronome,countIn:true,positions});}
+      catch(error){stop();message(error?.message||'Не удалось запустить звук. Проверьте громкость и нажмите «Играть» ещё раз.');}
+    }
+    function labelControl(parent,text,control){const label=node('label',text);label.appendChild(control);parent.appendChild(label);return control;}
+    function checkbox(parent,label,value,onchange,id){const box=node('input');box.type='checkbox';box.checked=value;if(id)box.id=id;const wrap=node('label',undefined,'practice-check');wrap.append(box,node('span',label));parent.appendChild(wrap);box.onchange=()=>onchange(box.checked);return box;}
+    function updateSetting(key,value){stop();session()[key]=value;save();}
+    function transport(parent){
+      const v=session(),a=audio(),ear=v.stage==='ear',transport=node('section',undefined,'practice-transport');transport.id='practiceTransport';transport.setAttribute('aria-label','Управление практикой');parent.appendChild(transport);
+      const top=row(transport),start=button(top,ear?'▶ Послушать задание':'▶ Играть',play,'practicePlay');start.classList.add('primary-btn');button(top,'■ Стоп',stop,'practiceStop').disabled=true;
+      const tempo=node('input');tempo.type='number';tempo.min=40;tempo.max=120;tempo.value=v.tempo;tempo.id='practiceTempo';tempo.onchange=()=>{updateSetting('tempo',Math.max(40,Math.min(120,Math.round(Number(tempo.value)||60))));tempo.value=v.tempo;};labelControl(top,'Темп',tempo);
+      const now=node('p','Готово к игре','practice-now');now.id='practiceNow';now.setAttribute('aria-live','off');transport.appendChild(now);
+      if(ear){transport.appendChild(node('p','Сначала слушайте без записи. Начальная нота дана в задании.','hint'));return;}
+      const settings=node('details'),limits=range();settings.className='practice-player-settings';settings.appendChild(node('summary',`Такты ${limits.fromBar}–${limits.toBar} · фрагмент и сопровождение`));transport.appendChild(settings);const selects=row(settings);
+      for(const [key,label] of [['fromBar','С такта'],['toBar','По такт']]){const select=node('select');select.id=key==='fromBar'?'practiceFrom':'practiceTo';for(let i=1;i<=bars(a.events);i++){const option=node('option',String(i));option.value=String(i);select.appendChild(option);}select.value=limits[key];select.onchange=()=>{updateSetting(key,Number(select.value));if(key==='fromBar'&&v.toBar<v.fromBar)v.toBar=v.fromBar;if(key==='toBar'&&v.fromBar>v.toBar)v.fromBar=v.toBar;save();render();};labelControl(selects,label,select);}
+      const toggles=row(settings);
+      checkbox(toggles,'Повторять',v.loop,value=>updateSetting('loop',value),'practiceLoop');
+      if(v.stage!=='free')checkbox(toggles,'Мелодия',v.melody,value=>updateSetting('melody',value),'practiceMelody');
+      checkbox(toggles,'Сопровождение',v.backing,value=>updateSetting('backing',value),'practiceBacking');
+      checkbox(toggles,'Метроном',v.metronome,value=>updateSetting('metronome',value),'practiceMetronome');
+      settings.appendChild(node('p','Перед началом — четыре доли отсчёта. Повтор идёт без нового отсчёта. Табы показывают выбранные такты; для самостоятельной игры выключите мелодию.','hint'));
+    }
+    function board(parent,{onPick=null,reveal=true}={}){
+      const s=study(),outer=node('div',undefined,'board-outer');outer.id='practiceBoardOuter';const grid=node('div',undefined,'board');grid.id='practiceBoard';outer.appendChild(grid);parent.appendChild(outer);v2RenderBoard(new Map(),grid.id);
+      const [low,high]=s.range;grid.style.gridTemplateColumns=`38px repeat(${high-low+1},minmax(36px,1fr))`;grid.style.minWidth=`${38+(high-low+1)*38}px`;
+      grid.querySelectorAll('.fret-label').forEach((n,f)=>n.hidden=f<low||f>high);
+      const activeMidi=audio().events.map(e=>e.midi);
+      const useful=s.points;
+      let focusSet=false;
+      grid.querySelectorAll('.cell').forEach((cell,index)=>{
+        const str=Math.floor(index/17)+1,fret=index%17;cell.hidden=fret<low||fret>high;if(cell.hidden)return;
+        const point=useful.find(p=>p.str===str&&p.fret===fret);if(!point)return;
+        const hit=node('button',undefined,'sandbox-hit');hit.type='button';hit.dataset.string=String(str);hit.dataset.fret=String(fret);hit.setAttribute('aria-label',`${pitch(point.midi)}, струна ${str}, лад ${fret}`);hit.tabIndex=focusSet?-1:0;focusSet=true;
+        if(reveal&&activeMidi.includes(point.midi)){const dot=node('span',session().labels==='degrees'?String(point.degree??''):session().labels==='none'?'•':pitch(point.midi),'note'+(point.midi%12===s.rootPc?' root':' chord-tone'));hit.appendChild(dot);}
+        hit.onfocus=()=>grid.querySelectorAll('.sandbox-hit').forEach(b=>b.tabIndex=b===hit?0:-1);
+        hit.onkeydown=e=>{const list=[...grid.querySelectorAll('.sandbox-hit')],i=list.indexOf(hit);if(['ArrowLeft','ArrowUp','ArrowRight','ArrowDown'].includes(e.key)){e.preventDefault();list[Math.max(0,Math.min(list.length-1,i+(['ArrowLeft','ArrowUp'].includes(e.key)?-1:1)))].focus();}};
+        hit.onclick=()=>{stop();if(onPick)onPick(point);previewVoices.push(playMidi(point.midi,undefined,.65,.17,{boardId:'practiceBoard',index}));};cell.appendChild(hit);
+      });
+      parent.appendChild(node('p',`Первая струна сверху. Позиция: лады ${low}–${high}. Цифры в табах — лады; номера пальцев уточнены в подсказке.`, 'practice-board-hint'));
+    }
+    function score(parent,events,progression,{editable=false}={}){
+      const v=session(),controls=row(parent);controls.classList.add('practice-score-options');
+      checkbox(controls,'Скрыть табы и гриф',v.hide,value=>{updateSetting('hide',value);render();},'practiceHide');
+      const select=node('select');for(const [value,text] of [['notes','Ноты'],['degrees','Ступени гаммы'],['none','Без подписей']]){const option=node('option',text);option.value=value;select.appendChild(option);}select.value=v.labels;select.onchange=()=>{updateSetting('labels',select.value);render();};labelControl(controls,'Подписи',select);
+      const target=node('div',undefined,'practice-score');target.id='practiceTab';parent.appendChild(target);
+      if(v.hide){target.appendChild(node('p','Запись скрыта. Слушайте сопровождение и играйте по памяти.','practice-hidden-note'));return;}
+      tab=CoursePracticePlayer.renderTab(target,events,{progression,labels:v.labels,rootPc:study().rootPc,degreeByMidi:Object.fromEntries(study().points.map(p=>[p.midi,p.degree])),onSelect:editable?index=>{stop();selectedEvent=index;render();}:null});
+      const limits=range();target.querySelectorAll('.practice-tab-bar').forEach((bar,index)=>{if(index+1<limits.fromBar||index+1>limits.toBar){bar.hidden=true;bar.style.display='none';}});
+      if(limits.fromBar!==1||limits.toBar!==bars(events)){const fragment=row(target);fragment.appendChild(node('span',`Показаны такты ${limits.fromBar}–${limits.toBar} из ${bars(events)}.`));button(fragment,'Вся мелодия',()=>{stop();v.fromBar=1;v.toBar=bars(events);save();render();},'practiceFullScore');}
+      if(editable&&selectedEvent!==null)target.appendChild(node('p',`Выбрана нота ${selectedEvent+1}. Теперь нажмите новую ноту на грифе или ниже.`,'practice-selection'));
+      board(parent,{onPick:editable?replaceVariation:null});
+    }
+    function noteButtons(parent,onPick){const notes=row(parent);notes.classList.add('practice-note-buttons');const seen=new Set();for(const p of study().points){if(seen.has(p.midi))continue;seen.add(p.midi);button(notes,pitch(p.midi)+String(Math.floor(p.midi/12)-1),()=>{stop();onPick(p);previewVoices.push(playMidi(p.midi,undefined,.6,.16));});}}
+    function replaceVariation(point){
+      if(selectedEvent===null){message('Выберите ноту в табах, которую хотите изменить.');return;}
+      const s=session(),previous=s.variation[selectedEvent];s.variation[selectedEvent]={midi:point.midi,beats:previous.beats,str:point.str,fret:point.fret,finger:point.finger};s.variationChecked=false;save();render();message('Нота заменена. Прослушайте ответ и проверьте условие.');
+    }
+    function renderEarAnswer(){
+      const target=el('practiceEarAnswer');if(!target)return;const restoreFocus=rememberFocus(target);target.replaceChildren();const s=study(),v=session(),round=s.ear.rounds[v.earRound],answers=v.earAnswers[v.earRound]||[];
+      const entered=node('p','Ваш ответ: '+(answers.length?answers.map(pitch).join(' · '):'пока нет нот'));entered.id='practiceEarEntered';target.appendChild(entered);
+      if(!earHeard){target.appendChild(node('p','Дослушайте задание до конца, затем вводите свой ответ.','hint'));return;}
+      const pick=point=>{const list=v.earAnswers[v.earRound]||(v.earAnswers[v.earRound]=[]);if(list.length>=round.events.filter(e=>e.midi!==null).length){message('Все места заполнены. Уберите последнюю ноту, если хотите исправить ответ.');return;}list.push(point.midi);v.earPassed[v.earRound]=false;save();renderEarAnswer();};
+      noteButtons(target,pick);board(target,{onPick:pick,reveal:false});
+      const actions=row(target);button(actions,'Убрать последнюю',()=>{stop();answers.pop();v.earAnswers[v.earRound]=answers;v.earPassed[v.earRound]=false;save();renderEarAnswer();},'practiceEarUndo');
+      button(actions,'Проверить на слух',()=>{v.earAttempts[v.earRound]=(v.earAttempts[v.earRound]||0)+1;const error=content.validateEar(s,answers,v.earRound);v.earPassed[v.earRound]=!error;save();message(error||'Последовательность совпала. Теперь повторите её на настоящей гитаре.',!error);renderEarAnswer();},'practiceEarCheck');
+      const reveal=button(actions,'Показать ответ',()=>{v.earAssisted[v.earRound]=true;save();renderEarAnswer();message('Ответ открыт с подсказкой. Вернитесь к нему позже без записи.');},'practiceEarReveal');reveal.disabled=!(v.earAttempts[v.earRound]>0);
+      if(v.earPassed[v.earRound]||v.earAssisted[v.earRound]){const answer=node('div');answer.id='practiceEarSolution';target.appendChild(answer);tab?.destroy();tab=CoursePracticePlayer.renderTab(answer,round.events,{rootPc:s.rootPc,labels:'notes'});target.appendChild(node('p',v.earAssisted[v.earRound]?'Разобрано с подсказкой.':'Экранный подбор проверен. Исполнение на гитаре оценивается отдельно.','hint'));}
+      restoreFocus();
+    }
+    function lessonStage(parent){
+      const s=study(),v=session();
+      if(v.stage==='play'){
+        parent.appendChild(node('h2','Сначала сыграйте целую мелодию'));parent.appendChild(node('p','Послушайте образец, пропойте его и сыграйте по два такта. Начните в спокойном темпе, затем соедините фрагменты.'));
+        transport(parent);score(parent,s.events,s.progression);
+      }else if(v.stage==='transitions'){
+        parent.appendChild(node('h2','Как мелодия проходит через смену аккорда'));const select=node('select');select.id='practiceDrill';s.drills.forEach((d,i)=>{const o=node('option',`${i+1}. ${d.title}`);o.value=String(i);select.appendChild(o);});select.value=v.drill;select.onchange=()=>{stop();v.drill=Number(select.value);v.fromBar=1;v.toBar=bars(s.drills[v.drill].events);save();render();};labelControl(parent,'Упражнение',select);
+        const drill=s.drills[v.drill];parent.appendChild(node('p',drill.explanation,'practice-purpose'));transport(parent);score(parent,drill.events,drill.progression);
+      }else if(v.stage==='ear'){
+        parent.appendChild(node('h2','Услышьте → пропойте → найдите'));const select=node('select');select.id='practiceEarRound';s.ear.rounds.forEach((_,i)=>{const o=node('option',`Пример ${i+1}${v.earPassed[i]?' · подобран':''}${v.earAssisted[i]?' · с подсказкой':''}`);o.value=String(i);select.appendChild(o);});select.value=v.earRound;select.onchange=()=>{stop();v.earRound=Number(select.value);earHeard=false;save();render();};labelControl(parent,'Короткий мотив',select);
+        const task=s.ear.rounds[v.earRound];parent.appendChild(node('p',task.instruction));parent.appendChild(node('p',`Начните от ${pitch(task.startingMidi)}${Math.floor(task.startingMidi/12)-1}. Сначала найдите звуки на гитаре, затем введите ответ.`,'practice-purpose'));transport(parent);const answer=node('div');answer.id='practiceEarAnswer';parent.appendChild(answer);renderEarAnswer();
+      }else if(v.stage==='variation'){
+        parent.appendChild(node('h2','Измените окончание, сохраните мотив'));parent.appendChild(node('p',s.variation.instruction,'practice-purpose'));transport(parent);score(parent,v.variation,s.variation.progression,{editable:true});
+        if(!v.hide){noteButtons(parent,replaceVariation);const select=node('select');select.id='practiceEventSelect';const empty=node('option','Выберите ноту для замены');empty.value='';select.appendChild(empty);v.variation.forEach((e,i)=>{const option=node('option',`${i+1}: ${pitch(e.midi)}`);option.value=String(i);select.appendChild(option);});select.value=selectedEvent===null?'':String(selectedEvent);select.onchange=()=>{stop();selectedEvent=select.value===''?null:Number(select.value);render();};labelControl(parent,'Редактирование',select);}
+        const actions=row(parent);button(actions,'Проверить изменение',()=>{const error=content.validateVariation(s,v.variation);v.variationChecked=!error;save();message(error||'Изменение выполнено: мотив сохранён, окончание изменено по условию. Теперь сыграйте оба варианта.',!error);},'practiceVariationCheck');button(actions,'Вернуть образец',()=>{stop();v.variation=copy(s.variation.sourceEvents);v.variationChecked=false;selectedEvent=null;save();render();},'practiceVariationReset');
+        if(v.variationChecked)parent.appendChild(node('p','Структура вариации проверена. Качество исполнения оцените после игры.','practice-verified'));
+      }else{
+        parent.appendChild(node('h2','Ваш ответ под сопровождение'));parent.appendChild(node('p','Сыграйте изученную мелодию, затем свой ответ. Сохраняйте узнаваемый рисунок и меняйте ритм или окончание при смене аккорда. Мелодия образца в этом режиме не звучит.','practice-purpose'));transport(parent);score(parent,s.events,s.progression);parent.appendChild(node('p','Сначала играйте только окончания на звуках аккорда. Затем соедините их коротким мотивом. Подсказки можно скрыть.','hint'));
+      }
+    }
+    function plan(parent){
+      const s=study(),v=session(),details=node('details');details.className='practice-plan';details.appendChild(node('summary',`План на сегодня · ${s.sessions[v.session].title}`));parent.appendChild(details);const choices=row(details);s.sessions.forEach((item,i)=>{const b=button(choices,`${i+1}. ${item.title}`,()=>{stop();v.session=i;save();render();});b.setAttribute('aria-pressed',String(i===v.session));});const list=node('ol');s.sessions[v.session].tasks.forEach(text=>list.appendChild(node('li',text)));details.appendChild(list);details.appendChild(node('p','Ориентир — 30 минут. Можно разделить занятие; увеличивайте время игры, если нужно повторение.','hint'));
+      if(v.note)parent.appendChild(node('p','Ваше трудное место: '+v.note,'practice-return-note'));
+    }
+    function journal(parent){
+      const s=study(),v=session(),details=node('details');details.className='practice-journal';details.open=v.stage==='free';details.appendChild(node('summary','После игры: результат и следующая попытка'));parent.appendChild(details);details.appendChild(node('p','Эти пункты — ваша самопроверка реальной игры. Приложение не измеряет чистоту звука и пульс инструмента.'));
+      s.checks.forEach((text,i)=>checkbox(details,text,!!v.checks[i],value=>{v.checks[i]=value;save();},`practiceCheck${i}`));
+      const note=node('textarea');note.id='practiceNote';note.rows=2;note.maxLength=1000;note.value=v.note;note.placeholder='Например: переход в третий такт, повторить медленнее';note.oninput=()=>{v.note=note.value;save();};labelControl(details,'Что повторить в следующий раз',note);
+      const recording=node('textarea');recording.id='practiceRecording';recording.rows=2;recording.maxLength=1000;recording.value=v.recording;recording.placeholder='Название записи или ссылка для преподавателя';recording.oninput=()=>{v.recording=recording.value;save();};labelControl(details,'Моя запись исполнения — по желанию',recording);details.appendChild(node('p','Запишите короткий дубль на телефон. Здесь можно сохранить заметку или ссылку; файл никуда автоматически не отправляется.','hint'));
+      button(details,'Сохранить результат игры',()=>{v.attempts.push({date:Date.now(),tempo:v.tempo,note:v.note,checks:[...v.checks]});v.attempts=v.attempts.slice(-12);save();message('Самопроверка сохранена. В следующий раз начните с отмеченного трудного места.',true);},'practiceSaveAttempt');
+      if(v.attempts.length){const last=v.attempts.at(-1);details.appendChild(node('p',`Последняя сохранённая попытка: ${new Date(last.date).toLocaleDateString('ru-RU')}, ${last.tempo} уд/мин. Отмечено ${last.checks.filter(Boolean).length} из ${s.checks.length} пунктов.`,'hint'));}
+    }
+    function exportWork(){const s=study(),v=session(),data={format:'fretlab-practice-v1',study:s.id,title:s.title,stage:v.stage,drill:v.drill,session:v.session,tempo:v.tempo,fromBar:v.fromBar,toBar:v.toBar,variation:v.variation,earAnswers:v.earAnswers,earPassed:v.earPassed,earAssisted:v.earAssisted,earAttempts:v.earAttempts,checks:v.checks,note:v.note,recording:v.recording,attempts:v.attempts,savedAt:new Date().toISOString()};const url=URL.createObjectURL(new Blob([JSON.stringify(data,null,2)],{type:'application/json'})),a=node('a');a.href=url;a.download=`fretlab-practice-${s.id}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);}
+    function render(){
+      const scroll=window.scrollY,restoreFocus=rememberFocus(host),expanded=[...host.querySelectorAll('details[open]')].map(d=>d.className);stop();tab?.destroy();tab=null;host.replaceChildren();const s=study(),v=session();v.variationChecked=!content.validateVariation(s,v.variation);
+      const heading=node('header',undefined,'practice-heading');host.appendChild(heading);button(heading,'← К курсу',close,'practiceBack');const eyebrow=node('p','Практика на гитаре · '+s.prerequisite,'course-eyebrow');heading.append(eyebrow,node('h1',s.title),node('p',s.purpose,'practice-purpose'));
+      const chooser=node('select');chooser.id='practiceStudy';studies.forEach(item=>{const option=node('option',item.title);option.value=item.id;chooser.appendChild(option);});chooser.value=s.id;chooser.onchange=()=>open(chooser.value);labelControl(heading,'Учебная миниатюра',chooser);plan(host);
+      const stages=node('nav',undefined,'practice-stages');stages.setAttribute('aria-label','Способы работы с миниатюрой');host.appendChild(stages);STAGES.forEach(([id,label])=>{const b=button(stages,label,()=>{stop();v.stage=id;earHeard=false;selectedEvent=null;if(id==='free'){v.loop=true;v.backing=true;}v.fromBar=1;v.toBar=bars(audio().events);save();render();});b.dataset.practiceStage=id;b.setAttribute('aria-pressed',String(v.stage===id));});
+      const workspace=node('section',undefined,'practice-workspace');host.appendChild(workspace);lessonStage(workspace);const feedback=node('p',undefined,'sandbox-readout');feedback.id='practiceFeedback';feedback.hidden=true;feedback.setAttribute('role','status');feedback.setAttribute('aria-live','polite');workspace.appendChild(feedback);
+      const tips=node('details');tips.className='practice-tips';tips.appendChild(node('summary','Аппликатура и подсказки для игры'));const list=node('ul');s.tips.forEach(text=>list.appendChild(node('li',text)));tips.appendChild(list);workspace.appendChild(tips);journal(host);
+      const output=row(host);output.classList.add('practice-export');button(output,'Скачать свою работу',exportWork,'practiceExport');const print=button(output,'Распечатать табы / PDF',()=>{if(v.stage==='ear'){message('Для печати откройте «Сыграть» или «Изменить».');return;}if(v.hide){v.hide=false;save();render();}window.print();},'practicePrint');print.disabled=v.stage==='ear';
+      const storage=node('p',undefined,'hint');storage.id='practiceStorage';host.appendChild(storage);host.querySelectorAll('details').forEach(d=>{if(expanded.includes(d.className))d.open=true;});save();restoreFocus();window.scrollTo(window.scrollX,scroll);
+    }
+    function open(id='cf'){
+      if(!studies.some(s=>s.id===id))id='cf';stop();stopOthers();state.study=id;earHeard=false;selectedEvent=null;opening=true;el('tab-course').click();opening=false;el('courseHome').hidden=true;el('courseWork').hidden=true;host.hidden=false;render();host.querySelector('h1').tabIndex=-1;host.querySelector('h1').focus({preventScroll:true});host.scrollIntoView({block:'start'});
+    }
+    function close(){stop();host.hidden=true;el('tab-course').click();el('courseHome').hidden=false;el('courseWork').hidden=true;}
+    document.addEventListener('click',event=>{const entry=event.target.closest?.('[data-practice-open]');if(entry){event.preventDefault();open(entry.dataset.practiceOpen);}});
+    document.querySelectorAll('[role="tab"]').forEach(t=>t.addEventListener('click',()=>{if(!opening){stop();host.hidden=true;}}));
+    document.addEventListener('visibilitychange',()=>{if(document.hidden)stop();});window.addEventListener('pagehide',stop);
+    window.addEventListener('beforeprint',()=>{if(!host.hidden){stop();document.body.classList.add('practice-print');}});
+    window.addEventListener('afterprint',()=>document.body.classList.remove('practice-print'));
+    const entry=new URLSearchParams(location.search).get('practice');if(entry&&studies.some(s=>s.id===entry))open(entry);
+    return {open,close,stop,getState:()=>copy(state)};
+  }
+  return {KEY,cleanState,boot};
+})();
+if(typeof module!=='undefined'&&module.exports)module.exports=CoursePractice;
+else window.coursePractice=CoursePractice.boot();
 </script>
 </body>
 </html>
